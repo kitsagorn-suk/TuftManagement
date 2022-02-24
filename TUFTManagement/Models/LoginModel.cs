@@ -21,8 +21,6 @@ namespace TUFTManagement.Models
         public string imageUrl { get; set; } = "";
         public string token { get; set; } = "";
         public string platform { get; set; } = "";
-        public int companyID { get; set; } = 0;
-        public bool isFirstLogin { get; set; }
         public int roleID { get; set; } = 0;
 
         public List<AccessRole> access_list { get; set; }
@@ -34,8 +32,6 @@ namespace TUFTManagement.Models
             username = dr["username"].ToString();
             employeeName = dr["firstname"].ToString() + " " + dr["lastname"].ToString();
             imageUrl = dr["image_name"].ToString();
-            companyID = int.Parse(dr["company_id"].ToString());
-            isFirstLogin = bool.Parse(dr["is_first"].ToString());
             roleID = int.Parse(dr["role_id"].ToString());
         }
     }
