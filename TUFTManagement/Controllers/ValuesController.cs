@@ -64,9 +64,9 @@ namespace TUFTManagement.Controllers
         #endregion
 
         #region Add Employees
-        [Route("insert/empProfile")]
+        [Route("save/empProfile")]
         [HttpPost]
-        public IHttpActionResult InsertEmpProfile(InsertEmpProfileDTO insertEmpProfileDTO)
+        public IHttpActionResult InsertEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -80,70 +80,92 @@ namespace TUFTManagement.Controllers
             try
             {
                 string checkMissingOptional = "";
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.empCode))
+
+                if (saveEmpProfileDTO.empProfileID.Equals(0))
                 {
-                    checkMissingOptional = checkMissingOptional + "empCode ";
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.empCode))
+                    {
+                        checkMissingOptional += checkMissingOptional + "empCode ";
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.userName))
+                    {
+                        checkMissingOptional += checkMissingOptional + "userName ";
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.password))
+                    {
+                        checkMissingOptional += checkMissingOptional + "password ";
+                    }
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.userName))
+
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCard))
                 {
-                    checkMissingOptional = checkMissingOptional + "userName ";
+                    checkMissingOptional += checkMissingOptional + "identityCard ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.password))
+                if (saveEmpProfileDTO.identityCard.Count() != 13)
                 {
-                    checkMissingOptional = checkMissingOptional + "password ";
+                    checkMissingOptional += checkMissingOptional + "identityCard is incomplete ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.identityCard))
+                if (saveEmpProfileDTO.titleID.Equals(0))
                 {
-                    checkMissingOptional = checkMissingOptional + "identityCard ";
+                    checkMissingOptional += checkMissingOptional + "titleID ";
                 }
-                if (insertEmpProfileDTO.titleID.Equals(null) || insertEmpProfileDTO.titleID.Equals(0))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.firstNameTH))
                 {
-                    checkMissingOptional = checkMissingOptional + "titleID ";
+                    checkMissingOptional += checkMissingOptional + "firstNameTH ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.firstNameTH))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.lastNameTH))
                 {
-                    checkMissingOptional = checkMissingOptional + "firstNameTH ";
+                    checkMissingOptional += checkMissingOptional + "lastNameTH ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.lastNameTH))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.phoneNumber))
                 {
-                    checkMissingOptional = checkMissingOptional + "lastNameTH ";
+                    checkMissingOptional += checkMissingOptional + "phoneNumber ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.contact))
+                if (saveEmpProfileDTO.phoneNumber.Count() != 9 || saveEmpProfileDTO.phoneNumber.Count() != 10)
                 {
-                    checkMissingOptional = checkMissingOptional + "contact ";
+                    checkMissingOptional += checkMissingOptional + "phoneNumber is incomplete ";
                 }
-                if (insertEmpProfileDTO.positionID.Equals(null) || insertEmpProfileDTO.positionID.Equals(0))
+                if (saveEmpProfileDTO.positionID.Equals(0))
                 {
-                    checkMissingOptional = checkMissingOptional + "positionID ";
+                    checkMissingOptional += checkMissingOptional + "positionID ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.personalCode))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.personalCode))
                 {
-                    checkMissingOptional = checkMissingOptional + "personalCode ";
+                    checkMissingOptional += checkMissingOptional + "personalCode ";
                 }
-                if (insertEmpProfileDTO.personalNO.Equals(null) || insertEmpProfileDTO.personalNO.Equals(0))
+                if (saveEmpProfileDTO.personalNO.Equals(0))
                 {
-                    checkMissingOptional = checkMissingOptional + "personalNO ";
+                    checkMissingOptional += checkMissingOptional + "personalNO ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.joinDate))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.joinDate))
                 {
-                    checkMissingOptional = checkMissingOptional + "joinDate ";
+                    checkMissingOptional += checkMissingOptional + "joinDate ";
                 }
-                if (string.IsNullOrEmpty(insertEmpProfileDTO.condition))
+                if (saveEmpProfileDTO.employmentTypeID.Equals(0))
                 {
-                    checkMissingOptional = checkMissingOptional + "condition ";
+                    checkMissingOptional += checkMissingOptional + "employmentTypeID ";
                 }
                 if (checkMissingOptional != "")
                 {
                     throw new Exception("Missing Parameter : " + checkMissingOptional);
                 }
 
-                string json = JsonConvert.SerializeObject(insertEmpProfileDTO);
+                string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
                 int logID = _sql.InsertLogReceiveData("InsertEmpProfile", json, timestampNow.ToString(), authHeader,
                     0, platform.ToLower());
 
-                InsertService srv = new InsertService();
-
-                var obj = srv.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, insertEmpProfileDTO, data.role_id, data.user_id);
+                var obj = new object();
+                if (saveEmpProfileDTO.empProfileID != 0)
+                {
+                    UpdateService srv = new UpdateService();
+                    obj = srv.UpdateEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                }
+                else
+                {
+                    InsertService srv1 = new InsertService();
+                    obj = srv1.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                }
+                
                 return Ok(obj);
             }
             catch (Exception ex)

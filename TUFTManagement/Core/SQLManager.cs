@@ -422,25 +422,41 @@ namespace TUFTManagement.Core
             return success;
         }
 
-        public int CheckUniqueNameInsertEmp(InsertEmpProfileDTO InsertEmpProfileDTO, int pUserID)
+        public DataTable CheckDupicateInsertEmp(SaveEmpProfileDTO saveEmpProfileDTO, int pUserID)
         {
-            int total = 0;
-
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec check_name_first_login " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec check_dupicate_employee " +
                 "@pFirstNameTh, " +
                 "@pLastNameTh, " +
+                "@pEmpCode, " +
+                "@pUserName, " +
+                "@pIdentityCard, " +
                 "@pUserID ");
 
             SqlParameter pFirstNameTh = new SqlParameter(@"pFirstNameTh", SqlDbType.VarChar, 150);
             pFirstNameTh.Direction = ParameterDirection.Input;
-            pFirstNameTh.Value = InsertEmpProfileDTO.firstNameTH;
+            pFirstNameTh.Value = saveEmpProfileDTO.firstNameTH;
             sql.Parameters.Add(pFirstNameTh);
 
             SqlParameter pLastNameTh = new SqlParameter(@"pLastNameTh", SqlDbType.VarChar, 150);
             pLastNameTh.Direction = ParameterDirection.Input;
-            pLastNameTh.Value = InsertEmpProfileDTO.lastNameTH;
+            pLastNameTh.Value = saveEmpProfileDTO.lastNameTH;
             sql.Parameters.Add(pLastNameTh);
+
+            SqlParameter pEmpCode = new SqlParameter(@"pEmpCode", SqlDbType.VarChar, 10);
+            pEmpCode.Direction = ParameterDirection.Input;
+            pEmpCode.Value = saveEmpProfileDTO.empCode;
+            sql.Parameters.Add(pEmpCode);
+
+            SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 200);
+            pUserName.Direction = ParameterDirection.Input;
+            pUserName.Value = saveEmpProfileDTO.userName;
+            sql.Parameters.Add(pUserName);
+
+            SqlParameter pIdentityCard = new SqlParameter(@"pIdentityCard", SqlDbType.VarChar, 30);
+            pIdentityCard.Direction = ParameterDirection.Input;
+            pIdentityCard.Value = saveEmpProfileDTO.identityCard;
+            sql.Parameters.Add(pIdentityCard);
 
             SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             paramUserID.Direction = ParameterDirection.Input;
@@ -449,16 +465,7 @@ namespace TUFTManagement.Core
 
             table = sql.executeQueryWithReturnTable();
 
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    DataRow dr = table.Rows[0];
-                    total = int.Parse(dr["total"].ToString());
-                }
-            }
-
-            return total;
+            return table;
         }
 
         public DataTable CheckValidationRoleID(string ObjectID, int RoleID)
@@ -483,7 +490,7 @@ namespace TUFTManagement.Core
             return table;
         }
 
-        public InsertLogin InsertEmpProfile(InsertEmpProfileDTO insertEmpProfileDTO, int userID)
+        public InsertLogin InsertEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_profile " +
@@ -497,7 +504,7 @@ namespace TUFTManagement.Core
                 "@pLastnameEN," +
                 "@pLastnameTH," +
                 "@pNickName," +
-                "@pContact," +
+                "@pPhoneNumber," +
                 "@pPositionID," +
                 "@pPersonalCode," +
                 "@pPersonalNO," +
@@ -507,124 +514,124 @@ namespace TUFTManagement.Core
                 "@pProPassDate," +
                 "@pMonthlySalary," +
                 "@pDailySalary," +
-                "@pCondition," +
+                "@pEmploymentTypeID," +
                 "@pTokenID," +
                 "@pRoleID," +
                 "@pCreateBy");
 
             SqlParameter pEmpCode = new SqlParameter(@"pEmpCode", SqlDbType.VarChar, 10);
             pEmpCode.Direction = ParameterDirection.Input;
-            pEmpCode.Value = insertEmpProfileDTO.empCode;
+            pEmpCode.Value = saveEmpProfileDTO.empCode;
             sql.Parameters.Add(pEmpCode);
 
             SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 200);
             pUserName.Direction = ParameterDirection.Input;
-            pUserName.Value = insertEmpProfileDTO.userName;
+            pUserName.Value = saveEmpProfileDTO.userName;
             sql.Parameters.Add(pUserName);
 
             SqlParameter pPassWord = new SqlParameter(@"@pPassWord", SqlDbType.VarChar, 250);
             pPassWord.Direction = ParameterDirection.Input;
-            pPassWord.Value = insertEmpProfileDTO.password;
+            pPassWord.Value = saveEmpProfileDTO.password;
             sql.Parameters.Add(pPassWord);
 
             SqlParameter pIdentityCard = new SqlParameter(@"pIdentityCard", SqlDbType.VarChar, 30);
             pIdentityCard.Direction = ParameterDirection.Input;
-            pIdentityCard.Value = insertEmpProfileDTO.identityCard;
+            pIdentityCard.Value = saveEmpProfileDTO.identityCard;
             sql.Parameters.Add(pIdentityCard);
 
             SqlParameter pTitleID = new SqlParameter(@"pTitleID", SqlDbType.Int);
             pTitleID.Direction = ParameterDirection.Input;
-            pTitleID.Value = insertEmpProfileDTO.titleID;
+            pTitleID.Value = saveEmpProfileDTO.titleID;
             sql.Parameters.Add(pTitleID);
 
             SqlParameter pFirstnameEN = new SqlParameter(@"pFirstnameEN", SqlDbType.VarChar, 250);
             pFirstnameEN.Direction = ParameterDirection.Input;
-            pFirstnameEN.Value = insertEmpProfileDTO.firstNameEN;
+            pFirstnameEN.Value = saveEmpProfileDTO.firstNameEN;
             sql.Parameters.Add(pFirstnameEN);
 
             SqlParameter pFirstnameTH = new SqlParameter(@"pFirstnameTH", SqlDbType.VarChar, 250);
             pFirstnameTH.Direction = ParameterDirection.Input;
-            pFirstnameTH.Value = insertEmpProfileDTO.firstNameTH;
+            pFirstnameTH.Value = saveEmpProfileDTO.firstNameTH;
             sql.Parameters.Add(pFirstnameTH);
 
             SqlParameter pLastnameEN = new SqlParameter(@"pLastnameEN", SqlDbType.VarChar, 250);
             pLastnameEN.Direction = ParameterDirection.Input;
-            pLastnameEN.Value = insertEmpProfileDTO.lastNameEN;
+            pLastnameEN.Value = saveEmpProfileDTO.lastNameEN;
             sql.Parameters.Add(pLastnameEN);
         
             SqlParameter pLastnameTH = new SqlParameter(@"pLastnameTH", SqlDbType.VarChar, 250);
             pLastnameTH.Direction = ParameterDirection.Input;
-            pLastnameTH.Value = insertEmpProfileDTO.lastNameTH;
+            pLastnameTH.Value = saveEmpProfileDTO.lastNameTH;
             sql.Parameters.Add(pLastnameTH);
 
             SqlParameter pNickName = new SqlParameter(@"pNickName", SqlDbType.VarChar, 100);
             pNickName.Direction = ParameterDirection.Input;
-            pNickName.Value = insertEmpProfileDTO.roleID;
+            pNickName.Value = saveEmpProfileDTO.nickName;
             sql.Parameters.Add(pNickName);
 
-            SqlParameter pContact = new SqlParameter(@"pContact", SqlDbType.VarChar, 15);
-            pContact.Direction = ParameterDirection.Input;
-            pContact.Value = insertEmpProfileDTO.contact;
-            sql.Parameters.Add(pContact);
+            SqlParameter pPhoneNumber = new SqlParameter(@"pPhoneNumber", SqlDbType.VarChar, 15);
+            pPhoneNumber.Direction = ParameterDirection.Input;
+            pPhoneNumber.Value = saveEmpProfileDTO.phoneNumber;
+            sql.Parameters.Add(pPhoneNumber);
 
             SqlParameter pPositionID = new SqlParameter(@"pPositionID", SqlDbType.Int);
             pPositionID.Direction = ParameterDirection.Input;
-            pPositionID.Value = insertEmpProfileDTO.positionID;
+            pPositionID.Value = saveEmpProfileDTO.positionID;
             sql.Parameters.Add(pPositionID);
 
             SqlParameter pPersonalCode = new SqlParameter(@"pPersonalCode", SqlDbType.VarChar, 10);
             pPersonalCode.Direction = ParameterDirection.Input;
-            pPersonalCode.Value = insertEmpProfileDTO.personalCode;
+            pPersonalCode.Value = saveEmpProfileDTO.personalCode;
             sql.Parameters.Add(pPersonalCode);
 
             SqlParameter pPersonalNO = new SqlParameter(@"pPersonalNO", SqlDbType.Int);
             pPersonalNO.Direction = ParameterDirection.Input;
-            pPersonalNO.Value = insertEmpProfileDTO.personalNO;
+            pPersonalNO.Value = saveEmpProfileDTO.personalNO;
             sql.Parameters.Add(pPersonalNO);
 
             SqlParameter pDateOfBirth = new SqlParameter(@"pDateOfBirth", SqlDbType.Date);
             pDateOfBirth.Direction = ParameterDirection.Input;
-            pDateOfBirth.Value = insertEmpProfileDTO.dateOfBirth;
+            pDateOfBirth.Value = saveEmpProfileDTO.dateOfBirth;
             sql.Parameters.Add(pDateOfBirth);
 
             SqlParameter pProductID = new SqlParameter(@"pProductID", SqlDbType.Int);
             pProductID.Direction = ParameterDirection.Input;
-            pProductID.Value = insertEmpProfileDTO.productID;
+            pProductID.Value = saveEmpProfileDTO.productID;
             sql.Parameters.Add(pProductID);
 
             SqlParameter pJoinDate = new SqlParameter(@"pJoinDate", SqlDbType.Date);
             pJoinDate.Direction = ParameterDirection.Input;
-            pJoinDate.Value = insertEmpProfileDTO.joinDate;
+            pJoinDate.Value = saveEmpProfileDTO.joinDate;
             sql.Parameters.Add(pJoinDate);
 
             SqlParameter pProPassDate = new SqlParameter(@"pProPassDate", SqlDbType.Date);
             pProPassDate.Direction = ParameterDirection.Input;
-            pProPassDate.Value = insertEmpProfileDTO.proPassDate;
+            pProPassDate.Value = saveEmpProfileDTO.proPassDate;
             sql.Parameters.Add(pProPassDate);
 
             SqlParameter pMonthlySalary = new SqlParameter(@"pMonthlySalary", SqlDbType.Decimal);
             pMonthlySalary.Direction = ParameterDirection.Input;
-            pMonthlySalary.Value = insertEmpProfileDTO.monthlySalary;
+            pMonthlySalary.Value = saveEmpProfileDTO.monthlySalary;
             sql.Parameters.Add(pMonthlySalary);
 
             SqlParameter pDailySalary = new SqlParameter(@"pDailySalary", SqlDbType.Decimal);
             pDailySalary.Direction = ParameterDirection.Input;
-            pDailySalary.Value = insertEmpProfileDTO.dailySalary;
+            pDailySalary.Value = saveEmpProfileDTO.dailySalary;
             sql.Parameters.Add(pDailySalary);
 
-            SqlParameter pCondition = new SqlParameter(@"pCondition", SqlDbType.VarChar, 20);
-            pCondition.Direction = ParameterDirection.Input;
-            pCondition.Value = insertEmpProfileDTO.condition;
-            sql.Parameters.Add(pCondition);
+            SqlParameter pEmploymentTypeID = new SqlParameter(@"pEmploymentTypeID", SqlDbType.Int);
+            pEmploymentTypeID.Direction = ParameterDirection.Input;
+            pEmploymentTypeID.Value = saveEmpProfileDTO.employmentTypeID;
+            sql.Parameters.Add(pEmploymentTypeID);
 
             SqlParameter pTokenID = new SqlParameter(@"pTokenID", SqlDbType.VarChar, 4000);
             pTokenID.Direction = ParameterDirection.Input;
-            pTokenID.Value = insertEmpProfileDTO.tokenID;
+            pTokenID.Value = saveEmpProfileDTO.tokenID;
             sql.Parameters.Add(pTokenID);
             
             SqlParameter pRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
             pRoleID.Direction = ParameterDirection.Input;
-            pRoleID.Value = insertEmpProfileDTO.productID;
+            pRoleID.Value = saveEmpProfileDTO.productID;
             sql.Parameters.Add(pRoleID);
 
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
@@ -645,6 +652,174 @@ namespace TUFTManagement.Core
             }
 
             return data;
+        }
+
+        public _ReturnIdModel UpdateEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_profile " +
+                "@pEmpProfileID, " +
+                "@pIdentityCard, " +
+                "@pTitleID, " +
+                "@pFirstnameEN," +
+                "@pFirstnameTH," +
+                "@pLastnameEN," +
+                "@pLastnameTH," +
+                "@pNickName," +
+                "@pPhoneNumber," +
+                "@pPositionID," +
+                "@pPersonalCode," +
+                "@pPersonalNO," +
+                "@pDateOfBirth," +
+                "@pProductID," +
+                "@pJoinDate," +
+                "@pProPassDate," +
+                "@pMonthlySalary," +
+                "@pDailySalary," +
+                "@pEmploymentTypeID," +
+                "@pRoleID," +
+                "@pUpdateBy");
+
+            SqlParameter pEmpProfileID = new SqlParameter(@"pEmpProfileID", SqlDbType.Int);
+            pEmpProfileID.Direction = ParameterDirection.Input;
+            pEmpProfileID.Value = saveEmpProfileDTO.empProfileID;
+            sql.Parameters.Add(pEmpProfileID);
+            
+            SqlParameter pIdentityCard = new SqlParameter(@"pIdentityCard", SqlDbType.VarChar, 30);
+            pIdentityCard.Direction = ParameterDirection.Input;
+            pIdentityCard.Value = saveEmpProfileDTO.identityCard;
+            sql.Parameters.Add(pIdentityCard);
+
+            SqlParameter pTitleID = new SqlParameter(@"pTitleID", SqlDbType.Int);
+            pTitleID.Direction = ParameterDirection.Input;
+            pTitleID.Value = saveEmpProfileDTO.titleID;
+            sql.Parameters.Add(pTitleID);
+
+            SqlParameter pFirstnameEN = new SqlParameter(@"pFirstnameEN", SqlDbType.VarChar, 250);
+            pFirstnameEN.Direction = ParameterDirection.Input;
+            pFirstnameEN.Value = saveEmpProfileDTO.firstNameEN;
+            sql.Parameters.Add(pFirstnameEN);
+
+            SqlParameter pFirstnameTH = new SqlParameter(@"pFirstnameTH", SqlDbType.VarChar, 250);
+            pFirstnameTH.Direction = ParameterDirection.Input;
+            pFirstnameTH.Value = saveEmpProfileDTO.firstNameTH;
+            sql.Parameters.Add(pFirstnameTH);
+
+            SqlParameter pLastnameEN = new SqlParameter(@"pLastnameEN", SqlDbType.VarChar, 250);
+            pLastnameEN.Direction = ParameterDirection.Input;
+            pLastnameEN.Value = saveEmpProfileDTO.lastNameEN;
+            sql.Parameters.Add(pLastnameEN);
+
+            SqlParameter pLastnameTH = new SqlParameter(@"pLastnameTH", SqlDbType.VarChar, 250);
+            pLastnameTH.Direction = ParameterDirection.Input;
+            pLastnameTH.Value = saveEmpProfileDTO.lastNameTH;
+            sql.Parameters.Add(pLastnameTH);
+
+            SqlParameter pNickName = new SqlParameter(@"pNickName", SqlDbType.VarChar, 100);
+            pNickName.Direction = ParameterDirection.Input;
+            pNickName.Value = saveEmpProfileDTO.nickName;
+            sql.Parameters.Add(pNickName);
+
+            SqlParameter pPhoneNumber = new SqlParameter(@"pPhoneNumber", SqlDbType.VarChar, 15);
+            pPhoneNumber.Direction = ParameterDirection.Input;
+            pPhoneNumber.Value = saveEmpProfileDTO.phoneNumber;
+            sql.Parameters.Add(pPhoneNumber);
+
+            SqlParameter pPositionID = new SqlParameter(@"pPositionID", SqlDbType.Int);
+            pPositionID.Direction = ParameterDirection.Input;
+            pPositionID.Value = saveEmpProfileDTO.positionID;
+            sql.Parameters.Add(pPositionID);
+
+            SqlParameter pPersonalCode = new SqlParameter(@"pPersonalCode", SqlDbType.VarChar, 10);
+            pPersonalCode.Direction = ParameterDirection.Input;
+            pPersonalCode.Value = saveEmpProfileDTO.personalCode;
+            sql.Parameters.Add(pPersonalCode);
+
+            SqlParameter pPersonalNO = new SqlParameter(@"pPersonalNO", SqlDbType.Int);
+            pPersonalNO.Direction = ParameterDirection.Input;
+            pPersonalNO.Value = saveEmpProfileDTO.personalNO;
+            sql.Parameters.Add(pPersonalNO);
+
+            SqlParameter pDateOfBirth = new SqlParameter(@"pDateOfBirth", SqlDbType.Date);
+            pDateOfBirth.Direction = ParameterDirection.Input;
+            pDateOfBirth.Value = saveEmpProfileDTO.dateOfBirth;
+            sql.Parameters.Add(pDateOfBirth);
+
+            SqlParameter pProductID = new SqlParameter(@"pProductID", SqlDbType.Int);
+            pProductID.Direction = ParameterDirection.Input;
+            pProductID.Value = saveEmpProfileDTO.productID;
+            sql.Parameters.Add(pProductID);
+
+            SqlParameter pJoinDate = new SqlParameter(@"pJoinDate", SqlDbType.Date);
+            pJoinDate.Direction = ParameterDirection.Input;
+            pJoinDate.Value = saveEmpProfileDTO.joinDate;
+            sql.Parameters.Add(pJoinDate);
+
+            SqlParameter pProPassDate = new SqlParameter(@"pProPassDate", SqlDbType.Date);
+            pProPassDate.Direction = ParameterDirection.Input;
+            pProPassDate.Value = saveEmpProfileDTO.proPassDate;
+            sql.Parameters.Add(pProPassDate);
+
+            SqlParameter pMonthlySalary = new SqlParameter(@"pMonthlySalary", SqlDbType.Decimal);
+            pMonthlySalary.Direction = ParameterDirection.Input;
+            pMonthlySalary.Value = saveEmpProfileDTO.monthlySalary;
+            sql.Parameters.Add(pMonthlySalary);
+
+            SqlParameter pDailySalary = new SqlParameter(@"pDailySalary", SqlDbType.Decimal);
+            pDailySalary.Direction = ParameterDirection.Input;
+            pDailySalary.Value = saveEmpProfileDTO.dailySalary;
+            sql.Parameters.Add(pDailySalary);
+
+            SqlParameter pEmploymentTypeID = new SqlParameter(@"pEmploymentTypeID", SqlDbType.Int);
+            pEmploymentTypeID.Direction = ParameterDirection.Input;
+            pEmploymentTypeID.Value = saveEmpProfileDTO.employmentTypeID;
+            sql.Parameters.Add(pEmploymentTypeID);
+            
+            SqlParameter pRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
+            pRoleID.Direction = ParameterDirection.Input;
+            pRoleID.Value = saveEmpProfileDTO.productID;
+            sql.Parameters.Add(pRoleID);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public DataTable CheckValidationUpdateByID(int ID, string Type)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec check_validation_update " +
+                "@pID, " +
+                "@pType");
+
+            SqlParameter pID = new SqlParameter(@"pID", SqlDbType.Int);
+            pID.Direction = ParameterDirection.Input;
+            pID.Value = ID;
+            sql.Parameters.Add(pID);
+
+            SqlParameter pType = new SqlParameter(@"pType", SqlDbType.VarChar);
+            pType.Direction = ParameterDirection.Input;
+            pType.Value = Type;
+            sql.Parameters.Add(pType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            return table;
         }
     }
 

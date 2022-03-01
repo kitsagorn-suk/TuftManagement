@@ -43,38 +43,12 @@ namespace TUFTManagement.Models
                     return 301004;
                 case InvalidState.E301005:
                     return 301005;
-                case InvalidState.E301006:
-                    return 301006;
                 case InvalidState.E301007:
                     return 301007;
-                case InvalidState.E301008:
-                    return 301008;
                 case InvalidState.E302001:
                     return 302001;
                 case InvalidState.E300001:
                     return 300001;
-                case InvalidState.E300002:
-                    return 300002;
-                case InvalidState.E300003:
-                    return 300003;
-                case InvalidState.E300004:
-                    return 300004;
-                case InvalidState.E300005:
-                    return 300005;
-                case InvalidState.E300006:
-                    return 300006;
-                case InvalidState.E300007:
-                    return 300007;
-                case InvalidState.E300008:
-                    return 300008;
-                case InvalidState.E302002:
-                    return 302002;
-                case InvalidState.E302003:
-                    return 302003;
-                case InvalidState.E303001:
-                    return 303001;
-                case InvalidState.E303002:
-                    return 303002;
                 default:
                     return 0;
             }
