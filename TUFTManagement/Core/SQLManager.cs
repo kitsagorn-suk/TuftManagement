@@ -821,6 +821,1867 @@ namespace TUFTManagement.Core
 
             return table;
         }
+
+        public DataTable CheckDuplicateMaster(MasterDataDTO masterDataDTO, string masterName)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("");
+
+            switch (masterName)
+            {
+                case "position":
+                    sql = new SQLCustomExecute("exec check_duplicate_position @pMasterID,@pNameEN, @pNameTH");
+                    break;
+                case "productarea":
+                    sql = new SQLCustomExecute("exec check_duplicate_product_area @pMasterID, @pNameEN, @pNameTH");
+                    break;
+                case "productcategory":
+                    sql = new SQLCustomExecute("exec check_duplicate_product_category @pMasterID, @pNameEN, @pNameTH");
+                    break;
+                case "producttype":
+                    sql = new SQLCustomExecute("exec check_duplicate_product_type @pMasterID, @pNameEN, @pNameTH");
+                    break;
+                case "quemembertype":
+                    sql = new SQLCustomExecute("exec check_duplicate_que_member_type @pMasterID, @pNameEN, @pNameTH");
+                    break;
+                case "questafftype":
+                    sql = new SQLCustomExecute("exec check_duplicate_que_staff_type @pMasterID, @pNameEN, @pNameTH");
+                    break;
+                case "roomtype":
+                    sql = new SQLCustomExecute("exec check_duplicate_room_type @pMasterID, @pNameEN, @pNameTH");
+                    break;
+                case "stocktype":
+                    sql = new SQLCustomExecute("exec check_duplicate_stock_type @pMasterID, @pNameEN, @pNameTH");
+                    break;
+            }
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            table = sql.executeQueryWithReturnTable();
+
+            return table;
+        }
+
+        public Pagination<SearchMasterData> SearchMasterDataPosition(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_position_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterPosition(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterPosition(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_position_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public MasterData GetMasterPosition(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_position " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterPosition(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_position " +
+                "@pNameEN," +
+                "@pNameTH," + 
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+            
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterPosition(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_position " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+            
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterPosition(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_position " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchMasterData> SearchMasterDataProductArea(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_product_area_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterProductArea(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterProductArea(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_product_area_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public MasterData GetMasterProductArea(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_product_area " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterProductArea(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_product_area " +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterProductArea(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_product_area " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterProductArea(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_product_area " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchMasterData> SearchMasterDataProductCategory(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_product_category_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterProductCategory(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterProductCategory(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_product_area_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public MasterData GetMasterProductCategory(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_product_category " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterProductCategory(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_product_category " +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterProductCategory(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_product_category " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterProductCategory(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_product_category " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchMasterData> SearchMasterDataProductType(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_product_type_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterProductType(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterProductType(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_product_type_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public MasterData GetMasterProductType(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_product_type " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterProductType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_product_type " +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterProductType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_product_type " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterProductType(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_product_type " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchMasterData> SearchMasterDataQueMemberType(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_que_member_type_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterQueMemberType(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterQueMemberType(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_que_member_type_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public MasterData GetMasterQueMemberType(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_que_member_type " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterQueMemberType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_que_member_type " +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterQueMemberType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_que_member_type " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterQueMemberType(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_que_member_type " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchMasterData> SearchMasterDataQueStaffType(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_que_staff_type_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterQueStaffType(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterQueStaffType(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_que_staff_type_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public MasterData GetMasterQueStaffType(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_que_staff_type " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterQueStaffType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_que_staff_type " +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterQueStaffType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_que_staff_type " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterQueStaffType(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_que_staff_type " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchMasterData> SearchMasterDataRoomType(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_room_type_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterRoomType(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterRoomType(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_room_type_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+        
+        public MasterData GetMasterRoomType(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_room_type " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterRoomType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_room_type " +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterRoomType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_room_type " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterRoomType(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_room_type " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+        
+        public Pagination<SearchMasterData> SearchMasterDataStockType(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_stock_type_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter paramPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            paramPage.Direction = ParameterDirection.Input;
+            paramPage.Value = pageInt;
+            sql.Parameters.Add(paramPage);
+
+            SqlParameter paramPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            paramPerPage.Direction = ParameterDirection.Input;
+            paramPerPage.Value = perPage;
+            sql.Parameters.Add(paramPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable();
+
+            Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterData data = new SearchMasterData();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterStockType(paramSearch);
+
+            pagination.SetPagination(total, perPage, pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterStockType(string paramSearch)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_stock_type_total " +
+                "@pParamSearch ");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public MasterData GetMasterStockType(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_master_stock_type " +
+                "@pMasterID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterStockType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_stock_type " +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateMasterStockType(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_master_stock_type " +
+                "@pMasterID," +
+                "@pNameEN," +
+                "@pNameTH," +
+                "@pUserID ");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar);
+            pNameEN.Direction = ParameterDirection.Input;
+            pNameEN.Value = masterDataDTO.nameEN;
+            sql.Parameters.Add(pNameEN);
+
+            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar);
+            pNameTH.Direction = ParameterDirection.Input;
+            pNameTH.Value = masterDataDTO.nameTH;
+            sql.Parameters.Add(pNameTH);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteMasterStockType(int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_stock_type " +
+                "@pMasterID," +
+                "@pUserID");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = id;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
     }
 
     public class SQLCustomExecute

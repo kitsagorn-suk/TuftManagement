@@ -26,17 +26,22 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new InsertLogin();
-                DataTable dt = _sql.CheckDupicateInsertEmp(saveEmpProfileDTO, 0);
-                ValidationModel validationDup = ValidationManager.CheckValidationDupicateInsertEmp(lang, saveEmpProfileDTO); 
-                //รอเรื่องสิทธิ์
-                //List<string> listobjectID = new List<string>();
-                //listobjectID.Add("100301001");
-                //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform); 
-                
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmp(lang, saveEmpProfileDTO); 
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertEmpProfile(saveEmpProfileDTO, userID);
+                    //รอเรื่องสิทธิ์
+                    //List<string> listobjectID = new List<string>();
+                    //listobjectID.Add("100301001");
+                    //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
+                    validation = ValidationManager.CheckValidation(1, lang, platform);
+                    if (validation.Success == true)
+                    {
+                        value.data = _sql.InsertEmpProfile(saveEmpProfileDTO, userID);
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    }
                 }
                 else
                 {
@@ -62,5 +67,6 @@ namespace TUFTManagement.Services
             return value;
         }
         #endregion
+
     }
 }

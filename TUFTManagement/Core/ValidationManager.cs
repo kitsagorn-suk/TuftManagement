@@ -222,31 +222,30 @@ namespace TUFTManagement.Core
 
                 if (dt.Rows.Count > 0)
                 {
-                    if (dt.Rows[0]["Name"].ToString() == "1")
+                    if (dt.Rows[0]["Name"].ToString() != "0")
                     {
-                        state = ValidationModel.InvalidState.E301007;
+                        state = ValidationModel.InvalidState.E301002;
                         getMessage = ValidationModel.GetInvalidMessage(state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
-                    if (dt.Rows[0]["EmpCode"].ToString() == "1")
+                    if (dt.Rows[0]["EmpCode"].ToString() != "0")
                     {
-                        state = ValidationModel.InvalidState.E301007;
+                        state = ValidationModel.InvalidState.E301003;
                         getMessage = ValidationModel.GetInvalidMessage(state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
-                    if (dt.Rows[0]["UserName"].ToString() == "1")
+                    if (dt.Rows[0]["UserName"].ToString() != "0")
                     {
-                        state = ValidationModel.InvalidState.E301007;
+                        state = ValidationModel.InvalidState.E301004;
                         getMessage = ValidationModel.GetInvalidMessage(state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
-                    if (dt.Rows[0]["@IsDupIdentityCard"].ToString() == "1")
+                    if (dt.Rows[0]["IdentityCard"].ToString() != "0")
                     {
-                        state = ValidationModel.InvalidState.E301007;
+                        state = ValidationModel.InvalidState.E301005;
                         getMessage = ValidationModel.GetInvalidMessage(state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
-
                 }
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
@@ -254,7 +253,49 @@ namespace TUFTManagement.Core
                 value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
 
+        public static ValidationModel CheckValidationDupicateMasterData(string lang, string mastername, MasterDataDTO masterDataDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state;
+
+                DataTable dt = _sql.CheckDuplicateMaster(masterDataDTO, mastername);
+
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0]["status_name_en"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301008;
+                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                    if (dt.Rows[0]["status_name_th"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301009;
+                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                }
+
+                getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
             }
             catch (Exception ex)
             {
