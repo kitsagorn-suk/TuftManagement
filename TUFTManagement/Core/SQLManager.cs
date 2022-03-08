@@ -2682,6 +2682,56 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public _ReturnIdModel InsertSystemLogChange(int actionID, string tableName, string fieldName, string newData, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_log_change " +
+                "@pActionID," +
+                "@pTableName," +
+                "@pFieldName," +
+                "@pNewData," +
+                "@pUserID ");
+
+            SqlParameter pActionID = new SqlParameter(@"pActionID", SqlDbType.Int);
+            pActionID.Direction = ParameterDirection.Input;
+            pActionID.Value = actionID;
+            sql.Parameters.Add(pActionID);
+
+            SqlParameter pTableName = new SqlParameter(@"pTableName", SqlDbType.VarChar, 100);
+            pTableName.Direction = ParameterDirection.Input;
+            pTableName.Value = tableName;
+            sql.Parameters.Add(pTableName);
+
+            SqlParameter pFieldName = new SqlParameter(@"pFieldName", SqlDbType.VarChar,100);
+            pFieldName.Direction = ParameterDirection.Input;
+            pFieldName.Value = fieldName;
+            sql.Parameters.Add(pFieldName);
+
+            SqlParameter pNewData = new SqlParameter(@"pNewData", SqlDbType.VarChar, 4000);
+            pNewData.Direction = ParameterDirection.Input;
+            pNewData.Value = newData;
+            sql.Parameters.Add(pNewData);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
     }
 
     public class SQLCustomExecute

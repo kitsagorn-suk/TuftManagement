@@ -34,6 +34,26 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
+                    string TableName = "emp_profile";
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "identity_card", saveEmpProfileDTO.identityCard, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "title_id", saveEmpProfileDTO.titleID.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "firstname_en", saveEmpProfileDTO.firstNameEN, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "firstname_th", saveEmpProfileDTO.firstNameTH, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "lastname_en", saveEmpProfileDTO.lastNameEN, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "lastname_th", saveEmpProfileDTO.lastNameTH, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "nickname", saveEmpProfileDTO.nickName, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "phone_number", saveEmpProfileDTO.phoneNumber, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "position_id", saveEmpProfileDTO.positionID.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "per_code", saveEmpProfileDTO.personalCode, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "per_num", saveEmpProfileDTO.personalNO.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "date_of_birth", saveEmpProfileDTO.dateOfBirth, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "product_id", saveEmpProfileDTO.productID.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "join_date", saveEmpProfileDTO.joinDate, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "pro_pass_date", saveEmpProfileDTO.proPassDate, userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "daily_salary", saveEmpProfileDTO.dailySalary.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "employment_type_id", saveEmpProfileDTO.employmentTypeID.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "role_id", saveEmpProfileDTO.roleID.ToString(), userID);
                     value.data = _sql.UpdateEmpProfile(saveEmpProfileDTO, userID);
                 }
                 else

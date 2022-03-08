@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using TUFTManagement.Core;
@@ -181,7 +182,10 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
-                        value.data = _sql.UpdateMasterPosition(masterDataDTO, userID); ;
+                        string TableName = "master_position";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+                        value.data = _sql.UpdateMasterPosition(masterDataDTO, userID);
                     }
                     else
                     {
@@ -429,6 +433,9 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
+                        string TableName = "master_product_area";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateMasterProductArea(masterDataDTO, userID); ;
                     }
                     else
@@ -677,6 +684,9 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
+                        string TableName = "master_product_category";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateMasterProductCategory(masterDataDTO, userID); ;
                     }
                     else
@@ -925,6 +935,9 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
+                        string TableName = "master_product_type";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateMasterProductType(masterDataDTO, userID); ;
                     }
                     else
@@ -1173,6 +1186,9 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
+                        string TableName = "master_que_member_type";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateMasterQueMemberType(masterDataDTO, userID); ;
                     }
                     else
@@ -1421,6 +1437,9 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
+                        string TableName = "master_que_staff_type";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateMasterQueStaffType(masterDataDTO, userID); ;
                     }
                     else
@@ -1669,6 +1688,9 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
+                        string TableName = "master_room_type";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateMasterRoomType(masterDataDTO, userID); ;
                     }
                     else
@@ -1917,6 +1939,9 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
+                        string TableName = "master_stock_type";
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateMasterStockType(masterDataDTO, userID); ;
                     }
                     else
