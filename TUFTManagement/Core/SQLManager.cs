@@ -800,6 +800,38 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_emp_profile " +
+                "@pEmpProfileID, " +
+                "@pUpdateBy");
+
+            SqlParameter pEmpProfileID = new SqlParameter(@"pEmpProfileID", SqlDbType.Int);
+            pEmpProfileID.Direction = ParameterDirection.Input;
+            pEmpProfileID.Value = saveEmpProfileDTO.empProfileID;
+            sql.Parameters.Add(pEmpProfileID);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public DataTable CheckValidationUpdateByID(int ID, string Type)
         {
             DataTable table = new DataTable();

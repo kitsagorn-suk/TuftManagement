@@ -66,7 +66,7 @@ namespace TUFTManagement.Controllers
         #region Add Employees
         [Route("save/empProfile")]
         [HttpPost]
-        public IHttpActionResult InsertEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
+        public IHttpActionResult SaveEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -165,6 +165,48 @@ namespace TUFTManagement.Controllers
                     InsertService srv1 = new InsertService();
                     obj = srv1.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
                 }
+                
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("delete/empProfile")]
+        [HttpPost]
+        public IHttpActionResult DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
+                int logID = _sql.InsertLogReceiveData("DeleteEmpProfile", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpProfileDTO.empProfileID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "empProfileID ";
+                }
+                
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                
+                DeleteService srv = new DeleteService();
+                var obj = srv.DeleteEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
                 
                 return Ok(obj);
             }
