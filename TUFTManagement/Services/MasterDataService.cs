@@ -13,6 +13,178 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
+        public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID,
+            MasterDataDTO masterDataDTO, string TableName, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                _ReturnIdModel data = new _ReturnIdModel();
+
+                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(lang, TableName, masterDataDTO);
+                if (validation.Success == true)
+                {
+                    if (masterDataDTO.mode.ToLower() == "insert")
+                    {
+                        //List<string> listobjectID = new List<string>();
+                        //listobjectID.Add("100401001");
+                        //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
+                        validation = ValidationManager.CheckValidation(1, lang, platform);
+                        value.data = _sql.InsertMasterData(masterDataDTO, TableName, userID);
+                    }
+                    else if (masterDataDTO.mode.ToLower() == "update")
+                    {
+                        //ValidationModel validation = new ValidationModel();
+                        //List<string> listobjectID = new List<string>();
+                        //listobjectID.Add("100401002");
+                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+                        validation = ValidationManager.CheckValidation(1, lang, platform);
+                        if (validation.Success == true)
+                        {
+                            _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                            _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+                            value.data = _sql.UpdateMasterData(masterDataDTO, TableName, userID);
+                        }
+                        else
+                        {
+                            _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                        }
+                    }
+                    else if (masterDataDTO.mode.ToLower() == "delete")
+                    {
+                        //ValidationModel validation = new ValidationModel();
+                        //List<string> listobjectID = new List<string>();
+                        //listobjectID.Add("100401002");
+                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+                        validation = ValidationManager.CheckValidation(1, lang, platform);
+                        if (validation.Success == true)
+                        {
+                            value.data = _sql.DeleteMasterData(masterDataDTO, TableName, userID);
+                        }
+                        else
+                        {
+                            _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                        }
+                    }
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SaveMasterService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetMasterDataModel GetMasterService(string authorization, string lang, string platform, int logID, int masterID, string TableName)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetMasterDataModel value = new GetMasterDataModel();
+            try
+            {
+                MasterData data = new MasterData();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetMasterData(masterID, TableName);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public SearchMasterDataModel SearchMasterService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, int roleID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchMasterDataModel value = new SearchMasterDataModel();
+            try
+            {
+                Pagination<SearchMasterData> data = new Pagination<SearchMasterData>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchMaster(searchMasterDataDTO, TableName);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
+
+
         public SearchMasterDataModel SearchMasterDataPositionService(string authorization, string lang, string platform, int logID, int perPage, int pageInt, string paramSearch
             , int sortField, string sortType, int roleID)
         {

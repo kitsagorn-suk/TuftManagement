@@ -261,7 +261,7 @@ namespace TUFTManagement.Core
             return value;
         }
 
-        public static ValidationModel CheckValidationDupicateMasterData(string lang, string mastername, MasterDataDTO masterDataDTO)
+        public static ValidationModel CheckValidationDupicateMasterData(string lang, string TableName, MasterDataDTO masterDataDTO)
         {
             if (_sql == null)
             {
@@ -273,7 +273,7 @@ namespace TUFTManagement.Core
                 GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
                 ValidationModel.InvalidState state;
 
-                DataTable dt = _sql.CheckDuplicateMaster(masterDataDTO, mastername);
+                DataTable dt = _sql.CheckDuplicateMaster(TableName , masterDataDTO);
 
                 if (dt.Rows.Count > 0)
                 {

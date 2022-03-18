@@ -176,6 +176,7 @@
     <Compile Include="DTO\MasterDataDTO.cs" />
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpProfileDTO.cs" />
+    <Compile Include="DTO\SearchMasterDataDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -5,11 +5,13 @@ using System.Web;
 
 namespace TUFTManagement.DTO
 {
-    public class MasterDataDTO
+    public class SearchMasterDataDTO
     {
-        public int masterID { set; get; } = 0;
-        public string mode { set; get; } = "";
         public string nameEN { set; get; } = "";
         public string nameTH { set; get; } = "";
+        public int perPage { set; get; } = 0;
+        public int pageInt { set; get; } = 0;
+        public int sortField { set; get; } = 0;
+        public string sortType { set; get; } = "";
     }
 }
