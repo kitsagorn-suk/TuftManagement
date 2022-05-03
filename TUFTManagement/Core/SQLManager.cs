@@ -238,6 +238,58 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel Logout(int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec logout " +
+                "@pUserID ");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnVerifyModel VerifyToken(string tokenID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec verify_token " +
+                "@pTokenID ");
+
+            SqlParameter pTokenID = new SqlParameter(@"pTokenID", SqlDbType.VarChar);
+            pTokenID.Direction = ParameterDirection.Input;
+            pTokenID.Value = tokenID;
+            sql.Parameters.Add(pTokenID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnVerifyModel data = new _ReturnVerifyModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public List<AccessRole> GetAllAccessRole(int pRoleID)
         {
             List<AccessRole> list = new List<AccessRole>();
@@ -3015,6 +3067,38 @@ namespace TUFTManagement.Core
             }
 
             return total;
+        }
+
+        public EmpProfile GetEmpProfile(int userID, string lang)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_emp_profile " +
+                "@pUserID," +
+                "@pLang");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 10);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = lang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            EmpProfile data = new EmpProfile();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
         }
     }
 

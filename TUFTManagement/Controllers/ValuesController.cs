@@ -61,6 +61,58 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("logout")]
+        [HttpPost]
+        public IHttpActionResult Logout()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                LoginService srv = new LoginService();
+
+                var obj = srv.Logout(authHeader, lang, data.user_id, platform.ToLower(), 1);
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("verifytoken")]
+        [HttpPost]
+        public IHttpActionResult VerifyToken()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                LoginService srv = new LoginService();
+
+                var obj = srv.VerifyToken(authHeader, lang, platform.ToLower(), 1);
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
         #endregion
 
         #region Add Employees
@@ -207,6 +259,38 @@ namespace TUFTManagement.Controllers
                 
                 DeleteService srv = new DeleteService();
                 var obj = srv.DeleteEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("get/empProfile")]
+        [HttpPost]
+        public IHttpActionResult GetEmpProfile(GetEmpProfileDTO getEmpProfileDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                
+                GetService srv = new GetService();
+
+                if (string.IsNullOrEmpty(getEmpProfileDTO.lang))
+                {
+                    getEmpProfileDTO.lang = "th";
+                }
+                var obj = srv.GetEmpProfileService(authHeader, getEmpProfileDTO.lang, platform.ToLower(), 1, data.user_id);
                 
                 return Ok(obj);
             }

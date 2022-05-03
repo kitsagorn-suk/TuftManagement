@@ -171,6 +171,7 @@
     <Compile Include="Core\SQLManager.cs" />
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\ValidationManager.cs" />
+    <Compile Include="DTO\GetEmpProfileDTO.cs" />
     <Compile Include="DTO\GetMessageTopicDTO.cs" />
     <Compile Include="DTO\LoginRequestDTO.cs" />
     <Compile Include="DTO\MasterDataDTO.cs" />
@@ -182,6 +183,7 @@
     </Compile>
     <Compile Include="Models\AuthorizationModel.cs" />
     <Compile Include="Models\CheckUserByTokenModel.cs" />
+    <Compile Include="Models\GetEmpProfileModel.cs" />
     <Compile Include="Models\GetMasterDataModel.cs" />
     <Compile Include="Models\InsertLoginModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
@@ -189,10 +191,12 @@
     <Compile Include="Models\MsgModel.cs" />
     <Compile Include="Models\Pagination.cs" />
     <Compile Include="Models\ReturnIdModel.cs" />
+    <Compile Include="Models\ReturnVerifyModel.cs" />
     <Compile Include="Models\SearchMasterDataModel.cs" />
     <Compile Include="Models\ValidationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DeleteService.cs" />
+    <Compile Include="Services\GetService.cs" />
     <Compile Include="Services\InsertService.cs" />
     <Compile Include="Services\LoginService.cs" />
     <Compile Include="Services\MasterDataService.cs" />
@@ -228,6 +232,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />

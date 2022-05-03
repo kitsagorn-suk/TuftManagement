@@ -44,10 +44,8 @@ namespace TUFTManagement.Services
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "nickname", saveEmpProfileDTO.nickName, userID);
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "phone_number", saveEmpProfileDTO.phoneNumber, userID);
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "position_id", saveEmpProfileDTO.positionID.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "per_code", saveEmpProfileDTO.personalCode, userID);
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "per_num", saveEmpProfileDTO.personalNO.ToString(), userID);
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "date_of_birth", saveEmpProfileDTO.dateOfBirth, userID);
-                    _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "product_id", saveEmpProfileDTO.productID.ToString(), userID);
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "join_date", saveEmpProfileDTO.joinDate, userID);
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "pro_pass_date", saveEmpProfileDTO.proPassDate, userID);
                     _sql.InsertSystemLogChange(saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);

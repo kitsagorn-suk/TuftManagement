@@ -15,7 +15,7 @@ namespace TUFTManagement.Core
             int expire_token = int.Parse(WebConfigurationManager.AppSettings["expire_token"]);
 
             double timestampNow = Utility.DateTimeToUnixTimestamp(DateTime.Now);
-            double timestampExpire = Utility.DateTimeToUnixTimestamp(DateTime.Now.AddDays(expire_token));
+            double timestampExpire = Utility.DateTimeToUnixTimestamp(DateTime.Now.AddHours(expire_token));
             CheckUserByTokenModel dataFormToken = new CheckUserByTokenModel();
             dataFormToken = _sql.CheckUserID(username, password);
 
