@@ -13,7 +13,7 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public LoginModel Login(string authorization, string lang, string username, string password, string platform, int logID)
+        public LoginModel Login(string authorization, string lang, string username, string password, string platform, int logID, string businesscode)
         {
             if (_sql == null)
             {
@@ -24,7 +24,7 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new LoginData();
-                ValidationModel validation = ValidationManager.CheckValidationLogin(username, password.Trim(), lang, value.data.id);
+                ValidationModel validation = ValidationManager.CheckValidationLogin(username, password.Trim(), lang, value.data.id, businesscode);
 
                 if (validation.Success == true)
                 {

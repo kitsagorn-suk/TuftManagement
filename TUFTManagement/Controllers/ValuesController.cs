@@ -32,6 +32,7 @@ namespace TUFTManagement.Controllers
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = request.Headers["platform"];
             string version = request.Headers["version"];
+            string businesscode = request.Headers["businesscode"]; 
 
             try
             {
@@ -53,7 +54,7 @@ namespace TUFTManagement.Controllers
 
                 LoginService srv = new LoginService();
 
-                var obj = srv.Login(authHeader, lang, username, password, platform.ToLower(), logID);
+                var obj = srv.Login(authHeader, lang, username, password, platform.ToLower(), logID, businesscode);
                 return Ok(obj);
             }
             catch (Exception ex)

@@ -22,6 +22,7 @@ namespace TUFTManagement.Models
         public string token { get; set; } = "";
         public string platform { get; set; } = "";
         public int roleID { get; set; } = 0;
+        public string businesscode { get; set; } = "";
 
         public List<AccessRole> access_list { get; set; }
         public List<MenuList> menuList { get; set; }
@@ -33,6 +34,7 @@ namespace TUFTManagement.Models
             employeeName = dr["firstname"].ToString() + " " + dr["lastname"].ToString();
             imageUrl = dr["image_name"].ToString();
             roleID = int.Parse(dr["role_id"].ToString());
+            businesscode = dr["business_code"].ToString();
         }
     }
 

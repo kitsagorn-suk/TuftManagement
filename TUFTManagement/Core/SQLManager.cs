@@ -452,6 +452,34 @@ namespace TUFTManagement.Core
             return total;
         }
 
+        public int CheckBusinessByUser(string pUserName, string pBusinessCode)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec check_user_business @pUserName, @pBusinessCode");
+
+            SqlParameter paramUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 100);
+            paramUserName.Direction = ParameterDirection.Input;
+            paramUserName.Value = pUserName;
+
+            SqlParameter paramBusinessCode = new SqlParameter(@"pBusinessCode", SqlDbType.VarChar, 10);
+            paramBusinessCode.Direction = ParameterDirection.Input;
+            paramBusinessCode.Value = pBusinessCode;
+
+            sql.Parameters.Add(paramUserName);
+            sql.Parameters.Add(paramBusinessCode);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                total = int.Parse(dr["total"].ToString());
+            }
+            return total;
+        }
+
         public bool CheckToken(string pToken)
         {
             bool success = false;
