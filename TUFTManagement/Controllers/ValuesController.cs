@@ -836,6 +836,164 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/delete/master/bodySet")]
+        [HttpPost]
+        public IHttpActionResult DeleteBodySet(SaveBodySetRequestDTO saveBodySetDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveBodySetDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpRate", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                //string checkMissingOptional = "";
+
+                //if (string.IsNullOrEmpty(saveBodySetDTO.height.ToString()))
+                //{
+                //    checkMissingOptional += checkMissingOptional + "height ";
+                //}
+                //if (string.IsNullOrEmpty(saveBodySetDTO.weight.ToString()))
+                //{
+                //    checkMissingOptional += checkMissingOptional + "weight ";
+                //}
+                //if (string.IsNullOrEmpty(saveBodySetDTO.chest.ToString()))
+                //{
+                //    checkMissingOptional += checkMissingOptional + "chest ";
+                //}
+                //if (string.IsNullOrEmpty(saveBodySetDTO.waist.ToString()))
+                //{
+                //    checkMissingOptional += checkMissingOptional + "waist ";
+                //}
+                //if (string.IsNullOrEmpty(saveBodySetDTO.hip.ToString()))
+                //{
+                //    checkMissingOptional += checkMissingOptional + "hip ";
+                //}
+                //if (checkMissingOptional != "")
+                //{
+                //    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                //}
+
+                MasterDataService srv = new MasterDataService();
+                UpdateService srv2 = new UpdateService();
+                var obj = new object();
+
+                if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
+                {
+                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
+                }
+                
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+        #endregion
+
+        #region Feedback
+        [Route("1.0/save/feedback")]
+        [HttpPost]
+        public IHttpActionResult SaveFeedback(FeedbackDTO feedbackDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(feedbackDTO);
+                int logID = _sql.InsertLogReceiveData("SaveFeedback", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(feedbackDTO.EmpID.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "EmpID ";
+                }
+                if (string.IsNullOrEmpty(feedbackDTO.Rate.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "Rate ";
+                }
+                if (string.IsNullOrEmpty(feedbackDTO.Comment.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "Comment ";
+                }
+                if (string.IsNullOrEmpty(feedbackDTO.TranID.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "TranID ";
+                }
+                
+                InsertService srv = new InsertService();
+                var obj = new object();
+                obj = srv.InsertFeedbackService(authHeader, lang, platform.ToLower(), logID, feedbackDTO, 0, data.user_id);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/feedback")]
+        [HttpPost]
+        public IHttpActionResult GetFeedback(FeedbackDTO feedbackDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(feedbackDTO);
+                int logID = _sql.InsertLogReceiveData("GetFeedback", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = new object();
+
+                if (feedbackDTO.EmpID != 0)
+                {
+                    obj = srv.GetFeedbackService(authHeader, lang, platform.ToLower(), logID, feedbackDTO.EmpID);
+                }
+                else
+                {
+                    throw new Exception("Missing Parameter : EmpID ");
+                }
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
         #endregion
     }
 }

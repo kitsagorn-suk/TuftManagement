@@ -1186,12 +1186,12 @@ namespace TUFTManagement.Core
                 "@pHip, " +
                 "@pCreateBy");
 
-            SqlParameter paramHeight = new SqlParameter(@"pHeight", SqlDbType.Int);
+            SqlParameter paramHeight = new SqlParameter(@"pHeight", SqlDbType.Float);
             paramHeight.Direction = ParameterDirection.Input;
             paramHeight.Value = saveBodySetDTO.height;
             sql.Parameters.Add(paramHeight);
 
-            SqlParameter paramWeight = new SqlParameter(@"pWeight", SqlDbType.VarChar, 10);
+            SqlParameter paramWeight = new SqlParameter(@"pWeight", SqlDbType.Float);
             paramWeight.Direction = ParameterDirection.Input;
             paramWeight.Value = saveBodySetDTO.weight;
             sql.Parameters.Add(paramWeight);
@@ -1243,12 +1243,12 @@ namespace TUFTManagement.Core
             paramBodyID.Value = saveBodySetDTO.id;
             sql.Parameters.Add(paramBodyID);
 
-            SqlParameter paramHeight = new SqlParameter(@"pHeight", SqlDbType.VarChar, 10);
+            SqlParameter paramHeight = new SqlParameter(@"pHeight", SqlDbType.Float);
             paramHeight.Direction = ParameterDirection.Input;
             paramHeight.Value = saveBodySetDTO.height;
             sql.Parameters.Add(paramHeight);
 
-            SqlParameter paramWeight = new SqlParameter(@"pWeight", SqlDbType.Int);
+            SqlParameter paramWeight = new SqlParameter(@"pWeight", SqlDbType.Float);
             paramWeight.Direction = ParameterDirection.Input;
             paramWeight.Value = saveBodySetDTO.weight;
             sql.Parameters.Add(paramWeight);
@@ -1288,6 +1288,87 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel DeleteBodySet(SaveBodySetRequestDTO saveBodySetDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_body_set " +
+                "@pBodyID, " +
+                "@pUpdateBy");
+
+            SqlParameter paramBodyID = new SqlParameter(@"pBodyID", SqlDbType.Int);
+            paramBodyID.Direction = ParameterDirection.Input;
+            paramBodyID.Value = saveBodySetDTO.id;
+            sql.Parameters.Add(paramBodyID);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertFeedback(FeedbackDTO feedbackDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_feedback " +
+                "@pEmpID, " +
+                "@pRate, " +
+                "@pComment, " +
+                "@pTranId," +
+                "@pCreateBy ");
+
+            SqlParameter paramEmpID = new SqlParameter(@"pEmpID", SqlDbType.Int);
+            paramEmpID.Direction = ParameterDirection.Input;
+            paramEmpID.Value = feedbackDTO.EmpID;
+            sql.Parameters.Add(paramEmpID);
+
+            SqlParameter paramRate = new SqlParameter(@"pRate", SqlDbType.Int);
+            paramRate.Direction = ParameterDirection.Input;
+            paramRate.Value = feedbackDTO.Rate;
+            sql.Parameters.Add(paramRate);
+
+            SqlParameter paramComment = new SqlParameter(@"pComment", SqlDbType.VarChar);
+            paramComment.Direction = ParameterDirection.Input;
+            paramComment.Value = feedbackDTO.Comment;
+            sql.Parameters.Add(paramComment);
+
+            SqlParameter paramTranId = new SqlParameter(@"pTranId", SqlDbType.Int);
+            paramTranId.Direction = ParameterDirection.Input;
+            paramTranId.Value = feedbackDTO.TranID;
+            sql.Parameters.Add(paramTranId);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
 
         public DataTable CheckValidationUpdateByID(int ID, string Type)
         {
@@ -1468,6 +1549,32 @@ namespace TUFTManagement.Core
             table = sql.executeQueryWithReturnTable();
 
             GetEmpRate data = new GetEmpRate();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public GetFeedback GetFeedback(int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_feedback " +
+                "@pEmpId");
+
+            SqlParameter paramID = new SqlParameter(@"pEmpId", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = userID;
+            sql.Parameters.Add(paramID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            GetFeedback data = new GetFeedback();
 
             if (table != null && table.Rows.Count > 0)
             {
