@@ -82,3 +82,4 @@ C:\Users\USER\Desktop\TuftManagement\TUFTManagement\bin\Microsoft.CodeDom.Provid
 C:\Users\USER\Desktop\TuftManagement\TUFTManagement\obj\Debug\TUFTManagement.csproj.CopyComplete
 C:\Users\USER\Desktop\TuftManagement\TUFTManagement\obj\Debug\TUFTManagement.dll
 C:\Users\USER\Desktop\TuftManagement\TUFTManagement\obj\Debug\TUFTManagement.pdb
+C:\Users\USER\Desktop\TuftManagement\TUFTManagement\obj\Debug\TUFTManagement.csprojAssemblyReference.cache
