@@ -13,5 +13,6 @@ namespace TUFTManagement.DTO
         public int chest { set; get; } = 0;
         public int waist { set; get; } = 0;
         public int hip { set; get; } = 0;
+
     }
 }
