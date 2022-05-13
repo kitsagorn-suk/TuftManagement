@@ -1175,6 +1175,120 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel InsertBodySet(SaveBodySetRequestDTO saveBodySetDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_body_set " +
+                "@pHeight, " +
+                "@pWeight, " +
+                "@pChest, " +
+                "@pWaist," +
+                "@pHip, " +
+                "@pCreateBy");
+
+            SqlParameter paramHeight = new SqlParameter(@"pHeight", SqlDbType.Int);
+            paramHeight.Direction = ParameterDirection.Input;
+            paramHeight.Value = saveBodySetDTO.height;
+            sql.Parameters.Add(paramHeight);
+
+            SqlParameter paramWeight = new SqlParameter(@"pWeight", SqlDbType.VarChar, 10);
+            paramWeight.Direction = ParameterDirection.Input;
+            paramWeight.Value = saveBodySetDTO.weight;
+            sql.Parameters.Add(paramWeight);
+
+            SqlParameter paramChest = new SqlParameter(@"pChest", SqlDbType.Int);
+            paramChest.Direction = ParameterDirection.Input;
+            paramChest.Value = saveBodySetDTO.chest;
+            sql.Parameters.Add(paramChest);
+
+            SqlParameter paramWaist = new SqlParameter(@"pWaist", SqlDbType.Int);
+            paramWaist.Direction = ParameterDirection.Input;
+            paramWaist.Value = saveBodySetDTO.waist;
+            sql.Parameters.Add(paramWaist);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateBodySet(SaveBodySetRequestDTO saveBodySetDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_body_set " +
+                "@pBodyID, " +
+                "@pHeight, " +
+                "@pWeight, " +
+                "@pChest," +
+                "@pWaist," +
+                "@pHip," +
+                "@pUpdateBy");
+
+            SqlParameter paramBodyID = new SqlParameter(@"pBodyID", SqlDbType.Int);
+            paramBodyID.Direction = ParameterDirection.Input;
+            paramBodyID.Value = saveBodySetDTO.id;
+            sql.Parameters.Add(paramBodyID);
+
+            SqlParameter paramHeight = new SqlParameter(@"pHeight", SqlDbType.VarChar, 10);
+            paramHeight.Direction = ParameterDirection.Input;
+            paramHeight.Value = saveBodySetDTO.height;
+            sql.Parameters.Add(paramHeight);
+
+            SqlParameter paramWeight = new SqlParameter(@"pWeight", SqlDbType.Int);
+            paramWeight.Direction = ParameterDirection.Input;
+            paramWeight.Value = saveBodySetDTO.weight;
+            sql.Parameters.Add(paramWeight);
+
+            SqlParameter paramChest = new SqlParameter(@"pChest", SqlDbType.Int);
+            paramChest.Direction = ParameterDirection.Input;
+            paramChest.Value = saveBodySetDTO.chest;
+            sql.Parameters.Add(paramChest);
+
+            SqlParameter paramWaist = new SqlParameter(@"pWaist", SqlDbType.Int);
+            paramWaist.Direction = ParameterDirection.Input;
+            paramWaist.Value = saveBodySetDTO.waist;
+            sql.Parameters.Add(paramWaist);
+
+            SqlParameter paramHip = new SqlParameter(@"pHip", SqlDbType.Int);
+            paramHip.Direction = ParameterDirection.Input;
+            paramHip.Value = saveBodySetDTO.hip;
+            sql.Parameters.Add(paramHip);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
         public DataTable CheckValidationUpdateByID(int ID, string Type)
         {
             DataTable table = new DataTable();

@@ -1968,6 +1968,115 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("save/master/bodySet")]
+        [HttpPost]
+        public IHttpActionResult SaveBodySet(SaveBodySetRequestDTO saveBodySetDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveBodySetDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpRate", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(saveBodySetDTO.height.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "height ";
+                }
+                if (string.IsNullOrEmpty(saveBodySetDTO.weight.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "weight ";
+                }
+                if (string.IsNullOrEmpty(saveBodySetDTO.chest.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "chest ";
+                }
+                if (string.IsNullOrEmpty(saveBodySetDTO.waist.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "waist ";
+                }
+                if (string.IsNullOrEmpty(saveBodySetDTO.hip.ToString()))
+                {
+                    checkMissingOptional += checkMissingOptional + "hip ";
+                }
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                MasterDataService srv = new MasterDataService();
+                UpdateService srv2 = new UpdateService();
+                var obj = new object();
+
+                if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
+                {
+                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
+                }
+                else
+                {
+                    //obj = srv2.UpdateEmpRateService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
+                }
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("get/master/bodySet")]
+        [HttpPost]
+        public IHttpActionResult GetBodySet(MasterDataDTO masterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(masterDataDTO);
+                int logID = _sql.InsertLogReceiveData("GetMasterBodySet", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (masterDataDTO.masterID != 0)
+                {
+                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "system_body_set");
+                }
+                else
+                {
+                    throw new Exception("Missing Parameter : ID ");
+                }
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
         #endregion
     }
 }

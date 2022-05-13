@@ -2192,5 +2192,94 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+
+        public ReturnIdModel InsertBodySetService(string authorization, string lang, string platform, int logID,
+            SaveBodySetRequestDTO saveBodySetDTO, int roleID, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertBodySet(lang, saveBodySetDTO);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.InsertBodySet(saveBodySetDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpRateService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel UpdateBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, int roleID, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    string TableName = "emp_rate";
+                    _sql.InsertSystemLogChange(saveBodySetDTO.empRateID, TableName, "product_code", saveBodySetDTO.productCode, userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_staff", saveBodySetDTO.rateStaff.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_manager", saveBodySetDTO.rateManager.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_owner", saveBodySetDTO.rateOwner.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_confirm", saveBodySetDTO.rateConfirm.ToString(), userID);
+
+                    value.data = _sql.UpdateEmpRate(saveBodySetDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateBodySetService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
     }
 }
