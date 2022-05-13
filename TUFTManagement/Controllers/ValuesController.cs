@@ -15,7 +15,7 @@ using TUFTManagement.Services;
 
 namespace TUFTManagement.Controllers
 {
-    [RoutePrefix("api/2.0")]
+    [RoutePrefix("api")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ValuesController : ApiController
     {
@@ -23,15 +23,14 @@ namespace TUFTManagement.Controllers
         private double timestampNow = Utility.DateTimeToUnixTimestamp(DateTime.Now);
 
         #region Page Login
-        [Route("login")]
+        [Route("1.0/login")]
         [HttpPost]
         public IHttpActionResult Login([FromBody] LoginRequestDTO loginRs)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
             string businesscode = request.Headers["businesscode"]; 
 
             try
@@ -63,15 +62,14 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("logout")]
+        [Route("1.0/logout")]
         [HttpPost]
         public IHttpActionResult Logout()
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -89,15 +87,14 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("verifytoken")]
+        [Route("1.0/verifytoken")]
         [HttpPost]
         public IHttpActionResult VerifyToken()
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -117,15 +114,14 @@ namespace TUFTManagement.Controllers
         #endregion
 
         #region Add Employees
-        [Route("save/empProfile")]
+        [Route("1.0/save/empProfile")]
         [HttpPost]
         public IHttpActionResult SaveEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -262,15 +258,14 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("edit/empProfile")]
+        [Route("1.0/edit/empProfile")]
         [HttpPost]
         public IHttpActionResult EditEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -394,15 +389,14 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("delete/empProfile")]
+        [Route("1.0/delete/empProfile")]
         [HttpPost]
         public IHttpActionResult DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -436,15 +430,15 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("get/empProfile")]
+        [Route("1.0/get/empProfile")]
         [HttpPost]
         public IHttpActionResult GetEmpProfile(GetEmpProfileDTO getEmpProfileDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -468,15 +462,14 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("save/empRate")]
+        [Route("1.0/save/empRate")]
         [HttpPost]
         public IHttpActionResult SaveEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -525,15 +518,15 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("get/empRate")]
+        [Route("1.0/get/empRate")]
         [HttpPost]
         public IHttpActionResult GetEmpRate(GetEmpRateRequestDTO getEmpRateRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -561,15 +554,14 @@ namespace TUFTManagement.Controllers
         #endregion
 
         #region Master
-        [Route("save/master/position")]
+        [Route("1.0/save/master/position")]
         [HttpPost]
         public IHttpActionResult SaveMasterPosition(MasterDataDTO masterDataDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -646,15 +638,14 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("get/master/position")]
+        [Route("1.0/get/master/position")]
         [HttpPost]
         public IHttpActionResult GetMasterPosition(MasterDataDTO masterDataDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -687,15 +678,14 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("search/master/position")]
+        [Route("1.0/search/master/position")]
         [HttpPost]
         public IHttpActionResult SearchMasterDataPosition(SearchMasterDataDTO searchMasterDataDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string platform = "web";
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
@@ -737,1239 +727,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("save/master/productarea")]
-        [HttpPost]
-        public IHttpActionResult SaveMasterProductArea(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterProductArea", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
-                {
-                    throw new Exception("Missing Parameter : mode ");
-                }
-
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
-                {
-                    if (masterDataDTO.masterID != 0)
-                    {
-                        checkMissingOptional += "masterID Must 0 ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                }
-                else
-                {
-                    throw new Exception("Choose Mode Insert or Update or Delete");
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                MasterDataService srv = new MasterDataService();
-                var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_product_area", data.user_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("get/master/productarea")]
-        [HttpPost]
-        public IHttpActionResult GetMasterProductArea(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterProductArea", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (masterDataDTO.masterID != 0)
-                {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_product_area");
-                }
-                else
-                {
-                    throw new Exception("Missing Parameter : ID ");
-                }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("search/master/productarea")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataProductArea(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataProductArea", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_product_area", data.role_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("save/master/productcategory")]
-        [HttpPost]
-        public IHttpActionResult SaveMasterProductCategory(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterProductCategory", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
-                {
-                    throw new Exception("Missing Parameter : mode ");
-                }
-
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
-                {
-                    if (masterDataDTO.masterID != 0)
-                    {
-                        checkMissingOptional += "masterID Must 0 ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                }
-                else
-                {
-                    throw new Exception("Choose Mode Insert or Update or Delete");
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                MasterDataService srv = new MasterDataService();
-                var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_product_category", data.user_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("get/master/productcategory")]
-        [HttpPost]
-        public IHttpActionResult GetMasterProductCategory(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterProductCategory", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (masterDataDTO.masterID != 0)
-                {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_product_category");
-                }
-                else
-                {
-                    throw new Exception("Missing Parameter : ID ");
-                }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("search/master/productcategory")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataProductCategory(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataProductCategory", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_product_category", data.role_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("save/master/producttype")]
-        [HttpPost]
-        public IHttpActionResult SaveMasterProductType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterProductType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
-                {
-                    throw new Exception("Missing Parameter : mode ");
-                }
-
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
-                {
-                    if (masterDataDTO.masterID != 0)
-                    {
-                        checkMissingOptional += "masterID Must 0 ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                }
-                else
-                {
-                    throw new Exception("Choose Mode Insert or Update or Delete");
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                MasterDataService srv = new MasterDataService();
-                var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_product_type", data.user_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("get/master/producttype")]
-        [HttpPost]
-        public IHttpActionResult GetMasterProductType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterProductType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (masterDataDTO.masterID != 0)
-                {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_product_type");
-                }
-                else
-                {
-                    throw new Exception("Missing Parameter : ID ");
-                }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("search/master/producttype")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataProductType(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataProductType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_product_type", data.role_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("save/master/quemembertype")]
-        [HttpPost]
-        public IHttpActionResult SaveMasterQueMemberType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterQueMemberType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
-                {
-                    throw new Exception("Missing Parameter : mode ");
-                }
-
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
-                {
-                    if (masterDataDTO.masterID != 0)
-                    {
-                        checkMissingOptional += "masterID Must 0 ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                }
-                else
-                {
-                    throw new Exception("Choose Mode Insert or Update or Delete");
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                MasterDataService srv = new MasterDataService();
-                var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_que_member_type", data.user_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("get/master/quemembertype")]
-        [HttpPost]
-        public IHttpActionResult GetMasterQueMemberType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterQueMemberType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (masterDataDTO.masterID != 0)
-                {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_que_member_type");
-                }
-                else
-                {
-                    throw new Exception("Missing Parameter : ID ");
-                }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("search/master/quemembertype")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataQueMemberType(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataQueMemberType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_que_member_type", data.role_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("save/master/questafftype")]
-        [HttpPost]
-        public IHttpActionResult SaveMasterQueStaffType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterQueStaffType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
-                {
-                    throw new Exception("Missing Parameter : mode ");
-                }
-
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
-                {
-                    if (masterDataDTO.masterID != 0)
-                    {
-                        checkMissingOptional += "masterID Must 0 ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                }
-                else
-                {
-                    throw new Exception("Choose Mode Insert or Update or Delete");
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                MasterDataService srv = new MasterDataService();
-                var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_que_staff_type", data.user_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("get/master/questafftype")]
-        [HttpPost]
-        public IHttpActionResult GetMasterQueStaffType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterQueStaffType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (masterDataDTO.masterID != 0)
-                {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_que_staff_type");
-                }
-                else
-                {
-                    throw new Exception("Missing Parameter : ID ");
-                }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("search/master/questafftype")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataQueStaffType(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataQueStaffType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_que_staff_type", data.role_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("save/master/roomtype")]
-        [HttpPost]
-        public IHttpActionResult SaveMasterRoomType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterRoomType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
-                {
-                    throw new Exception("Missing Parameter : mode ");
-                }
-
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
-                {
-                    if (masterDataDTO.masterID != 0)
-                    {
-                        checkMissingOptional += "masterID Must 0 ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                }
-                else
-                {
-                    throw new Exception("Choose Mode Insert or Update or Delete");
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                MasterDataService srv = new MasterDataService();
-                var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_room_type", data.user_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("get/master/roomtype")]
-        [HttpPost]
-        public IHttpActionResult GetMasterRoomType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterRoomType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (masterDataDTO.masterID != 0)
-                {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_room_type");
-                }
-                else
-                {
-                    throw new Exception("Missing Parameter : ID ");
-                }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-        
-        [Route("search/master/roomtype")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataRoomType(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataRoomType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_room_type", data.role_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("save/master/stocktype")]
-        [HttpPost]
-        public IHttpActionResult SaveMasterStockType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterStockType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
-                {
-                    throw new Exception("Missing Parameter : mode ");
-                }
-
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
-                {
-                    if (masterDataDTO.masterID != 0)
-                    {
-                        checkMissingOptional += "masterID Must 0 ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                {
-                    if (masterDataDTO.masterID == 0)
-                    {
-                        checkMissingOptional += "masterID ";
-                    }
-                }
-                else
-                {
-                    throw new Exception("Choose Mode Insert or Update or Delete");
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                MasterDataService srv = new MasterDataService();
-                var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_stock_type", data.user_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("get/master/stocktype")]
-        [HttpPost]
-        public IHttpActionResult GetMasterStockType(MasterDataDTO masterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterStockType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (masterDataDTO.masterID != 0)
-                {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_stock_type");
-                }
-                else
-                {
-                    throw new Exception("Missing Parameter : ID ");
-                }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("search/master/stocktype")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataStockType(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataStockType", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
-
-                MasterDataService srv = new MasterDataService();
-
-                var obj = new object();
-
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_stock_type", data.role_id);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("save/master/bodySet")]
+        [Route("1.0/save/master/bodySet")]
         [HttpPost]
         public IHttpActionResult SaveBodySet(SaveBodySetRequestDTO saveBodySetDTO)
         {
@@ -2037,7 +795,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("get/master/bodySet")]
+        [Route("1.0/get/master/bodySet")]
         [HttpPost]
         public IHttpActionResult GetBodySet(MasterDataDTO masterDataDTO)
         {
@@ -2077,6 +835,7 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
         #endregion
     }
 }
