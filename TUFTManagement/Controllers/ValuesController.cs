@@ -527,7 +527,7 @@ namespace TUFTManagement.Controllers
 
         [Route("get/empRate")]
         [HttpPost]
-        public IHttpActionResult GetEmpRate(GetEmpRateRequestDTO getEmpRateRequestDTO)
+        public IHttpActionResult GetEmpRate(EmpRateRequestDTO empRateRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -543,12 +543,54 @@ namespace TUFTManagement.Controllers
 
                 GetService srv = new GetService();
 
-                if (getEmpRateRequestDTO.userID.Equals(0)|| getEmpRateRequestDTO.userID.Equals(null) )
+                if (empRateRequestDTO.empID.Equals(0)|| empRateRequestDTO.empID.Equals(null) )
                 {
-                    throw new Exception("Missing Parameter : userID");
+                    throw new Exception("Missing Parameter : empID");
                 }
 
-                var obj = srv.GetEmpRateService(authHeader, lang, platform.ToLower(), 1, getEmpRateRequestDTO.userID);
+                var obj = srv.GetEmpRateService(authHeader, lang, platform.ToLower(), 1, empRateRequestDTO.empID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("delete/empRate")]
+        [HttpPost]
+        public IHttpActionResult DeleteEmpRate(EmpRateRequestDTO empRateRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(empRateRequestDTO);
+                int logID = _sql.InsertLogReceiveData("DeleteEmpRate", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (empRateRequestDTO.empID.Equals(0)|| empRateRequestDTO.empID.Equals(null))
+                {
+                    checkMissingOptional += checkMissingOptional + "empID ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                DeleteService srv = new DeleteService();
+                var obj = srv.DeleteEmpRateService(authHeader, lang, platform.ToLower(), logID, empRateRequestDTO, data.role_id, data.user_id);
 
                 return Ok(obj);
             }
