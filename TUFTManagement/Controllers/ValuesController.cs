@@ -137,23 +137,23 @@ namespace TUFTManagement.Controllers
                     data.user_id, platform.ToLower());
 
                 string checkMissingOptional = "";
-
-                if (saveEmpProfileDTO.empProfileID.Equals(0))
+                
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.empCode))
                 {
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.empCode))
-                    {
-                        checkMissingOptional += checkMissingOptional + "empCode ";
-                    }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.userName))
-                    {
-                        checkMissingOptional += checkMissingOptional + "userName ";
-                    }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.password))
-                    {
-                        checkMissingOptional += checkMissingOptional + "password ";
-                    }
+                    checkMissingOptional += checkMissingOptional + "empCode ";
                 }
-
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.userName))
+                {
+                    checkMissingOptional += checkMissingOptional + "userName ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.password))
+                {
+                    checkMissingOptional += checkMissingOptional + "password ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.businessCode))
+                {
+                    checkMissingOptional += checkMissingOptional + "businessCode ";
+                }
                 if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCard))
                 {
                     checkMissingOptional += checkMissingOptional + "identityCard ";
@@ -202,22 +202,189 @@ namespace TUFTManagement.Controllers
                 {
                     checkMissingOptional += checkMissingOptional + "employmentTypeID ";
                 }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
+                {
+                    checkMissingOptional += checkMissingOptional + "cAddress ";
+                }
+                if (saveEmpProfileDTO.cSubDistrictID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "cSubDistrictID ";
+                }
+                if (saveEmpProfileDTO.cDistrictID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "cDistrictID ";
+                }
+                if (saveEmpProfileDTO.cProvinceID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "cProvinceID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.cZipcode))
+                {
+                    checkMissingOptional += checkMissingOptional + "cZipcode ";
+                }
+                if (saveEmpProfileDTO.isSamePermanentAddress.Equals(0))
+                {
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pAddress ";
+                    }
+                    if (saveEmpProfileDTO.pSubDistrictID.Equals(0))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pSubDistrictID ";
+                    }
+                    if (saveEmpProfileDTO.pDistrictID.Equals(0))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pDistrictID ";
+                    }
+                    if (saveEmpProfileDTO.pProvinceID.Equals(0))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pProvinceID ";
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pZipcode))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pZipcode ";
+                    }
+                }
+                
                 if (checkMissingOptional != "")
                 {
                     throw new Exception("Missing Parameter : " + checkMissingOptional);
                 }
+                
+                InsertService srv1 = new InsertService();
+                var obj = srv1.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
-                var obj = new object();
-                if (saveEmpProfileDTO.empProfileID != 0)
+        [Route("edit/empProfile")]
+        [HttpPost]
+        public IHttpActionResult EditEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
+                int logID = _sql.InsertLogReceiveData("EditEmpProfile", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.businessCode))
                 {
-                    UpdateService srv = new UpdateService();
-                    obj = srv.UpdateEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                    checkMissingOptional += checkMissingOptional + "businessCode ";
                 }
-                else
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCard))
                 {
-                    InsertService srv1 = new InsertService();
-                    obj = srv1.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                    checkMissingOptional += checkMissingOptional + "identityCard ";
                 }
+                if (saveEmpProfileDTO.identityCard.Count() != 13)
+                {
+                    checkMissingOptional += checkMissingOptional + "identityCard is incomplete ";
+                }
+                if (saveEmpProfileDTO.titleID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "titleID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.firstNameTH))
+                {
+                    checkMissingOptional += checkMissingOptional + "firstNameTH ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.lastNameTH))
+                {
+                    checkMissingOptional += checkMissingOptional + "lastNameTH ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.phoneNumber))
+                {
+                    checkMissingOptional += checkMissingOptional + "phoneNumber ";
+                }
+                if (saveEmpProfileDTO.phoneNumber.Count() < 9 || saveEmpProfileDTO.phoneNumber.Count() > 10)
+                {
+                    checkMissingOptional += checkMissingOptional + "phoneNumber is incomplete ";
+                }
+                if (saveEmpProfileDTO.positionID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "positionID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.personalCode))
+                {
+                    checkMissingOptional += checkMissingOptional + "personalCode ";
+                }
+                if (saveEmpProfileDTO.personalNO.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "personalNO ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.joinDate))
+                {
+                    checkMissingOptional += checkMissingOptional + "joinDate ";
+                }
+                if (saveEmpProfileDTO.employmentTypeID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "employmentTypeID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
+                {
+                    checkMissingOptional += checkMissingOptional + "cAddress ";
+                }
+                if (saveEmpProfileDTO.cSubDistrictID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "cSubDistrictID ";
+                }
+                if (saveEmpProfileDTO.cDistrictID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "cDistrictID ";
+                }
+                if (saveEmpProfileDTO.cProvinceID.Equals(0))
+                {
+                    checkMissingOptional += checkMissingOptional + "cProvinceID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.cZipcode))
+                {
+                    checkMissingOptional += checkMissingOptional + "cZipcode ";
+                }
+                if (saveEmpProfileDTO.isSamePermanentAddress.Equals(0))
+                {
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pAddress ";
+                    }
+                    if (saveEmpProfileDTO.pSubDistrictID.Equals(0))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pSubDistrictID ";
+                    }
+                    if (saveEmpProfileDTO.pDistrictID.Equals(0))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pDistrictID ";
+                    }
+                    if (saveEmpProfileDTO.pProvinceID.Equals(0))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pProvinceID ";
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pZipcode))
+                    {
+                        checkMissingOptional += checkMissingOptional + "pZipcode ";
+                    }
+                }
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                
+                UpdateService srv = new UpdateService();
+                var obj = srv.UpdateEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
                 
                 return Ok(obj);
             }

@@ -8,6 +8,7 @@ namespace TUFTManagement.DTO
     public class SaveEmpProfileDTO
     {
         public int empProfileID { set; get; } = 0;
+        public string businessCode { set; get; } = "";
         public string empCode { set; get; } = "";
         public string userName { set; get; } = "";
         public string password { set; get; } = "";
@@ -31,5 +32,17 @@ namespace TUFTManagement.DTO
         public string tokenID { set; get; } = "";
         public int roleID { set; get; } = 0;
         public int employmentTypeID { set; get; } = 0;
+
+        public string cAddress { set; get; } = "";
+        public int cSubDistrictID { set; get; } = 0;
+        public int cDistrictID { set; get; } = 0;
+        public int cProvinceID { set; get; } = 0;
+        public string cZipcode { set; get; } = "";
+        public int isSamePermanentAddress { set; get; } = 0;
+        public string pAddress { set; get; } = "";
+        public int pSubDistrictID { set; get; } = 0;
+        public int pDistrictID { set; get; } = 0;
+        public int pProvinceID { set; get; } = 0;
+        public string pZipcode { set; get; } = "";
     }
 }

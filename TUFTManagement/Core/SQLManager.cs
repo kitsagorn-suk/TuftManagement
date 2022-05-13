@@ -577,6 +577,7 @@ namespace TUFTManagement.Core
                 "@pEmpCode, " +
                 "@pUserName, " +
                 "@pPassWord, " +
+                "@pBusinessCode," +
                 "@pIdentityCard, " +
                 "@pTitleID, " +
                 "@pFirstnameEN," +
@@ -597,6 +598,17 @@ namespace TUFTManagement.Core
                 "@pEmploymentTypeID," +
                 "@pTokenID," +
                 "@pRoleID," +
+                "@pCAddress," +
+                "@pCSubDistrictID," +
+                "@pCDistrictID," +
+                "@pCProvinceID," +
+                "@pCZipcode," +
+                "@pIsSamePermanentAddress," +
+                "@pPAddress," +
+                "@pPSubDistrictID," +
+                "@pPDistrictID," +
+                "@pPProvinceID," +
+                "@pPZipcode," +
                 "@pCreateBy");
 
             SqlParameter pEmpCode = new SqlParameter(@"pEmpCode", SqlDbType.VarChar, 10);
@@ -609,10 +621,15 @@ namespace TUFTManagement.Core
             pUserName.Value = saveEmpProfileDTO.userName;
             sql.Parameters.Add(pUserName);
 
-            SqlParameter pPassWord = new SqlParameter(@"@pPassWord", SqlDbType.VarChar, 250);
+            SqlParameter pPassWord = new SqlParameter(@"pPassWord", SqlDbType.VarChar, 250);
             pPassWord.Direction = ParameterDirection.Input;
             pPassWord.Value = saveEmpProfileDTO.password;
             sql.Parameters.Add(pPassWord);
+
+            SqlParameter pBusinessCode = new SqlParameter(@"pBusinessCode", SqlDbType.VarChar, 10);
+            pBusinessCode.Direction = ParameterDirection.Input;
+            pBusinessCode.Value = saveEmpProfileDTO.businessCode;
+            sql.Parameters.Add(pBusinessCode);
 
             SqlParameter pIdentityCard = new SqlParameter(@"pIdentityCard", SqlDbType.VarChar, 30);
             pIdentityCard.Direction = ParameterDirection.Input;
@@ -714,6 +731,61 @@ namespace TUFTManagement.Core
             pRoleID.Value = saveEmpProfileDTO.productID;
             sql.Parameters.Add(pRoleID);
 
+            SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);
+            pCAddress.Direction = ParameterDirection.Input;
+            pCAddress.Value = saveEmpProfileDTO.cAddress;
+            sql.Parameters.Add(pCAddress);
+
+            SqlParameter pCSubDistrictID = new SqlParameter(@"pCSubDistrictID", SqlDbType.Int);
+            pCSubDistrictID.Direction = ParameterDirection.Input;
+            pCSubDistrictID.Value = saveEmpProfileDTO.cSubDistrictID;
+            sql.Parameters.Add(pCSubDistrictID);
+
+            SqlParameter pCDistrictID = new SqlParameter(@"pCDistrictID", SqlDbType.Int);
+            pCDistrictID.Direction = ParameterDirection.Input;
+            pCDistrictID.Value = saveEmpProfileDTO.cDistrictID;
+            sql.Parameters.Add(pCDistrictID);
+
+            SqlParameter pCProvinceID = new SqlParameter(@"pCProvinceID", SqlDbType.Int);
+            pCProvinceID.Direction = ParameterDirection.Input;
+            pCProvinceID.Value = saveEmpProfileDTO.cProvinceID;
+            sql.Parameters.Add(pCProvinceID);
+
+            SqlParameter pCZipcode = new SqlParameter(@"pCZipcode", SqlDbType.VarChar, 10);
+            pCZipcode.Direction = ParameterDirection.Input;
+            pCZipcode.Value = saveEmpProfileDTO.cZipcode;
+            sql.Parameters.Add(pCZipcode);
+
+            SqlParameter pIsSamePermanentAddress = new SqlParameter(@"pIsSamePermanentAddress", SqlDbType.Int);
+            pIsSamePermanentAddress.Direction = ParameterDirection.Input;
+            pIsSamePermanentAddress.Value = saveEmpProfileDTO.isSamePermanentAddress;
+            sql.Parameters.Add(pIsSamePermanentAddress);
+
+            SqlParameter pPAddress = new SqlParameter(@"pPAddress", SqlDbType.VarChar, 200);
+            pPAddress.Direction = ParameterDirection.Input;
+            pPAddress.Value = saveEmpProfileDTO.pAddress;
+            sql.Parameters.Add(pPAddress);
+
+            SqlParameter pPSubDistrictID = new SqlParameter(@"pPSubDistrictID", SqlDbType.Int);
+            pPSubDistrictID.Direction = ParameterDirection.Input;
+            pPSubDistrictID.Value = saveEmpProfileDTO.pSubDistrictID;
+            sql.Parameters.Add(pPSubDistrictID);
+
+            SqlParameter pPDistrictID = new SqlParameter(@"pPDistrictID", SqlDbType.Int);
+            pPDistrictID.Direction = ParameterDirection.Input;
+            pPDistrictID.Value = saveEmpProfileDTO.pDistrictID;
+            sql.Parameters.Add(pPDistrictID);
+
+            SqlParameter pPProvinceID = new SqlParameter(@"pPProvinceID", SqlDbType.Int);
+            pPProvinceID.Direction = ParameterDirection.Input;
+            pPProvinceID.Value = saveEmpProfileDTO.pProvinceID;
+            sql.Parameters.Add(pPProvinceID);
+
+            SqlParameter pPZipcode = new SqlParameter(@"pPZipcode", SqlDbType.VarChar, 10);
+            pPZipcode.Direction = ParameterDirection.Input;
+            pPZipcode.Value = saveEmpProfileDTO.pZipcode;
+            sql.Parameters.Add(pPZipcode);
+
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
             pCreateBy.Value = userID;
@@ -758,6 +830,18 @@ namespace TUFTManagement.Core
                 "@pDailySalary," +
                 "@pEmploymentTypeID," +
                 "@pRoleID," +
+                "@pRoleID," +
+                "@pCAddress," +
+                "@pCSubDistrictID," +
+                "@pCDistrictID," +
+                "@pCProvinceID," +
+                "@pCZipcode," +
+                "@pIsSamePermanentAddress," +
+                "@pPAddress," +
+                "@pPSubDistrictID," +
+                "@pPDistrictID," +
+                "@pPProvinceID," +
+                "@pPZipcode," +
                 "@pUpdateBy");
 
             SqlParameter pEmpProfileID = new SqlParameter(@"pEmpProfileID", SqlDbType.Int);
@@ -859,6 +943,61 @@ namespace TUFTManagement.Core
             pRoleID.Direction = ParameterDirection.Input;
             pRoleID.Value = saveEmpProfileDTO.productID;
             sql.Parameters.Add(pRoleID);
+
+            SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);
+            pCAddress.Direction = ParameterDirection.Input;
+            pCAddress.Value = saveEmpProfileDTO.cAddress;
+            sql.Parameters.Add(pCAddress);
+
+            SqlParameter pCSubDistrictID = new SqlParameter(@"pCSubDistrictID", SqlDbType.Int);
+            pCSubDistrictID.Direction = ParameterDirection.Input;
+            pCSubDistrictID.Value = saveEmpProfileDTO.cSubDistrictID;
+            sql.Parameters.Add(pCSubDistrictID);
+
+            SqlParameter pCDistrictID = new SqlParameter(@"pCDistrictID", SqlDbType.Int);
+            pCDistrictID.Direction = ParameterDirection.Input;
+            pCDistrictID.Value = saveEmpProfileDTO.cDistrictID;
+            sql.Parameters.Add(pCDistrictID);
+
+            SqlParameter pCProvinceID = new SqlParameter(@"pCProvinceID", SqlDbType.Int);
+            pCProvinceID.Direction = ParameterDirection.Input;
+            pCProvinceID.Value = saveEmpProfileDTO.cProvinceID;
+            sql.Parameters.Add(pCProvinceID);
+
+            SqlParameter pCZipcode = new SqlParameter(@"pCZipcode", SqlDbType.VarChar, 10);
+            pCZipcode.Direction = ParameterDirection.Input;
+            pCZipcode.Value = saveEmpProfileDTO.cZipcode;
+            sql.Parameters.Add(pCZipcode);
+
+            SqlParameter pIsSamePermanentAddress = new SqlParameter(@"pIsSamePermanentAddress", SqlDbType.Int);
+            pIsSamePermanentAddress.Direction = ParameterDirection.Input;
+            pIsSamePermanentAddress.Value = saveEmpProfileDTO.isSamePermanentAddress;
+            sql.Parameters.Add(pIsSamePermanentAddress);
+
+            SqlParameter pPAddress = new SqlParameter(@"pPAddress", SqlDbType.VarChar, 200);
+            pPAddress.Direction = ParameterDirection.Input;
+            pPAddress.Value = saveEmpProfileDTO.pAddress;
+            sql.Parameters.Add(pPAddress);
+
+            SqlParameter pPSubDistrictID = new SqlParameter(@"pPSubDistrictID", SqlDbType.Int);
+            pPSubDistrictID.Direction = ParameterDirection.Input;
+            pPSubDistrictID.Value = saveEmpProfileDTO.pSubDistrictID;
+            sql.Parameters.Add(pPSubDistrictID);
+
+            SqlParameter pPDistrictID = new SqlParameter(@"pPDistrictID", SqlDbType.Int);
+            pPDistrictID.Direction = ParameterDirection.Input;
+            pPDistrictID.Value = saveEmpProfileDTO.pDistrictID;
+            sql.Parameters.Add(pPDistrictID);
+
+            SqlParameter pPProvinceID = new SqlParameter(@"pPProvinceID", SqlDbType.Int);
+            pPProvinceID.Direction = ParameterDirection.Input;
+            pPProvinceID.Value = saveEmpProfileDTO.pProvinceID;
+            sql.Parameters.Add(pPProvinceID);
+
+            SqlParameter pPZipcode = new SqlParameter(@"pPZipcode", SqlDbType.VarChar, 10);
+            pPZipcode.Direction = ParameterDirection.Input;
+            pPZipcode.Value = saveEmpProfileDTO.pZipcode;
+            sql.Parameters.Add(pPZipcode);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;
