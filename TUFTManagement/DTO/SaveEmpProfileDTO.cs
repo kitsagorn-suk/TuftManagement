@@ -13,6 +13,7 @@ namespace TUFTManagement.DTO
         public string userName { set; get; } = "";
         public string password { set; get; } = "";
         public string identityCard { set; get; } = "";
+        public string identityCardExpiry { set; get; } = "";
         public int titleID { set; get; } = 0;
         public string firstNameEN { set; get; } = "";
         public string lastNameEN { set; get; } = "";
@@ -21,17 +22,22 @@ namespace TUFTManagement.DTO
         public string nickName { set; get; } = "";
         public string phoneNumber { set; get; } = "";
         public int positionID { set; get; } = 0;
-        public string personalCode { set; get; } = "";
-        public int personalNO { set; get; } = 0;
+        public int perNum { set; get; } = 0;
         public string dateOfBirth { set; get; } = "";
-        public int productID { set; get; } = 0;
         public string joinDate { set; get; } = "";
         public string proPassDate { set; get; } = "";
         public decimal monthlySalary { set; get; } = 0;
         public decimal dailySalary { set; get; } = 0;
-        public string tokenID { set; get; } = "";
-        public int roleID { set; get; } = 0;
         public int employmentTypeID { set; get; } = 0;
+        public int roleID { set; get; } = 0; 
+        public int maritalID { set; get; } = 0; 
+        public int pRelationID { set; get; } = 0;
+        public string pFirstname { set; get; } = "";
+        public string pLastname { set; get; } = "";
+        public string pDateOfBirth { set; get; } = "";
+        public int pOccupationID { set; get; } = 0;
+        public int bodySetID { set; get; } = 0;
+        public string shirtSize { set; get; } = "";
 
         public string cAddress { set; get; } = "";
         public int cSubDistrictID { set; get; } = 0;

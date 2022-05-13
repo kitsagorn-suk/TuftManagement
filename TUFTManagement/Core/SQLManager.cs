@@ -579,6 +579,7 @@ namespace TUFTManagement.Core
                 "@pPassWord, " +
                 "@pBusinessCode," +
                 "@pIdentityCard, " +
+                "@pIdentityCardExpiry, " +
                 "@pTitleID, " +
                 "@pFirstnameEN," +
                 "@pFirstnameTH," +
@@ -587,17 +588,22 @@ namespace TUFTManagement.Core
                 "@pNickName," +
                 "@pPhoneNumber," +
                 "@pPositionID," +
-                "@pPersonalCode," +
-                "@pPersonalNO," +
+                "@pPerNum," +
                 "@pDateOfBirth," +
-                "@pProductID," +
                 "@pJoinDate," +
                 "@pProPassDate," +
                 "@pMonthlySalary," +
                 "@pDailySalary," +
                 "@pEmploymentTypeID," +
-                "@pTokenID," +
                 "@pRoleID," +
+                "@pMaritalID," +
+                "@pRelationID," +
+                "@pFirstname," +
+                "@pLastname," +
+                "@ppDateOfBirth," +
+                "@pOccupationID," +
+                "@pBodySetID," +
+                "@pShirtSize," +
                 "@pCAddress," +
                 "@pCSubDistrictID," +
                 "@pCDistrictID," +
@@ -635,6 +641,11 @@ namespace TUFTManagement.Core
             pIdentityCard.Direction = ParameterDirection.Input;
             pIdentityCard.Value = saveEmpProfileDTO.identityCard;
             sql.Parameters.Add(pIdentityCard);
+
+            SqlParameter pIdentityCardExpiry = new SqlParameter(@"pIdentityCardExpiry", SqlDbType.VarChar, 30);
+            pIdentityCardExpiry.Direction = ParameterDirection.Input;
+            pIdentityCardExpiry.Value = saveEmpProfileDTO.identityCardExpiry;
+            sql.Parameters.Add(pIdentityCardExpiry);
 
             SqlParameter pTitleID = new SqlParameter(@"pTitleID", SqlDbType.Int);
             pTitleID.Direction = ParameterDirection.Input;
@@ -676,25 +687,15 @@ namespace TUFTManagement.Core
             pPositionID.Value = saveEmpProfileDTO.positionID;
             sql.Parameters.Add(pPositionID);
 
-            SqlParameter pPersonalCode = new SqlParameter(@"pPersonalCode", SqlDbType.VarChar, 10);
-            pPersonalCode.Direction = ParameterDirection.Input;
-            pPersonalCode.Value = saveEmpProfileDTO.personalCode;
-            sql.Parameters.Add(pPersonalCode);
-
-            SqlParameter pPersonalNO = new SqlParameter(@"pPersonalNO", SqlDbType.Int);
-            pPersonalNO.Direction = ParameterDirection.Input;
-            pPersonalNO.Value = saveEmpProfileDTO.personalNO;
-            sql.Parameters.Add(pPersonalNO);
+            SqlParameter pPerNum = new SqlParameter(@"pPerNum", SqlDbType.Int);
+            pPerNum.Direction = ParameterDirection.Input;
+            pPerNum.Value = saveEmpProfileDTO.perNum;
+            sql.Parameters.Add(pPerNum);
 
             SqlParameter pDateOfBirth = new SqlParameter(@"pDateOfBirth", SqlDbType.Date);
             pDateOfBirth.Direction = ParameterDirection.Input;
             pDateOfBirth.Value = saveEmpProfileDTO.dateOfBirth;
             sql.Parameters.Add(pDateOfBirth);
-
-            SqlParameter pProductID = new SqlParameter(@"pProductID", SqlDbType.Int);
-            pProductID.Direction = ParameterDirection.Input;
-            pProductID.Value = saveEmpProfileDTO.productID;
-            sql.Parameters.Add(pProductID);
 
             SqlParameter pJoinDate = new SqlParameter(@"pJoinDate", SqlDbType.Date);
             pJoinDate.Direction = ParameterDirection.Input;
@@ -720,16 +721,51 @@ namespace TUFTManagement.Core
             pEmploymentTypeID.Direction = ParameterDirection.Input;
             pEmploymentTypeID.Value = saveEmpProfileDTO.employmentTypeID;
             sql.Parameters.Add(pEmploymentTypeID);
-
-            SqlParameter pTokenID = new SqlParameter(@"pTokenID", SqlDbType.VarChar, 4000);
-            pTokenID.Direction = ParameterDirection.Input;
-            pTokenID.Value = saveEmpProfileDTO.tokenID;
-            sql.Parameters.Add(pTokenID);
             
             SqlParameter pRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
             pRoleID.Direction = ParameterDirection.Input;
-            pRoleID.Value = saveEmpProfileDTO.productID;
+            pRoleID.Value = saveEmpProfileDTO.roleID;
             sql.Parameters.Add(pRoleID);
+
+            SqlParameter pMaritalID = new SqlParameter(@"pMaritalID", SqlDbType.Int);
+            pMaritalID.Direction = ParameterDirection.Input;
+            pMaritalID.Value = saveEmpProfileDTO.maritalID;
+            sql.Parameters.Add(pMaritalID);
+
+            SqlParameter pRelationID = new SqlParameter(@"pRelationID", SqlDbType.Int);
+            pRelationID.Direction = ParameterDirection.Input;
+            pRelationID.Value = saveEmpProfileDTO.pRelationID;
+            sql.Parameters.Add(pRelationID);
+
+            SqlParameter pFirstname = new SqlParameter(@"pFirstname", SqlDbType.VarChar, 250);
+            pFirstname.Direction = ParameterDirection.Input;
+            pFirstname.Value = saveEmpProfileDTO.pFirstname;
+            sql.Parameters.Add(pFirstname);
+
+            SqlParameter pLastname = new SqlParameter(@"pLastname", SqlDbType.VarChar, 250);
+            pLastname.Direction = ParameterDirection.Input;
+            pLastname.Value = saveEmpProfileDTO.pLastname;
+            sql.Parameters.Add(pLastname);
+
+            SqlParameter ppDateOfBirth = new SqlParameter(@"ppDateOfBirth", SqlDbType.VarChar, 10);
+            ppDateOfBirth.Direction = ParameterDirection.Input;
+            ppDateOfBirth.Value = saveEmpProfileDTO.dateOfBirth;
+            sql.Parameters.Add(ppDateOfBirth);
+
+            SqlParameter pOccupationID = new SqlParameter(@"pOccupationID", SqlDbType.Int);
+            pOccupationID.Direction = ParameterDirection.Input;
+            pOccupationID.Value = saveEmpProfileDTO.pOccupationID;
+            sql.Parameters.Add(pOccupationID);
+
+            SqlParameter pBodySetID = new SqlParameter(@"pBodySetID", SqlDbType.Int);
+            pBodySetID.Direction = ParameterDirection.Input;
+            pBodySetID.Value = saveEmpProfileDTO.bodySetID;
+            sql.Parameters.Add(pBodySetID);
+
+            SqlParameter pShirtSize = new SqlParameter(@"pShirtSize", SqlDbType.VarChar, 20);
+            pShirtSize.Direction = ParameterDirection.Input;
+            pShirtSize.Value = saveEmpProfileDTO.shirtSize;
+            sql.Parameters.Add(pShirtSize);
 
             SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);
             pCAddress.Direction = ParameterDirection.Input;
@@ -874,6 +910,7 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_profile " +
                 "@pEmpProfileID, " +
                 "@pIdentityCard, " +
+                "@pIdentityCardExpiry, " + 
                 "@pTitleID, " +
                 "@pFirstnameEN," +
                 "@pFirstnameTH," +
@@ -882,17 +919,22 @@ namespace TUFTManagement.Core
                 "@pNickName," +
                 "@pPhoneNumber," +
                 "@pPositionID," +
-                "@pPersonalCode," +
-                "@pPersonalNO," +
+                "@pPernum," +
                 "@pDateOfBirth," +
-                "@pProductID," +
                 "@pJoinDate," +
                 "@pProPassDate," +
                 "@pMonthlySalary," +
                 "@pDailySalary," +
                 "@pEmploymentTypeID," +
                 "@pRoleID," +
-                "@pRoleID," +
+                "@pMaritalID," +
+                "@pRelationID," +
+                "@pFirstname," +
+                "@pLastname," +
+                "@ppDateOfBirth," +
+                "@pOccupationID," +
+                "@pBodySetID," +
+                "@pShirtSize," +
                 "@pCAddress," +
                 "@pCSubDistrictID," +
                 "@pCDistrictID," +
@@ -915,6 +957,11 @@ namespace TUFTManagement.Core
             pIdentityCard.Direction = ParameterDirection.Input;
             pIdentityCard.Value = saveEmpProfileDTO.identityCard;
             sql.Parameters.Add(pIdentityCard);
+
+            SqlParameter pIdentityCardExpiry = new SqlParameter(@"pIdentityCardExpiry", SqlDbType.VarChar, 30);
+            pIdentityCardExpiry.Direction = ParameterDirection.Input;
+            pIdentityCardExpiry.Value = saveEmpProfileDTO.identityCardExpiry;
+            sql.Parameters.Add(pIdentityCardExpiry);
 
             SqlParameter pTitleID = new SqlParameter(@"pTitleID", SqlDbType.Int);
             pTitleID.Direction = ParameterDirection.Input;
@@ -956,25 +1003,15 @@ namespace TUFTManagement.Core
             pPositionID.Value = saveEmpProfileDTO.positionID;
             sql.Parameters.Add(pPositionID);
 
-            SqlParameter pPersonalCode = new SqlParameter(@"pPersonalCode", SqlDbType.VarChar, 10);
-            pPersonalCode.Direction = ParameterDirection.Input;
-            pPersonalCode.Value = saveEmpProfileDTO.personalCode;
-            sql.Parameters.Add(pPersonalCode);
-
-            SqlParameter pPersonalNO = new SqlParameter(@"pPersonalNO", SqlDbType.Int);
-            pPersonalNO.Direction = ParameterDirection.Input;
-            pPersonalNO.Value = saveEmpProfileDTO.personalNO;
-            sql.Parameters.Add(pPersonalNO);
+            SqlParameter pPernum = new SqlParameter(@"pPernum", SqlDbType.Int);
+            pPernum.Direction = ParameterDirection.Input;
+            pPernum.Value = saveEmpProfileDTO.perNum;
+            sql.Parameters.Add(pPernum);
 
             SqlParameter pDateOfBirth = new SqlParameter(@"pDateOfBirth", SqlDbType.Date);
             pDateOfBirth.Direction = ParameterDirection.Input;
             pDateOfBirth.Value = saveEmpProfileDTO.dateOfBirth;
             sql.Parameters.Add(pDateOfBirth);
-
-            SqlParameter pProductID = new SqlParameter(@"pProductID", SqlDbType.Int);
-            pProductID.Direction = ParameterDirection.Input;
-            pProductID.Value = saveEmpProfileDTO.productID;
-            sql.Parameters.Add(pProductID);
 
             SqlParameter pJoinDate = new SqlParameter(@"pJoinDate", SqlDbType.Date);
             pJoinDate.Direction = ParameterDirection.Input;
@@ -1003,8 +1040,48 @@ namespace TUFTManagement.Core
             
             SqlParameter pRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
             pRoleID.Direction = ParameterDirection.Input;
-            pRoleID.Value = saveEmpProfileDTO.productID;
+            pRoleID.Value = saveEmpProfileDTO.roleID;
             sql.Parameters.Add(pRoleID);
+
+            SqlParameter pMaritalID = new SqlParameter(@"pMaritalID", SqlDbType.Int);
+            pMaritalID.Direction = ParameterDirection.Input;
+            pMaritalID.Value = saveEmpProfileDTO.maritalID;
+            sql.Parameters.Add(pMaritalID);
+
+            SqlParameter pRelationID = new SqlParameter(@"pRelationID", SqlDbType.Int);
+            pRelationID.Direction = ParameterDirection.Input;
+            pRelationID.Value = saveEmpProfileDTO.pRelationID;
+            sql.Parameters.Add(pRelationID);
+
+            SqlParameter ppFirstname = new SqlParameter(@"pFirstname", SqlDbType.VarChar, 250);
+            ppFirstname.Direction = ParameterDirection.Input;
+            ppFirstname.Value = saveEmpProfileDTO.pFirstname;
+            sql.Parameters.Add(ppFirstname);
+
+            SqlParameter pLastname = new SqlParameter(@"pLastname", SqlDbType.VarChar, 250);
+            pLastname.Direction = ParameterDirection.Input;
+            pLastname.Value = saveEmpProfileDTO.pLastname;
+            sql.Parameters.Add(pLastname);
+
+            SqlParameter ppDateOfBirth = new SqlParameter(@"ppDateOfBirth", SqlDbType.VarChar, 10);
+            ppDateOfBirth.Direction = ParameterDirection.Input;
+            ppDateOfBirth.Value = saveEmpProfileDTO.dateOfBirth;
+            sql.Parameters.Add(ppDateOfBirth);
+
+            SqlParameter pOccupationID = new SqlParameter(@"pOccupationID", SqlDbType.Int);
+            pOccupationID.Direction = ParameterDirection.Input;
+            pOccupationID.Value = saveEmpProfileDTO.pOccupationID;
+            sql.Parameters.Add(pOccupationID);
+
+            SqlParameter pBodySetID = new SqlParameter(@"pBodySetID", SqlDbType.Int);
+            pBodySetID.Direction = ParameterDirection.Input;
+            pBodySetID.Value = saveEmpProfileDTO.bodySetID;
+            sql.Parameters.Add(pBodySetID);
+
+            SqlParameter pShirtSize = new SqlParameter(@"pShirtSize", SqlDbType.VarChar, 20);
+            pShirtSize.Direction = ParameterDirection.Input;
+            pShirtSize.Value = saveEmpProfileDTO.shirtSize;
+            sql.Parameters.Add(pShirtSize);
 
             SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);
             pCAddress.Direction = ParameterDirection.Input;
