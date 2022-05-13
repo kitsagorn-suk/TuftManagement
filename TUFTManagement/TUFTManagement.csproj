@@ -171,12 +171,15 @@
     <Compile Include="Core\SQLManager.cs" />
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\ValidationManager.cs" />
+    <Compile Include="DTO\FeedbackDTO.cs" />
     <Compile Include="DTO\GetEmpRateRequestDTO.cs" />
     <Compile Include="DTO\GetEmpProfileDTO.cs" />
     <Compile Include="DTO\GetMessageTopicDTO.cs" />
+    <Compile Include="DTO\InsertEmpProfileDTO.cs" />
     <Compile Include="DTO\LoginRequestDTO.cs" />
     <Compile Include="DTO\MasterDataDTO.cs" />
     <Compile Include="DTO\PageRequestDTO.cs" />
+    <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpRateRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpProfileDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
@@ -187,6 +190,7 @@
     <Compile Include="Models\CheckUserByTokenModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
     <Compile Include="Models\GetEmpRateModel.cs" />
+    <Compile Include="Models\GetFeedbackModel.cs" />
     <Compile Include="Models\GetMasterDataModel.cs" />
     <Compile Include="Models\InsertLoginModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
