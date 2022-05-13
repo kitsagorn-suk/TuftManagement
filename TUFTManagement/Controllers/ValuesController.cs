@@ -467,6 +467,97 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("save/empRate")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveEmpRateDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpRate", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpRateDTO.empID.Equals(0)|| saveEmpRateDTO.empID.Equals(null))
+                {
+                    checkMissingOptional += checkMissingOptional + "empID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpRateDTO.productCode))
+                {
+                    checkMissingOptional += checkMissingOptional + "productCode ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                InsertService srv = new InsertService();
+                UpdateService srv2 = new UpdateService();
+                var obj = new object();
+
+                if (saveEmpRateDTO.empRateID.Equals(0) || saveEmpRateDTO.empRateID.Equals(null))
+                {
+                    obj = srv.InsertEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.role_id, data.user_id);
+                }
+                else
+                {
+                    obj = srv2.UpdateEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.role_id, data.user_id);
+                }
+                
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("get/empRate")]
+        [HttpPost]
+        public IHttpActionResult GetEmpRate(GetEmpRateRequestDTO getEmpRateRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+
+            try
+            {
+
+                GetService srv = new GetService();
+
+                if (getEmpRateRequestDTO.userID.Equals(0)|| getEmpRateRequestDTO.userID.Equals(null) )
+                {
+                    throw new Exception("Missing Parameter : userID");
+                }
+
+                var obj = srv.GetEmpRateService(authHeader, lang, platform.ToLower(), 1, getEmpRateRequestDTO.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
         #endregion
 
         #region Master

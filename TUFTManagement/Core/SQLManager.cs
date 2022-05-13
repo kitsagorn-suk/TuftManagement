@@ -806,6 +806,68 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel InsertEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_rate " +
+                "@pEmpID, " +
+                "@pProductCd, " +
+                "@pRateStaff, " +
+                "@pRateManager," +
+                "@pRateOwner, " +
+                "@pRateConfirm, " +
+                "@pCreateBy");
+
+            SqlParameter paramEmpID = new SqlParameter(@"pEmpID", SqlDbType.Int);
+            paramEmpID.Direction = ParameterDirection.Input;
+            paramEmpID.Value = saveEmpRateDTO.empID;
+            sql.Parameters.Add(paramEmpID);
+
+            SqlParameter paramProductCd = new SqlParameter(@"pProductCd", SqlDbType.VarChar, 10);
+            paramProductCd.Direction = ParameterDirection.Input;
+            paramProductCd.Value = saveEmpRateDTO.productCode;
+            sql.Parameters.Add(paramProductCd);
+
+            SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Int);
+            paramRateStaff.Direction = ParameterDirection.Input;
+            paramRateStaff.Value = saveEmpRateDTO.rateStaff;
+            sql.Parameters.Add(paramRateStaff);
+
+            SqlParameter paramRateManager = new SqlParameter(@"pRateManager", SqlDbType.Int);
+            paramRateManager.Direction = ParameterDirection.Input;
+            paramRateManager.Value = saveEmpRateDTO.rateManager;
+            sql.Parameters.Add(paramRateManager);
+
+            SqlParameter paramRateOwner = new SqlParameter(@"pRateOwner", SqlDbType.Int);
+            paramRateOwner.Direction = ParameterDirection.Input;
+            paramRateOwner.Value = saveEmpRateDTO.rateOwner;
+            sql.Parameters.Add(paramRateOwner);
+
+            SqlParameter paramRateConfirm = new SqlParameter(@"pRateConfirm", SqlDbType.Int);
+            paramRateConfirm.Direction = ParameterDirection.Input;
+            paramRateConfirm.Value = saveEmpRateDTO.rateConfirm;
+            sql.Parameters.Add(paramRateConfirm);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel UpdateEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -1019,6 +1081,68 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel UpdateEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_rate " +
+                "@pEmpId, " +
+                "@pProductCd, " +
+                "@pRateStaff, " +
+                "@pRateManager," +
+                "@pRateOwner," +
+                "@pRateConfirm," +
+                "@pUpdateBy");
+
+            SqlParameter paramID = new SqlParameter(@"pEmpId", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = saveEmpRateDTO.empID;
+            sql.Parameters.Add(paramID);
+
+            SqlParameter paramProductCd = new SqlParameter(@"pProductCd", SqlDbType.VarChar, 10);
+            paramProductCd.Direction = ParameterDirection.Input;
+            paramProductCd.Value = saveEmpRateDTO.productCode;
+            sql.Parameters.Add(paramProductCd);
+
+            SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Int);
+            paramRateStaff.Direction = ParameterDirection.Input;
+            paramRateStaff.Value = saveEmpRateDTO.rateStaff;
+            sql.Parameters.Add(paramRateStaff);
+
+            SqlParameter paramRateManager = new SqlParameter(@"pRateManager", SqlDbType.Int);
+            paramRateManager.Direction = ParameterDirection.Input;
+            paramRateManager.Value = saveEmpRateDTO.rateManager;
+            sql.Parameters.Add(paramRateManager);
+
+            SqlParameter paramRateOwner = new SqlParameter(@"pRateOwner", SqlDbType.Int);
+            paramRateOwner.Direction = ParameterDirection.Input;
+            paramRateOwner.Value = saveEmpRateDTO.rateOwner;
+            sql.Parameters.Add(paramRateOwner);
+
+            SqlParameter paramRateConfirm = new SqlParameter(@"pRateConfirm", SqlDbType.Int);
+            paramRateConfirm.Direction = ParameterDirection.Input;
+            paramRateConfirm.Value = saveEmpRateDTO.rateConfirm;
+            sql.Parameters.Add(paramRateConfirm);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -1204,6 +1328,32 @@ namespace TUFTManagement.Core
             table = sql.executeQueryWithReturnTable();
 
             MasterData data = new MasterData();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public GetEmpRate GetEmpRate(int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_emp_rate " +
+                "@pEmpId");
+
+            SqlParameter paramID = new SqlParameter(@"pEmpId", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = userID;
+            sql.Parameters.Add(paramID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            GetEmpRate data = new GetEmpRate();
 
             if (table != null && table.Rows.Count > 0)
             {
