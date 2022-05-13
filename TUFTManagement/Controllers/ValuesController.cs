@@ -783,7 +783,7 @@ namespace TUFTManagement.Controllers
                 }
                 else
                 {
-                    //obj = srv2.UpdateEmpRateService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
+                    obj = srv.UpdateBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
                 }
 
 

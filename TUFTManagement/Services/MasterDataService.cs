@@ -2248,14 +2248,14 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    string TableName = "emp_rate";
-                    _sql.InsertSystemLogChange(saveBodySetDTO.empRateID, TableName, "product_code", saveBodySetDTO.productCode, userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_staff", saveBodySetDTO.rateStaff.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_manager", saveBodySetDTO.rateManager.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_owner", saveBodySetDTO.rateOwner.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.empID, TableName, "rate_confirm", saveBodySetDTO.rateConfirm.ToString(), userID);
+                    string TableName = "system_body_set";
+                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "height", saveBodySetDTO.height.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "weight", saveBodySetDTO.weight.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "chest", saveBodySetDTO.chest.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "waist", saveBodySetDTO.waist.ToString(), userID);
+                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "hip", saveBodySetDTO.hip.ToString(), userID);
 
-                    value.data = _sql.UpdateEmpRate(saveBodySetDTO, userID);
+                    value.data = _sql.UpdateBodySet(saveBodySetDTO, userID);
                 }
                 else
                 {
