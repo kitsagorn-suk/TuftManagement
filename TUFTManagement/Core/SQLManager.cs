@@ -1085,7 +1085,7 @@ namespace TUFTManagement.Core
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_rate " +
-                "@pEmpId, " +
+                "@pId, " +
                 "@pProductCd, " +
                 "@pRateStaff, " +
                 "@pRateManager," +
@@ -1093,9 +1093,9 @@ namespace TUFTManagement.Core
                 "@pRateConfirm," +
                 "@pUpdateBy");
 
-            SqlParameter paramID = new SqlParameter(@"pEmpId", SqlDbType.Int);
+            SqlParameter paramID = new SqlParameter(@"pId", SqlDbType.Int);
             paramID.Direction = ParameterDirection.Input;
-            paramID.Value = saveEmpRateDTO.empID;
+            paramID.Value = saveEmpRateDTO.empRateID;
             sql.Parameters.Add(paramID);
 
             SqlParameter paramProductCd = new SqlParameter(@"pProductCd", SqlDbType.VarChar, 10);
@@ -1154,6 +1154,38 @@ namespace TUFTManagement.Core
             pEmpProfileID.Direction = ParameterDirection.Input;
             pEmpProfileID.Value = saveEmpProfileDTO.empProfileID;
             sql.Parameters.Add(pEmpProfileID);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteEmpRate(EmpRateRequestDTO empRateRequestDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_emp_rate " +
+                "@pEmpId, " +
+                "@pUpdateBy");
+
+            SqlParameter paramEmpId = new SqlParameter(@"pEmpId", SqlDbType.Int);
+            paramEmpId.Direction = ParameterDirection.Input;
+            paramEmpId.Value = empRateRequestDTO.empID;
+            sql.Parameters.Add(paramEmpId);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;

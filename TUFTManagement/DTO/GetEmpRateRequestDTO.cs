@@ -5,8 +5,8 @@ using System.Web;
 
 namespace TUFTManagement.DTO
 {
-    public class GetEmpRateRequestDTO
+    public class EmpRateRequestDTO
     {
-        public int userID { set; get; } = 0;
+        public int empID { set; get; } = 0;
     }
 }
