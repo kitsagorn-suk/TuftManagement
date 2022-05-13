@@ -70,9 +70,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -95,9 +96,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -122,9 +124,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -266,9 +269,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -397,9 +401,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -438,20 +443,17 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
-            
+            string businesscode = request.Headers["businesscode"];
+
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
-                
+
                 GetService srv = new GetService();
 
-                if (string.IsNullOrEmpty(getEmpProfileDTO.lang))
-                {
-                    getEmpProfileDTO.lang = "th";
-                }
                 var obj = srv.GetEmpProfileService(authHeader, getEmpProfileDTO.lang, platform.ToLower(), 1, data.user_id);
                 
                 return Ok(obj);
@@ -470,9 +472,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -526,10 +529,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
-            
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -562,9 +565,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -646,9 +650,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {
@@ -686,9 +691,10 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
+            string businesscode = request.Headers["businesscode"];
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
 
             try
             {

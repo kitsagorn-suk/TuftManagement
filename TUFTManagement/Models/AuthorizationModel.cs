@@ -13,6 +13,7 @@ namespace TUFTManagement.Models
         public int role_id { get; set; } = 0;
         public string username { get; set; } = "";
         public string password { get; set; } = "";
+        public string business_code { get; set; } = "";
         public string type_login { get; set; } = "";
         public string signal { get; set; } = "";
         public double create_date { get; set; } = 0;

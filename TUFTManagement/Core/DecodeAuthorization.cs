@@ -38,6 +38,7 @@ namespace TUFTManagement.Core
                 dataAuth.password = tokenHeader["password"].ToString();
                 dataAuth.type_login = tokenHeader["platform_login"].ToString();
                 dataAuth.signal = tokenHeader["signal"].ToString();
+                dataAuth.business_code = tokenPayload["business_code"].ToString();
             }
             catch (Exception ex)
             {

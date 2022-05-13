@@ -33,6 +33,7 @@ namespace TUFTManagement.Core
             payload += " \"create_date\":" + timestampNow + ",";
             payload += " \"user_id\":" + dataFormToken.userID + ",";
             payload += " \"role_id\":" + dataFormToken.roleID + ",";
+            payload += " \"business_code\":\"" + dataFormToken.business_code + "\",";
             payload += " }";
 
             string encryptedHeader = Utility.Base64UrlEncode(header);
