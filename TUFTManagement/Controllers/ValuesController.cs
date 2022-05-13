@@ -551,7 +551,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("delete/empRate")]
+        [Route("1.0/delete/empRate")]
         [HttpPost]
         public IHttpActionResult DeleteEmpRate(EmpRateRequestDTO empRateRequestDTO)
         {
