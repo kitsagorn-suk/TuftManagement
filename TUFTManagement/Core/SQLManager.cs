@@ -868,6 +868,56 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel InsertEmpWorkShift(SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_shift " +
+                "@pWsCode, " +
+                "@pTimeStart, " +
+                "@pTimeEnd, " +
+                "@pWorkTypeID," +
+                "@pCreateBy");
+
+            SqlParameter paramWsCode = new SqlParameter(@"pWsCode", SqlDbType.VarChar, 50);
+            paramWsCode.Direction = ParameterDirection.Input;
+            paramWsCode.Value = saveEmpWorkShiftRequestDTO.wsCode;
+            sql.Parameters.Add(paramWsCode);
+
+            SqlParameter paramTimeStart = new SqlParameter(@"pTimeStart", SqlDbType.VarChar, 100);
+            paramTimeStart.Direction = ParameterDirection.Input;
+            paramTimeStart.Value = saveEmpWorkShiftRequestDTO.timeStart;
+            sql.Parameters.Add(paramTimeStart);
+
+            SqlParameter paramTimeEnd = new SqlParameter(@"pTimeEnd", SqlDbType.VarChar, 100);
+            paramTimeEnd.Direction = ParameterDirection.Input;
+            paramTimeEnd.Value = saveEmpWorkShiftRequestDTO.timeEnd;
+            sql.Parameters.Add(paramTimeEnd);
+
+            SqlParameter paramWorkTypeID = new SqlParameter(@"pWorkTypeID", SqlDbType.Int);
+            paramWorkTypeID.Direction = ParameterDirection.Input;
+            paramWorkTypeID.Value = saveEmpWorkShiftRequestDTO.workTypeID;
+            sql.Parameters.Add(paramWorkTypeID);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel UpdateEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -1143,6 +1193,62 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel UpdateEmpWorkShift(SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_work_shift " +
+                "@pId, " +
+                "@pWsCode, " +
+                "@pTimeStart, " +
+                "@pTimeEnd, " +
+                "@pWorkTypeID," +
+                "@pUpdateBy");
+
+            SqlParameter paramID = new SqlParameter(@"pId", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = saveEmpWorkShiftRequestDTO.empWorkShiftID;
+            sql.Parameters.Add(paramID);
+
+            SqlParameter paramWsCode = new SqlParameter(@"pWsCode", SqlDbType.VarChar, 50);
+            paramWsCode.Direction = ParameterDirection.Input;
+            paramWsCode.Value = saveEmpWorkShiftRequestDTO.wsCode;
+            sql.Parameters.Add(paramWsCode);
+
+            SqlParameter paramTimeStart = new SqlParameter(@"pTimeStart", SqlDbType.VarChar, 100);
+            paramTimeStart.Direction = ParameterDirection.Input;
+            paramTimeStart.Value = saveEmpWorkShiftRequestDTO.timeStart;
+            sql.Parameters.Add(paramTimeStart);
+
+            SqlParameter paramTimeEnd = new SqlParameter(@"pTimeEnd", SqlDbType.VarChar, 100);
+            paramTimeEnd.Direction = ParameterDirection.Input;
+            paramTimeEnd.Value = saveEmpWorkShiftRequestDTO.timeEnd;
+            sql.Parameters.Add(paramTimeEnd);
+
+            SqlParameter paramWorkTypeID = new SqlParameter(@"pWorkTypeID", SqlDbType.Int);
+            paramWorkTypeID.Direction = ParameterDirection.Input;
+            paramWorkTypeID.Value = saveEmpWorkShiftRequestDTO.workTypeID;
+            sql.Parameters.Add(paramWorkTypeID);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -1186,6 +1292,38 @@ namespace TUFTManagement.Core
             paramEmpId.Direction = ParameterDirection.Input;
             paramEmpId.Value = empRateRequestDTO.empID;
             sql.Parameters.Add(paramEmpId);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel DeleteEmpWorkShift(SaveEmpWorkShiftRequestDTO requestDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_emp_work_shift " +
+                "@pId, " +
+                "@pUpdateBy");
+
+            SqlParameter paramId = new SqlParameter(@"pId", SqlDbType.Int);
+            paramId.Direction = ParameterDirection.Input;
+            paramId.Value = requestDTO.empWorkShiftID;
+            sql.Parameters.Add(paramId);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;
@@ -1386,6 +1524,32 @@ namespace TUFTManagement.Core
             table = sql.executeQueryWithReturnTable();
 
             GetEmpRate data = new GetEmpRate();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public GetEmpWorkShift GetEmpWorkShift(int empWorkShiftID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_emp_work_shift " +
+                "@pID");
+
+            SqlParameter paramID = new SqlParameter(@"pID", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = empWorkShiftID;
+            sql.Parameters.Add(paramID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            GetEmpWorkShift data = new GetEmpWorkShift();
 
             if (table != null && table.Rows.Count > 0)
             {
