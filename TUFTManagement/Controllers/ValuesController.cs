@@ -414,11 +414,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpRateDTO.empID.Equals(0)|| saveEmpRateDTO.empID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "empID ";
+                    checkMissingOptional += "empID ";
                 }
                 if (string.IsNullOrEmpty(saveEmpRateDTO.productCode))
                 {
-                    checkMissingOptional += checkMissingOptional + "productCode ";
+                    checkMissingOptional += "productCode ";
                 }
 
                 if (checkMissingOptional != "")
@@ -504,7 +504,7 @@ namespace TUFTManagement.Controllers
 
                 if (empRateRequestDTO.empID.Equals(0)|| empRateRequestDTO.empID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "empID ";
+                    checkMissingOptional += "empID ";
                 }
 
                 if (checkMissingOptional != "")
@@ -546,19 +546,19 @@ namespace TUFTManagement.Controllers
 
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.wsCode))
                 {
-                    checkMissingOptional += checkMissingOptional + "wsCode ";
+                    checkMissingOptional += "wsCode ";
                 }
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.timeStart))
                 {
-                    checkMissingOptional += checkMissingOptional + "timeStart ";
+                    checkMissingOptional += "timeStart ";
                 }
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.timeEnd))
                 {
-                    checkMissingOptional += checkMissingOptional + "timeEnd ";
+                    checkMissingOptional += "timeEnd ";
                 }
                 if (saveEmpWorkShiftRequestDTO.workTypeID.Equals(0)|| saveEmpWorkShiftRequestDTO.workTypeID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "workTypeID ";
+                    checkMissingOptional += "workTypeID ";
                 }
 
                 if (checkMissingOptional != "")
@@ -647,7 +647,7 @@ namespace TUFTManagement.Controllers
 
                 if (requestDTO.empWorkShiftID.Equals(0) || requestDTO.empWorkShiftID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "empWorkShiftID ";
+                    checkMissingOptional += "empWorkShiftID ";
                 }
 
                 if (checkMissingOptional != "")
