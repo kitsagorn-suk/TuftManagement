@@ -1464,6 +1464,32 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public BodySet GetBodySet(int id)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_body_set " +
+                "@pId");
+
+            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
+            pId.Direction = ParameterDirection.Input;
+            pId.Value = id;
+            sql.Parameters.Add(pId);
+
+            table = sql.executeQueryWithReturnTable();
+
+            BodySet data = new BodySet();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel InsertBodySet(SaveBodySetRequestDTO saveBodySetDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -1494,6 +1520,11 @@ namespace TUFTManagement.Core
             paramWaist.Direction = ParameterDirection.Input;
             paramWaist.Value = saveBodySetDTO.waist;
             sql.Parameters.Add(paramWaist);
+
+            SqlParameter paramHip = new SqlParameter(@"pHip", SqlDbType.Int);
+            paramHip.Direction = ParameterDirection.Input;
+            paramHip.Value = saveBodySetDTO.hip;
+            sql.Parameters.Add(paramHip);
 
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
@@ -1556,6 +1587,12 @@ namespace TUFTManagement.Core
             paramHip.Direction = ParameterDirection.Input;
             paramHip.Value = saveBodySetDTO.hip;
             sql.Parameters.Add(paramHip);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
             table = sql.executeQueryWithReturnTable();
 
             _ReturnIdModel data = new _ReturnIdModel();

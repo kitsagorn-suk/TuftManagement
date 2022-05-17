@@ -938,7 +938,7 @@ namespace TUFTManagement.Controllers
 
                 if (masterDataDTO.masterID != 0)
                 {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "system_body_set");
+                    obj = srv.GetMasterBodySetervice(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID);
                 }
                 else
                 {
