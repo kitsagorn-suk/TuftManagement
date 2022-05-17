@@ -321,6 +321,26 @@ namespace TUFTManagement.Core
             {
                 GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
 
+                getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+
+        public static ValidationModel CheckValidationDupicateInsertEmpWorkShift(string lang, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+
 
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);

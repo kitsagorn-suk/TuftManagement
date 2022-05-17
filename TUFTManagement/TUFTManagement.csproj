@@ -180,6 +180,8 @@
     <Compile Include="DTO\MasterDataDTO.cs" />
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
+    <Compile Include="DTO\SaveEmpWorkTimeRequestDTO.cs" />
+    <Compile Include="DTO\SaveEmpWorkShiftRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpRateRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpProfileDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
@@ -189,6 +191,8 @@
     <Compile Include="Models\AuthorizationModel.cs" />
     <Compile Include="Models\CheckUserByTokenModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
+    <Compile Include="Models\GetEmpWorkTimeModel.cs" />
+    <Compile Include="Models\GetEmpWorkShiftModel.cs" />
     <Compile Include="Models\GetEmpRateModel.cs" />
     <Compile Include="Models\GetFeedbackModel.cs" />
     <Compile Include="Models\GetMasterDataModel.cs" />

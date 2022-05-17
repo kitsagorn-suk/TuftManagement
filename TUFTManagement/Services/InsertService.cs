@@ -107,6 +107,46 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public ReturnIdModel InsertEmpWorkShiftService(string authorization, string lang, string platform, int logID,
+            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int roleID, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmpWorkShift(lang, saveEmpWorkShiftRequestDTO);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.InsertEmpWorkShift(saveEmpWorkShiftRequestDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpWorkShiftService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
         #endregion
 
         #region Feedback
