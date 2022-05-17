@@ -918,6 +918,80 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel InsertEmpWorkTime(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_time " +
+                "@pEmpID, " +
+                "@pWorkShiftID, " +
+                "@pWorkDate, " +
+                "@pWorkIn," +
+                "@pWorkOut," +
+                "@pFloorIn," +
+                "@pFloorOut," +
+                "@pIsFix," +
+                "@pCreateBy");
+
+            SqlParameter paramEmpID = new SqlParameter(@"pEmpID", SqlDbType.Int);
+            paramEmpID.Direction = ParameterDirection.Input;
+            paramEmpID.Value = saveEmpWorkTimeRequestDTO.empID;
+            sql.Parameters.Add(paramEmpID);
+
+            SqlParameter paramWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            paramWorkShiftID.Direction = ParameterDirection.Input;
+            paramWorkShiftID.Value = saveEmpWorkTimeRequestDTO.empWorkShiftID;
+            sql.Parameters.Add(paramWorkShiftID);
+
+            SqlParameter paramWorkIn = new SqlParameter(@"pWorkIn", SqlDbType.Time);
+            paramWorkIn.Direction = ParameterDirection.Input;
+            paramWorkIn.Value = saveEmpWorkTimeRequestDTO.workIn;
+            sql.Parameters.Add(paramWorkIn);
+
+            SqlParameter paramWorkOut = new SqlParameter(@"pWorkOut", SqlDbType.Time);
+            paramWorkOut.Direction = ParameterDirection.Input;
+            paramWorkOut.Value = saveEmpWorkTimeRequestDTO.workOut;
+            sql.Parameters.Add(paramWorkOut);
+
+            SqlParameter paramFloorIn = new SqlParameter(@"pFloorIn", SqlDbType.Time);
+            paramFloorIn.Direction = ParameterDirection.Input;
+            paramFloorIn.Value = saveEmpWorkTimeRequestDTO.floorIn;
+            sql.Parameters.Add(paramFloorIn);
+
+            SqlParameter paramFloorOut = new SqlParameter(@"pFloorOut", SqlDbType.Time);
+            paramFloorOut.Direction = ParameterDirection.Input;
+            paramFloorOut.Value = saveEmpWorkTimeRequestDTO.floorOut;
+            sql.Parameters.Add(paramFloorOut);
+
+            SqlParameter paramIsFix = new SqlParameter(@"pIsFix", SqlDbType.Bit);
+            paramIsFix.Direction = ParameterDirection.Input;
+            paramIsFix.Value = saveEmpWorkTimeRequestDTO.isFix;
+            sql.Parameters.Add(paramIsFix);
+
+            SqlParameter paramWorkDate = new SqlParameter(@"pWorkDate", SqlDbType.Date);
+            paramWorkDate.Direction = ParameterDirection.Input;
+            paramWorkDate.Value = saveEmpWorkTimeRequestDTO.workDate;
+            sql.Parameters.Add(paramWorkDate);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel UpdateEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -1550,6 +1624,32 @@ namespace TUFTManagement.Core
             table = sql.executeQueryWithReturnTable();
 
             GetEmpWorkShift data = new GetEmpWorkShift();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public GetEmpWorkTime GetEmpWorkTime(int empWorkTimeID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_emp_work_time " +
+                "@pID");
+
+            SqlParameter paramID = new SqlParameter(@"pID", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = empWorkTimeID;
+            sql.Parameters.Add(paramID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            GetEmpWorkTime data = new GetEmpWorkTime();
 
             if (table != null && table.Rows.Count > 0)
             {
