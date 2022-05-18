@@ -1,9 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using ExcelDataReader;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Http;
@@ -17,6 +21,7 @@ namespace TUFTManagement.Controllers
 {
     [RoutePrefix("api")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
+
     public class ValuesController : ApiController
     {
         private SQLManager _sql = SQLManager.Instance;
@@ -659,6 +664,139 @@ namespace TUFTManagement.Controllers
                 var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, requestDTO, data.role_id, data.user_id);
 
                 return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/upload/excel")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> UploadFileExcel()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] ?? "");
+            string lang = (request.Headers["lang"] ?? WebConfigurationManager.AppSettings["default_language"]);
+            string platform = request.Headers["platform"];
+            string version = request.Headers["version"];
+
+            UploadModel value = new UploadModel();
+            value.data = new _ServiceUploadData();
+
+
+            try
+            {
+
+                #region Variable Declaration
+                HttpResponseMessage ResponseMessage = null;
+                var httpRequest = HttpContext.Current.Request;
+                DataSet dsexcelRecords = new DataSet();
+                IExcelDataReader reader = null;
+                HttpPostedFile Inputfile = null;
+                Stream FileStream = null;
+                SQLManager _sqlmanage = SQLManager.Instance;
+                #endregion
+
+                #region Save Student Detail From Excel
+                using (Inventory_ComplexEntities objEntity = new Inventory_ComplexEntities())
+                {
+                    if (httpRequest.Files.Count > 0)
+                    {
+                        Inputfile = httpRequest.Files[0];
+                        FileStream = Inputfile.InputStream;
+
+                        if (Inputfile != null && FileStream != null)
+                        {
+                            if (Inputfile.FileName.EndsWith(".xls"))
+                            {
+                                reader = ExcelReaderFactory.CreateBinaryReader(FileStream);
+                            }
+                            else if (Inputfile.FileName.EndsWith(".xlsx"))
+                            {
+                                reader = ExcelReaderFactory.CreateOpenXmlReader(FileStream);
+                            }
+                            else
+                            {
+                                value.success = false;
+                                value.msg = new MsgModel() { code = 0, text = "The file format is not supported.", topic = "No Success" };
+                            }
+
+                            dsexcelRecords = reader.AsDataSet();
+                            reader.Close();
+
+                            DataTable dtEmpCode = _sqlmanage.GetAllEmpCode();
+                            DataTable dtWorkShift = _sqlmanage.GetAllWorkShift();
+
+                            if (dsexcelRecords != null && dsexcelRecords.Tables.Count > 0)
+                            {
+                                DataTable dtExcel = dsexcelRecords.Tables[0];
+                                for (int i = 3; i < dtExcel.Rows.Count; i++)
+                                {
+                                    int year = 0, month = 0; 
+                                    int.TryParse(dtExcel.Rows[0][1].ToString(), out year);
+                                    int.TryParse(dtExcel.Rows[1][1].ToString(), out month);
+                                    int countDate = DateTime.DaysInMonth(year, month);
+                                    string emp_code = Convert.ToString(dtExcel.Rows[i][0]);
+                                    int user_id = 0, workshift = 0;
+                                    DataRow[] dremp = dtEmpCode.Select("emp_code='" + emp_code + "'");
+                                    if (dremp.Length > 0)
+                                    {
+                                        int.TryParse(dremp[0]["user_id"].ToString(), out user_id);
+                                    }
+
+                                    for (int j = 1; j < countDate; j++)
+                                    {
+                                        string work_shift = Convert.ToString(dtExcel.Rows[i][j].ToString());
+                                        DataRow[] drwork = dtWorkShift.Select("ws_code='" + work_shift + "'");
+                                        if (drwork.Length > 0)
+                                        {
+                                            int.TryParse(drwork[0]["id"].ToString(), out workshift);
+                                        }
+                                        emp_work_time objWork = new emp_work_time();
+                                        objWork.user_id = user_id;
+                                        objWork.work_shift_id = workshift;
+                                        objWork.work_date = Convert.ToDateTime(year.ToString() + '-' + month.ToString().PadLeft(2, '0') + '-' + j.ToString().PadLeft(2, '0'));
+                                        objWork.is_fix = true;
+                                        objEntity.emp_work_time.Add(objWork);
+                                    }
+                                }
+
+                                int output = objEntity.SaveChanges();
+                                if (output > 0)
+                                {
+                                    value.success = true;
+                                    value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
+                                }
+                                else
+                                {
+                                    value.success = false;
+                                    value.msg = new MsgModel() { code = 0, text = "Something Went Wrong!, The Excel file uploaded has fiald.", topic = "No Success" };
+                                }
+                            }
+                            else
+                            {
+                                value.success = false;
+                                value.msg = new MsgModel() { code = 0, text = "Selected file is empty.", topic = "No Success" };
+                            }
+
+                        }
+                        else
+                        {
+                            value.success = false;
+                            value.msg = new MsgModel() { code = 0, text = "Invalid File.", topic = "No Success" };
+                        }
+
+                    }
+                    else
+                    {
+                        ResponseMessage = Request.CreateResponse(HttpStatusCode.BadRequest);
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, value, Configuration.Formatters.JsonFormatter);
+                #endregion
+
+
             }
             catch (Exception ex)
             {

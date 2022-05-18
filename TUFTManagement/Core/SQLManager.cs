@@ -4005,6 +4005,26 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public DataTable GetAllEmpCode()
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_emp_code ");
+
+            table = sql.executeQueryWithReturnTable();
+
+            return table;
+        }
+
+        public DataTable GetAllWorkShift()
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_work_shift ");
+
+            table = sql.executeQueryWithReturnTable();
+
+            return table;
+        }
     }
 
     public class SQLCustomExecute
