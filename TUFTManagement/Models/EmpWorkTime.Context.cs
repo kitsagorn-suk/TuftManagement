@@ -13,10 +13,10 @@ namespace TUFTManagement.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class Inventory_ComplexEntities : DbContext
+    public partial class Inventory_ComplexEntities1 : DbContext
     {
-        public Inventory_ComplexEntities()
-            : base("name=Inventory_ComplexEntities")
+        public Inventory_ComplexEntities1()
+            : base("name=Inventory_ComplexEntities1")
         {
         }
     

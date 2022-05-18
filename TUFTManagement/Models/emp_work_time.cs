@@ -15,8 +15,8 @@ namespace TUFTManagement.Models
     public partial class emp_work_time
     {
         public int id { get; set; }
-        public int user_id { get; set; }
-        public int work_shift_id { get; set; }
+        public Nullable<int> user_id { get; set; }
+        public Nullable<int> work_shift_id { get; set; }
         public Nullable<System.DateTime> work_date { get; set; }
         public Nullable<bool> is_fix { get; set; }
     }

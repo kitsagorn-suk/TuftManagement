@@ -699,7 +699,7 @@ namespace TUFTManagement.Controllers
                 #endregion
 
                 #region Save Student Detail From Excel
-                using (Inventory_ComplexEntities objEntity = new Inventory_ComplexEntities())
+                using (Inventory_ComplexEntities1 objEntity = new Inventory_ComplexEntities1())
                 {
                     if (httpRequest.Files.Count > 0)
                     {

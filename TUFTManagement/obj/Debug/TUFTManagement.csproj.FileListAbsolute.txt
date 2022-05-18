@@ -177,3 +177,13 @@ C:\Users\USER\Desktop\TuftManagement\TUFTManagement\bin\ExcelDataReader.pdb
 C:\Users\USER\Desktop\TuftManagement\TUFTManagement\bin\ExcelDataReader.xml
 C:\Users\USER\Desktop\TuftManagement\TUFTManagement\bin\ExcelDataReader.DataSet.pdb
 C:\Users\USER\Desktop\TuftManagement\TUFTManagement\bin\ExcelDataReader.DataSet.xml
+D:\_Tuft_Management\TUFTManagement\bin\EntityFramework.dll
+D:\_Tuft_Management\TUFTManagement\bin\EntityFramework.SqlServer.dll
+D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.DataSet.dll
+D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.dll
+D:\_Tuft_Management\TUFTManagement\bin\EntityFramework.xml
+D:\_Tuft_Management\TUFTManagement\bin\EntityFramework.SqlServer.xml
+D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.pdb
+D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.xml
+D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.DataSet.pdb
+D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.DataSet.xml
