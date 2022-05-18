@@ -180,6 +180,8 @@
     <Compile Include="DTO\MasterDataDTO.cs" />
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
+    <Compile Include="DTO\SaveWorkTimeTransChangeRequestDTO.cs" />
+    <Compile Include="DTO\SaveEmpWorkTimeTransChangeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkShiftRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpRateRequestDTO.cs" />
