@@ -687,7 +687,6 @@ namespace TUFTManagement.Controllers
 
             try
             {
-
                 #region Variable Declaration
                 HttpResponseMessage ResponseMessage = null;
                 var httpRequest = HttpContext.Current.Request;
@@ -736,6 +735,14 @@ namespace TUFTManagement.Controllers
                                     int year = 0, month = 0; 
                                     int.TryParse(dtExcel.Rows[0][1].ToString(), out year);
                                     int.TryParse(dtExcel.Rows[1][1].ToString(), out month);
+                                    if (year == 0)
+                                    {
+                                        throw new Exception("กรุณาระบุปี");
+                                    }
+                                    if (month == 0)
+                                    {
+                                        throw new Exception("กรุณาระบุเดือน");
+                                    }
                                     int countDate = DateTime.DaysInMonth(year, month);
                                     string emp_code = Convert.ToString(dtExcel.Rows[i][0]);
                                     int user_id = 0, workshift = 0;
@@ -745,7 +752,7 @@ namespace TUFTManagement.Controllers
                                         int.TryParse(dremp[0]["user_id"].ToString(), out user_id);
                                     }
 
-                                    for (int j = 1; j < countDate; j++)
+                                    for (int j = 1; j <= countDate; j++)
                                     {
                                         string work_shift = Convert.ToString(dtExcel.Rows[i][j].ToString());
                                         DataRow[] drwork = dtWorkShift.Select("ws_code='" + work_shift + "'");
@@ -795,8 +802,6 @@ namespace TUFTManagement.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, value, Configuration.Formatters.JsonFormatter);
                 #endregion
-
-
             }
             catch (Exception ex)
             {
