@@ -707,6 +707,10 @@ namespace TUFTManagement.Controllers
 
                         if (Inputfile != null && FileStream != null)
                         {
+                            if (string.IsNullOrEmpty(Inputfile.FileName))
+                            {
+                                throw new Exception("ไม่พบไฟล์");
+                            }
                             if (Inputfile.FileName.EndsWith(".xls"))
                             {
                                 reader = ExcelReaderFactory.CreateBinaryReader(FileStream);
