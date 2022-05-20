@@ -36,7 +36,7 @@ namespace TUFTManagement.Controllers
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string platform = "web";
-            string businesscode = request.Headers["businesscode"]; 
+            //string businesscode = request.Headers["businesscode"]; 
 
             try
             {
@@ -58,7 +58,7 @@ namespace TUFTManagement.Controllers
 
                 LoginService srv = new LoginService();
 
-                var obj = srv.Login(authHeader, lang, username, password, platform.ToLower(), logID, businesscode);
+                var obj = srv.Login(authHeader, lang, username, password, platform.ToLower(), logID);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -419,11 +419,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpRateDTO.empID.Equals(0)|| saveEmpRateDTO.empID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "empID ";
+                    checkMissingOptional += "empID ";
                 }
                 if (string.IsNullOrEmpty(saveEmpRateDTO.productCode))
                 {
-                    checkMissingOptional += checkMissingOptional + "productCode ";
+                    checkMissingOptional += "productCode ";
                 }
 
                 if (checkMissingOptional != "")
@@ -509,7 +509,7 @@ namespace TUFTManagement.Controllers
 
                 if (empRateRequestDTO.empID.Equals(0)|| empRateRequestDTO.empID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "empID ";
+                    checkMissingOptional += "empID ";
                 }
 
                 if (checkMissingOptional != "")
@@ -551,19 +551,19 @@ namespace TUFTManagement.Controllers
 
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.wsCode))
                 {
-                    checkMissingOptional += checkMissingOptional + "wsCode ";
+                    checkMissingOptional += "wsCode ";
                 }
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.timeStart))
                 {
-                    checkMissingOptional += checkMissingOptional + "timeStart ";
+                    checkMissingOptional += "timeStart ";
                 }
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.timeEnd))
                 {
-                    checkMissingOptional += checkMissingOptional + "timeEnd ";
+                    checkMissingOptional += "timeEnd ";
                 }
                 if (saveEmpWorkShiftRequestDTO.workTypeID.Equals(0)|| saveEmpWorkShiftRequestDTO.workTypeID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "workTypeID ";
+                    checkMissingOptional += "workTypeID ";
                 }
 
                 if (checkMissingOptional != "")
@@ -652,7 +652,7 @@ namespace TUFTManagement.Controllers
 
                 if (requestDTO.empWorkShiftID.Equals(0) || requestDTO.empWorkShiftID.Equals(null))
                 {
-                    checkMissingOptional += checkMissingOptional + "empWorkShiftID ";
+                    checkMissingOptional += "empWorkShiftID ";
                 }
 
                 if (checkMissingOptional != "")
@@ -802,6 +802,388 @@ namespace TUFTManagement.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, value, Configuration.Formatters.JsonFormatter);
                 #endregion
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/empWorkTime")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpWorkTime(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            string businesscode = request.Headers["businesscode"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTime", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkShiftID ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+                    int param = saveEmpWorkTimeRequestDTO.empWorkShiftID;
+                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
+                    prepairRequest.empWorkTimeID = empWorkTimeID;
+                    prepairRequest.empWorkShiftID = param;
+
+                    UpdateService srv = new UpdateService();
+                    
+                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    {
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                    }
+                }
+                
+                    return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/empWorkTime/workIn")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpWorkTimeWorkIn(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            string businesscode = request.Headers["businesscode"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeWorkIn", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.workIn))
+                {
+                    checkMissingOptional += "workIn ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+                    string param = saveEmpWorkTimeRequestDTO.workIn;
+                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
+                    prepairRequest.empWorkTimeID = empWorkTimeID;
+                    prepairRequest.workIn = param;
+
+                    UpdateService srv = new UpdateService();
+                    
+                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    {
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                    }
+                }
+                
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/empWorkTime/workOut")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpWorkTimeWorkOut(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            string businesscode = request.Headers["businesscode"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeWorkOut", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.workOut))
+                {
+                    checkMissingOptional += "workOut ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+                    string param = saveEmpWorkTimeRequestDTO.workOut;
+                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
+                    prepairRequest.empWorkTimeID = empWorkTimeID;
+                    prepairRequest.workOut = param;
+
+                    UpdateService srv = new UpdateService();
+
+                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    {
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/empWorkTime/floorIn")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpWorkTimeFloorIn(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            string businesscode = request.Headers["businesscode"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeFloorIn", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.floorIn))
+                {
+                    checkMissingOptional += "floorIn ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+                    string param = saveEmpWorkTimeRequestDTO.floorIn;
+                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
+                    prepairRequest.empWorkTimeID = empWorkTimeID;
+                    prepairRequest.floorIn = param;
+
+                    UpdateService srv = new UpdateService();
+
+                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    {
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/empWorkTime/floorOut")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpWorkTimeFloorOut(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            string businesscode = request.Headers["businesscode"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeFloorOut", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.floorOut))
+                {
+                    checkMissingOptional += "floorOut ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+                    string param = saveEmpWorkTimeRequestDTO.floorOut;
+                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
+                    prepairRequest.empWorkTimeID = empWorkTimeID;
+                    prepairRequest.floorOut = param;
+
+                    UpdateService srv = new UpdateService();
+
+                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    {
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/empWorkTime")]
+        [HttpPost]
+        public IHttpActionResult GetEmpWorkTime(SaveEmpWorkTimeRequestDTO empWorkTimeRequest)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            string businesscode = request.Headers["businesscode"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+
+            try
+            {
+
+                GetService srv = new GetService();
+
+                if (empWorkTimeRequest.empWorkTimeID.Equals(0) || empWorkTimeRequest.empWorkTimeID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : empWorkTimeID");
+                }
+
+                var obj = srv.GetEmpWorkTimeService(authHeader, lang, platform.ToLower(), 1, empWorkTimeRequest.empWorkTimeID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/approve/transChange")]
+        [HttpPost]
+        public IHttpActionResult ApproveWorkTimeTransChange(SaveWorkTimeTransChangeRequestDTO transChangeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string platform = "web";
+            string businesscode = request.Headers["businesscode"];
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(transChangeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("ApproveWorkTimeTransChange", json, timestampNow.ToString(), authHeader,
+                    data.user_id, platform.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (transChangeRequestDTO.transChangeID.Equals(0) || transChangeRequestDTO.transChangeID.Equals(null))
+                {
+                    checkMissingOptional += "transChangeID ";
+                }
+                if (transChangeRequestDTO.statusApprove.Equals(0) || transChangeRequestDTO.statusApprove.Equals(null))
+                {
+                    checkMissingOptional += "statusApprove ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    UpdateService srv = new UpdateService();
+
+                    if (transChangeRequestDTO.transChangeID.Equals(0) || transChangeRequestDTO.transChangeID.Equals(null))
+                    {
+                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, platform.ToLower(), logID, transChangeRequestDTO, data.role_id, data.user_id);
+                    }
+                }
+
+                return Ok(obj);
+
             }
             catch (Exception ex)
             {
