@@ -187,3 +187,4 @@ D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.pdb
 D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.xml
 D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.DataSet.pdb
 D:\_Tuft_Management\TUFTManagement\bin\ExcelDataReader.DataSet.xml
+D:\_Tuft_Management\TUFTManagement\obj\Debug\TUFTManagement.csprojAssemblyReference.cache
