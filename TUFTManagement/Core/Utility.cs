@@ -8,6 +8,8 @@ namespace TUFTManagement.Core
 {
     public class Utility
     {
+        static string WS_DATE_FORMAT2 = "yyyy-MM-dd";
+
         public static string Base64UrlEncode(string input)
         {
             var inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
@@ -36,6 +38,22 @@ namespace TUFTManagement.Core
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
         {
             return (dateTime - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
+        }
+
+        public static string convertToDateTimeServiceFormatString2(string input)
+        {
+            DateTime result;
+
+            bool isPass = DateTime.TryParse(input, out result);
+
+            if (!isPass)
+            {
+                return "";
+            }
+            else
+            {
+                return result.ToString(WS_DATE_FORMAT2);
+            }
         }
     }
 }

@@ -181,5 +181,49 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+
+        public GetEmpWorkTimeModel GetEmpWorkTimeService(string authorization, string lang, string platform, int logID, int empWorkTimeID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetEmpWorkTimeModel value = new GetEmpWorkTimeModel();
+            try
+            {
+                GetEmpWorkTime data = new GetEmpWorkTime();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetEmpWorkTime(empWorkTimeID);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpWorkTimeService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
     }
 }

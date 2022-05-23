@@ -194,6 +194,8 @@
     <Compile Include="DTO\MasterDataDTO.cs" />
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
+    <Compile Include="DTO\SaveWorkTimeTransChangeRequestDTO.cs" />
+    <Compile Include="DTO\SaveEmpWorkTimeTransChangeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkShiftRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpRateRequestDTO.cs" />
@@ -222,6 +224,7 @@
     <Compile Include="Models\emp_work_time.cs">
       <DependentUpon>EmpWorkTime.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetBodySetModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeModel.cs" />
     <Compile Include="Models\GetEmpWorkShiftModel.cs" />
