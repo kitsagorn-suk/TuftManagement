@@ -16,7 +16,7 @@ namespace TUFTManagement.Services
         #region Insert Employees
 
         public InsertLoginModel InsertEmpProfileService(string authorization, string lang, string platform, int logID,
-            SaveEmpProfileDTO saveEmpProfileDTO, int roleID, int userID)
+            SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -68,7 +68,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertEmpRateService(string authorization, string lang, string platform, int logID,
-            SaveEmpRateRequestDTO saveEmpRateDTO, int roleID, int userID)
+            SaveEmpRateRequestDTO saveEmpRateDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -108,7 +108,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertEmpWorkShiftService(string authorization, string lang, string platform, int logID,
-            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int roleID, int userID)
+            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {

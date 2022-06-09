@@ -12,7 +12,7 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public ReturnIdModel UpdateEmpProfileService(string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, int roleID, int userID)
+        public ReturnIdModel UpdateEmpProfileService(string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -87,7 +87,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateEmpRateService(string authorization, string lang, string platform, int logID, SaveEmpRateRequestDTO saveEmpRateDTO, int roleID, int userID)
+        public ReturnIdModel UpdateEmpRateService(string authorization, string lang, string platform, int logID, SaveEmpRateRequestDTO saveEmpRateDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -135,7 +135,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateEmpWorkShiftService(string authorization, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int roleID, int userID)
+        public ReturnIdModel UpdateEmpWorkShiftService(string authorization, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -181,7 +181,7 @@ namespace TUFTManagement.Services
             }
             return value;
         }
-        public ReturnIdModel UpdateEmpWorkTimeService(string authorization, string lang, string platform, int logID, SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int roleID, int userID)
+        public ReturnIdModel UpdateEmpWorkTimeService(string authorization, string lang, string platform, int logID, SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -260,7 +260,7 @@ namespace TUFTManagement.Services
             }
             return value;
         }
-        public ReturnIdModel ApproveWorkTimeTransChangeService(string authorization, string lang, string platform, int logID, SaveWorkTimeTransChangeRequestDTO transChangeRequest, int roleID, int userID)
+        public ReturnIdModel ApproveWorkTimeTransChangeService(string authorization, string lang, string platform, int logID, SaveWorkTimeTransChangeRequestDTO transChangeRequest, string roleIDList, int userID)
         {
             if (_sql == null)
             {

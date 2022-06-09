@@ -65,7 +65,7 @@ namespace TUFTManagement.Controllers
                 data = DecodeAuthorization.AuthorizationDecode(authorization);
 
                 #region check business
-                if (data.business_code != businesscode)
+                if (data.shareCodeList != businesscode)
                 {
                     var response = new BasicResponse
                     {
@@ -95,7 +95,7 @@ namespace TUFTManagement.Controllers
 
                 #region checkexpiretoken
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                dateTime = dateTime.AddSeconds(data.expire_date).ToLocalTime();
+                dateTime = dateTime.AddSeconds(data.expireDate).ToLocalTime();
 
                 bool status_expire = (DateTime.Now > dateTime) ? true : false;
                 if (status_expire)

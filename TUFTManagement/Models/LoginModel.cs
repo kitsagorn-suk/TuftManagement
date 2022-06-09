@@ -17,24 +17,20 @@ namespace TUFTManagement.Models
     {
         public int id { get; set; } = 0;
         public string username { get; set; } = "";
-        public string employeeName { get; set; } = "";
-        public string imageUrl { get; set; } = "";
+        //public string employeeName { get; set; } = "";
+        //public string imageUrl { get; set; } = "";
         public string token { get; set; } = "";
         public string platform { get; set; } = "";
-        public int roleID { get; set; } = 0;
-        public string businesscode { get; set; } = "";
-
-        public List<AccessRole> access_list { get; set; }
-        public List<MenuList> menuList { get; set; }
+        public List<RoleIDList> role { get; set; }
+        public List<ShareHolderList> shareHolder { get; set; }
+        public List<AccessRole> accessList { get; set; }
 
         public void loadData(DataRow dr)
         {
             id = int.Parse(dr["id"].ToString());
             username = dr["username"].ToString();
-            employeeName = dr["firstname"].ToString() + " " + dr["lastname"].ToString();
-            imageUrl = dr["image_name"].ToString();
-            roleID = int.Parse(dr["role_id"].ToString());
-            businesscode = dr["business_code"].ToString();
+            //employeeName = dr["firstname"].ToString() + " " + dr["lastname"].ToString();
+            //imageUrl = dr["image_name"].ToString();
         }
     }
 
@@ -47,6 +43,44 @@ namespace TUFTManagement.Models
         {
             object_id = dr["object_id"].ToString();
             object_name = dr["object_name"].ToString();
+        }
+    }
+
+    public class RoleIDList
+    {
+        public int roleID { set; get; }
+        public string roleName { set; get; }
+
+        public void loadDataUserRole(DataRow dr)
+        {
+            roleID = int.Parse(dr["role_id"].ToString());
+            roleName = dr["name"].ToString();
+        }
+    }
+
+    public class ShareHolderList
+    {
+        public int shareID { set; get; }
+        public string shareCode { set; get; }
+        public string shareName { set; get; }
+        public List<AgentList> agentList { get; set; }
+        
+        public void loadDataShareHolder(DataRow dr)
+        {
+            shareID = int.Parse(dr["share_id"].ToString());
+            shareCode = dr["share_code"].ToString();
+            shareName = dr["name"].ToString();
+        }
+    }
+
+    public class AgentList
+    {
+        public int agentID { set; get; }
+        public string agentName { set; get; }
+        public void loadDataAgent(DataRow dr)
+        {
+            agentID = int.Parse(dr["agent_id"].ToString());
+            agentName = dr["name"].ToString();
         }
     }
 

@@ -84,7 +84,7 @@ namespace TUFTManagement.Controllers
             {
                 LoginService srv = new LoginService();
 
-                var obj = srv.Logout(authHeader, lang, data.user_id, platform.ToLower(), 1);
+                var obj = srv.Logout(authHeader, lang, data.userID, platform.ToLower(), 1);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -138,7 +138,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpProfile", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
                 
@@ -309,11 +309,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpProfileDTO.empProfileID.Equals(0))
                 {
-                    obj = srv1.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                    obj = srv1.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv.UpdateEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                    obj = srv.UpdateEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                 }
 
                 return Ok(obj);
@@ -342,7 +342,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteEmpProfile", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -357,7 +357,7 @@ namespace TUFTManagement.Controllers
                 }
                 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.role_id, data.user_id);
+                var obj = srv.DeleteEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                 
                 return Ok(obj);
             }
@@ -386,7 +386,7 @@ namespace TUFTManagement.Controllers
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileService(authHeader, getEmpProfileDTO.lang, platform.ToLower(), 1, data.user_id);
+                var obj = srv.GetEmpProfileService(authHeader, getEmpProfileDTO.lang, platform.ToLower(), 1, data.userID);
                 
                 return Ok(obj);
             }
@@ -413,7 +413,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(saveEmpRateDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpRate", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -437,11 +437,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpRateDTO.empRateID.Equals(0) || saveEmpRateDTO.empRateID.Equals(null))
                 {
-                    obj = srv.InsertEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.role_id, data.user_id);
+                    obj = srv.InsertEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv2.UpdateEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.role_id, data.user_id);
+                    obj = srv2.UpdateEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
                 }
                 
 
@@ -503,7 +503,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(empRateRequestDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteEmpRate", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -518,7 +518,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpRateService(authHeader, lang, platform.ToLower(), logID, empRateRequestDTO, data.role_id, data.user_id);
+                var obj = srv.DeleteEmpRateService(authHeader, lang, platform.ToLower(), logID, empRateRequestDTO, data.roleIDList, data.userID);
 
                 return Ok(obj);
             }
@@ -545,7 +545,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(saveEmpWorkShiftRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkShift", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -577,11 +577,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpWorkShiftRequestDTO.empWorkShiftID.Equals(0) || saveEmpWorkShiftRequestDTO.empWorkShiftID.Equals(null))
                 {
-                    obj = srv.InsertEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.role_id, data.user_id);
+                    obj = srv.InsertEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv2.UpdateEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.role_id, data.user_id);
+                    obj = srv2.UpdateEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
                 }
 
 
@@ -610,7 +610,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(requestDTO);
                 int logID = _sql.InsertLogReceiveData("GetEmpWorkShift", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 GetService srv = new GetService();
 
@@ -646,7 +646,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(requestDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteEmpWorkShift", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -661,7 +661,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, requestDTO, data.role_id, data.user_id);
+                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
 
                 return Ok(obj);
             }
@@ -831,7 +831,7 @@ namespace TUFTManagement.Controllers
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTime", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -860,7 +860,7 @@ namespace TUFTManagement.Controllers
                     
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
                 
@@ -890,7 +890,7 @@ namespace TUFTManagement.Controllers
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeWorkIn", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -919,7 +919,7 @@ namespace TUFTManagement.Controllers
                     
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
                 
@@ -949,7 +949,7 @@ namespace TUFTManagement.Controllers
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeWorkOut", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -978,7 +978,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1008,7 +1008,7 @@ namespace TUFTManagement.Controllers
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeFloorIn", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1037,7 +1037,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1067,7 +1067,7 @@ namespace TUFTManagement.Controllers
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeFloorOut", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1096,7 +1096,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.role_id, data.user_id);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1159,7 +1159,7 @@ namespace TUFTManagement.Controllers
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(transChangeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("ApproveWorkTimeTransChange", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1182,7 +1182,7 @@ namespace TUFTManagement.Controllers
 
                     if (transChangeRequestDTO.transChangeID.Equals(0) || transChangeRequestDTO.transChangeID.Equals(null))
                     {
-                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, platform.ToLower(), logID, transChangeRequestDTO, data.role_id, data.user_id);
+                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, platform.ToLower(), logID, transChangeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1215,7 +1215,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
                 int logID = _sql.InsertLogReceiveData("SaveMasterPosition", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1273,7 +1273,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_position", data.user_id);
+                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_position", data.userID);
 
                 return Ok(obj);
             }
@@ -1300,7 +1300,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
                 int logID = _sql.InsertLogReceiveData("GetMasterPosition", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 MasterDataService srv = new MasterDataService();
 
@@ -1341,7 +1341,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject("");
                 int logID = _sql.InsertLogReceiveData("SearchMasterDataPosition", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 MasterDataService srv = new MasterDataService();
 
@@ -1364,7 +1364,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_position", data.role_id);
+                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_position", data.roleIDList);
 
                 return Ok(obj);
             }
@@ -1391,7 +1391,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(saveBodySetDTO);
                 int logID = _sql.InsertLogReceiveData("SaveBodySet", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1426,11 +1426,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
                 {
-                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
+                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv.UpdateBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
+                    obj = srv.UpdateBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
                 }
 
 
@@ -1459,7 +1459,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
                 int logID = _sql.InsertLogReceiveData("GetBodySet", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 MasterDataService srv = new MasterDataService();
 
@@ -1500,7 +1500,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(saveBodySetDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteBodySet", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 //string checkMissingOptional = "";
 
@@ -1535,7 +1535,7 @@ namespace TUFTManagement.Controllers
 
                 if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
                 {
-                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.role_id, data.user_id);
+                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
                 }
                 
 
@@ -1569,7 +1569,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(feedbackDTO);
                 int logID = _sql.InsertLogReceiveData("SaveFeedback", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1592,7 +1592,7 @@ namespace TUFTManagement.Controllers
                 
                 InsertService srv = new InsertService();
                 var obj = new object();
-                obj = srv.InsertFeedbackService(authHeader, lang, platform.ToLower(), logID, feedbackDTO, 0, data.user_id);
+                obj = srv.InsertFeedbackService(authHeader, lang, platform.ToLower(), logID, feedbackDTO, 0, data.userID);
 
                 return Ok(obj);
             }
@@ -1619,7 +1619,7 @@ namespace TUFTManagement.Controllers
             {
                 string json = JsonConvert.SerializeObject(feedbackDTO);
                 int logID = _sql.InsertLogReceiveData("GetFeedback", json, timestampNow.ToString(), authHeader,
-                    data.user_id, platform.ToLower());
+                    data.userID, platform.ToLower());
 
                 GetService srv = new GetService();
 

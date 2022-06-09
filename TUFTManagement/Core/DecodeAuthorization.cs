@@ -30,15 +30,15 @@ namespace TUFTManagement.Core
                 JToken tokenHeader = JObject.Parse(decodeHeader);
                 JToken tokenPayload = JObject.Parse(decodePayload);
 
-                dataAuth.user_id = int.Parse(tokenPayload["user_id"].ToString());
-                dataAuth.role_id = int.Parse(tokenPayload["role_id"].ToString());
-                dataAuth.create_date = Convert.ToDouble(tokenPayload["create_date"].ToString());
-                dataAuth.expire_date = Convert.ToDouble(tokenPayload["expire_date"].ToString());
-                dataAuth.username = tokenHeader["username"].ToString();
+                dataAuth.userID = int.Parse(tokenPayload["user_id"].ToString());
+                dataAuth.roleIDList = tokenPayload["role_id"].ToString();
+                dataAuth.createDate = Convert.ToDouble(tokenPayload["create_date"].ToString());
+                dataAuth.expireDate = Convert.ToDouble(tokenPayload["expire_date"].ToString());
+                dataAuth.userName = tokenHeader["username"].ToString();
                 dataAuth.password = tokenHeader["password"].ToString();
-                dataAuth.type_login = tokenHeader["platform_login"].ToString();
+                dataAuth.typeLogin = tokenHeader["platform_login"].ToString();
                 dataAuth.signal = tokenHeader["signal"].ToString();
-                dataAuth.business_code = tokenPayload["business_code"].ToString();
+                dataAuth.shareCodeList = tokenPayload["business_code"].ToString();
             }
             catch (Exception ex)
             {
