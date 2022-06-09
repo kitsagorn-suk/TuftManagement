@@ -4382,5 +4382,59 @@ namespace TUFTManagement.Core
             }
             return result;
         }
+
+        public DataTable executeQueryWithReturnTableBusiness(string connectionString)
+        {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US", false);
+
+            CultureInfo cultureInfo = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
+            cultureInfo.DateTimeFormat.DateSeparator = "-";
+            cultureInfo.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
+
+            DataTable result = null;
+
+            //string cc = "Server=18.138.158.140;Initial Catalog=Inventory_Complex;Database=Lalisa;User ID=sa;Password=Snocko2020;Pooling=false;";
+            //string encode = Utility.Base64UrlEncode(cc);
+            connectionString = Utility.Base64ForUrlDecode(connectionString);
+            //string connectionString = WebConfigurationManager.AppSettings["connectionStrings"];
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+                command.CommandText = this.sqlCommand;
+
+                if (this.Parameters != null)
+                    foreach (SqlParameter parameter in this.Parameters)
+                        command.Parameters.Add(parameter);
+                try
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        result = new DataTable();
+                        if (reader.HasRows)
+                        {
+                            result.Load(reader);
+                        }
+                        command.Parameters.Clear();
+                    }
+                    command.Parameters.Clear();
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    connection.Dispose();
+                    connection.Close();
+                }
+            }
+            return result;
+        }
     }
 }

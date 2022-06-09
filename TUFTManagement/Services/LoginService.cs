@@ -23,6 +23,7 @@ namespace TUFTManagement.Services
             LoginModel value = new LoginModel();
             try
             {
+                string businesscode = "";
                 //user หา business_code มาว่าอยู่ร้านไหนบ้าง
                 value.data = new LoginData();
                 ValidationModel validation = ValidationManager.CheckValidationLogin(username, password.Trim(), lang, value.data.id, businesscode);
