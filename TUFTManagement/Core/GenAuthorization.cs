@@ -9,16 +9,14 @@ namespace TUFTManagement.Core
 {
     public class GenAuthorization
     {
-        public static string GetAuthorization(string username, string password, string signal, string platform)
+        public static string GetAuthorization(string username, string password, string signal, string platform, CheckUserByTokenModel dataFormToken)
         {
             SQLManager _sql = SQLManager.Instance;
             int expire_token = int.Parse(WebConfigurationManager.AppSettings["expire_token"]);
 
             double timestampNow = Utility.DateTimeToUnixTimestamp(DateTime.Now);
             double timestampExpire = Utility.DateTimeToUnixTimestamp(DateTime.Now.AddHours(expire_token));
-            CheckUserByTokenModel dataFormToken = new CheckUserByTokenModel();
-            dataFormToken = _sql.CheckUserID(username, password);
-
+            
             string header = "";
             header = "{";
             header += " \"username\":\"" + username + "\",";
@@ -32,8 +30,8 @@ namespace TUFTManagement.Core
             payload += " \"expire_date\":" + timestampExpire + ",";
             payload += " \"create_date\":" + timestampNow + ",";
             payload += " \"user_id\":" + dataFormToken.userID + ",";
-            payload += " \"role_id\":" + dataFormToken.roleID + ",";
-            payload += " \"business_code\":\"" + dataFormToken.business_code + "\",";
+            payload += " \"role_id\":" + dataFormToken.roleIDList + ",";
+            payload += " \"share_code\":\"" + dataFormToken.shareCodeList + "\",";
             payload += " }";
 
             string encryptedHeader = Utility.Base64UrlEncode(header);

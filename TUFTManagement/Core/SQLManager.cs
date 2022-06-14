@@ -319,82 +319,117 @@ namespace TUFTManagement.Core
             return list;
         }
 
-        public List<MenuList> GetAllMenuMain(int pRoleID, string pLang)
+        public List<RoleIDList> GetUserRole(int pUserID, string pLang)
         {
-            List<MenuList> list = new List<MenuList>();
+            List<RoleIDList> list = new List<RoleIDList>();
 
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_menu_main @pRoleID, @pLang");
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_user_role @pUserID, @pLang");
 
-            SqlParameter paramRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
-            paramRoleID.Direction = ParameterDirection.Input;
-            paramRoleID.Value = pRoleID;
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = pUserID;
 
             SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
             paramLang.Direction = ParameterDirection.Input;
             paramLang.Value = pLang;
 
-            sql.Parameters.Add(paramRoleID);
+            sql.Parameters.Add(paramUserID);
             sql.Parameters.Add(paramLang);
 
             table = sql.executeQueryWithReturnTable();
 
             if (table != null && table.Rows.Count > 0)
             {
-                MenuList data;
+                RoleIDList data;
                 foreach (DataRow row in table.Rows)
                 {
-                    data = new MenuList();
-                    data.loadDataMenu(row);
-
-                    data.menuSub = new List<MenuList>();
-                    data.menuSub = GetAllMenuSub(pRoleID, data.parentID, pLang);
-
+                    data = new RoleIDList();
+                    data.loadDataUserRole(row);
                     list.Add(data);
                 }
-
             }
             return list;
         }
 
-        public List<MenuList> GetAllMenuSub(int pRoleID, int pParentID, string pLang)
+        public List<ShareHolderList> GetUserShareHolder(int pUserID, string pLang)
         {
-            List<MenuList> list = new List<MenuList>();
+            List<ShareHolderList> list = new List<ShareHolderList>();
 
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_menu_sub @pRoleID, @pParentID, @pLang");
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_user_shareholder @pUserID, @pLang");
 
-            SqlParameter paramRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
-            paramRoleID.Direction = ParameterDirection.Input;
-            paramRoleID.Value = pRoleID;
-
-            SqlParameter paramParentID = new SqlParameter(@"pParentID", SqlDbType.Int);
-            paramParentID.Direction = ParameterDirection.Input;
-            paramParentID.Value = pParentID;
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = pUserID;
 
             SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
             paramLang.Direction = ParameterDirection.Input;
             paramLang.Value = pLang;
 
-            sql.Parameters.Add(paramRoleID);
-            sql.Parameters.Add(paramParentID);
+            sql.Parameters.Add(paramUserID);
             sql.Parameters.Add(paramLang);
 
             table = sql.executeQueryWithReturnTable();
 
             if (table != null && table.Rows.Count > 0)
             {
-                MenuList data;
+                ShareHolderList data;
                 foreach (DataRow row in table.Rows)
                 {
-                    data = new MenuList();
-                    data.loadDataMenu(row);
+                    data = new ShareHolderList();
+                    data.loadDataShareHolder(row);
+
+                    data.agentList = new List<AgentList>();
+                    data.agentList = GetUserAgent(pUserID, data.shareID, pLang);
+
                     list.Add(data);
                 }
-
             }
             return list;
         }
+
+        public List<AgentList> GetUserAgent(int pUserID, int pShareID, string pLang)
+        {
+            List<AgentList> list = new List<AgentList>();
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_user_agent @pUserID, @pShareID, @pLang");
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = pUserID;
+
+            SqlParameter paramShareID = new SqlParameter(@"pShareID", SqlDbType.Int);
+            paramShareID.Direction = ParameterDirection.Input;
+            paramShareID.Value = pShareID;
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = pLang;
+
+            sql.Parameters.Add(paramUserID);
+            sql.Parameters.Add(paramShareID);
+            sql.Parameters.Add(paramLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                AgentList data;
+                foreach (DataRow row in table.Rows)
+                {
+                    data = new AgentList();
+                    data.loadDataAgent(row);
+                    list.Add(data);
+                }
+            }
+            return list;
+        }
+
+
+
+        
 
         public int UpdateLogReceiveDataError(int pLogID, string pErrorText)
         {

@@ -50,7 +50,7 @@ namespace TUFTManagement.Core
             return value;
         }
 
-        public static ValidationModel CheckValidationLogin(string username, string password, string lang, int dataID, string businesscode)
+        public static ValidationModel CheckValidationLogin(string username, string password, string lang)
         {
             ValidationModel value = new ValidationModel();
             try
@@ -67,15 +67,6 @@ namespace TUFTManagement.Core
                     return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage301001.message, InvalidText = getMessage301001.topic };
                 }
                 #endregion
-                //#region E301006
-                //state = ValidationModel.InvalidState.E301006; //ผู้ใช้นี้ไม่ได้อยู่ในระบบร้าน
-                //int haveBusiness = _sql.CheckBusinessByUser(username, businesscode);
-                //if (haveBusiness == 0)
-                //{
-                //    GetMessageTopicDTO getMessage301006 = ValidationModel.GetInvalidMessage(state, lang);
-                //    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage301006.message, InvalidText = getMessage301006.topic };
-                //}
-                //#endregion
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;

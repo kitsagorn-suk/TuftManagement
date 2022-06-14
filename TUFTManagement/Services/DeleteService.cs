@@ -13,7 +13,7 @@ namespace TUFTManagement.Services
         private SQLManager _sql = SQLManager.Instance;
 
         public ReturnIdModel DeleteEmpProfileService(string authorization, string lang, string platform, int logID,
-            SaveEmpProfileDTO saveEmpProfileDTO, int roleID, int userID)
+            SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -63,7 +63,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel DeleteEmpRateService(string authorization, string lang, string platform, int logID,
-            EmpRateRequestDTO empRateRequestDTO, int roleID, int userID)
+            EmpRateRequestDTO empRateRequestDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
@@ -106,7 +106,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel DeleteEmpWorkShiftService(string authorization, string lang, string platform, int logID,
-            SaveEmpWorkShiftRequestDTO requestDTO, int roleID, int userID)
+            SaveEmpWorkShiftRequestDTO requestDTO, string roleIDList, int userID)
         {
             if (_sql == null)
             {
