@@ -7,7 +7,10 @@ namespace TUFTManagement.Models
 {
     public class MsgModel
     {
-        public MsgModel() { }
+        public MsgModel()
+        {
+
+        }
         public MsgModel(string text)
         {
             this.text = text;

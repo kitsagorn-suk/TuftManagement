@@ -54,9 +54,9 @@ namespace TUFTManagement.Controllers
                 response = new BasicResponse
                 {
                     success = false,
-                    msg = new MsgModel(value_return.InvalidMessage)
+                    msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
                 };
-                ResponseErrorReturn(response);
+                ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
             }
 
             #endregion
@@ -79,15 +79,16 @@ namespace TUFTManagement.Controllers
                         success = false,
                         msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
                     };
-                    ResponseErrorReturn(response);
+                    ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
                 #endregion
 
                 #region check shareCode
 
                 string[] shareCodeArr = new string[] {""};
-                shareCodeArr = data.shareCodeList.Split(',');
-                int checkDupShareCode = shareCodeArr.Count(x => x == shareCode);
+                string shareCodeReplace = data.shareCodeList.Replace(" ","");
+                shareCodeArr = shareCodeReplace.Split(',');
+                int checkDupShareCode = shareCodeArr.Count(x => x.ToLower() == shareCode.ToLower());
 
                 if (checkDupShareCode == 0)
                 {
@@ -102,7 +103,7 @@ namespace TUFTManagement.Controllers
                         success = false,
                         msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
                     };
-                    ResponseErrorReturn(response);
+                    ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
                 
                 #endregion
@@ -120,9 +121,9 @@ namespace TUFTManagement.Controllers
                     response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel(value_return.InvalidMessage)
+                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
                     };
-                    ResponseErrorReturn(response);
+                    ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
                 #endregion
 
@@ -142,9 +143,9 @@ namespace TUFTManagement.Controllers
                     response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel(value_return.InvalidMessage)
+                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
                     };
-                    ResponseErrorReturn(response);
+                    ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
                 #endregion
                 
@@ -207,9 +208,9 @@ namespace TUFTManagement.Controllers
 
             return data;
         }
-        public HttpResponseException ResponseErrorReturn(BasicResponse response)
+        public HttpResponseException ResponseErrorReturn(BasicResponse response, HttpStatusCode httpStatusCode)
         {
-            var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+            var error = new HttpResponseMessage(httpStatusCode);
             error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
             throw new HttpResponseException(error);
         }

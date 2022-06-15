@@ -39,7 +39,7 @@ namespace TUFTManagement.Core
 
                 GetMessageTopicDTO getMessageSuccess = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessageSuccess.message;
                 value.InvalidText = getMessageSuccess.topic;
             }
@@ -70,7 +70,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
@@ -117,7 +117,7 @@ namespace TUFTManagement.Core
                 
                 GetMessageTopicDTO getMessageSuccess = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessageSuccess.message;
                 value.InvalidText = getMessageSuccess.topic;
             }
@@ -155,7 +155,7 @@ namespace TUFTManagement.Core
 
                 GetMessageTopicDTO getMessageSuccess = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessageSuccess.message;
                 value.InvalidText = getMessageSuccess.topic;
             }
@@ -214,7 +214,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
 
@@ -284,7 +284,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
@@ -335,7 +335,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
@@ -357,7 +357,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
@@ -379,7 +379,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
@@ -399,7 +399,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
@@ -421,7 +421,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
@@ -464,7 +464,7 @@ namespace TUFTManagement.Core
 
                 getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
-                value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
                 value.InvalidText = getMessage.topic;
             }
