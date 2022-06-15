@@ -79,14 +79,18 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
+
             try
             {
+                string json = JsonConvert.SerializeObject(request.Headers.ToString());
+                int logID = _sql.InsertLogReceiveData("Logout", json, timestampNow.ToString(), authHeader,
+                    0, fromProject.ToLower());
                 LoginService srv = new LoginService();
 
                 var obj = srv.Logout(authHeader, lang, data.userID, fromProject.ToLower(), 1);

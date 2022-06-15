@@ -12,6 +12,11 @@ namespace TUFTManagement.Models
         {
             this.text = text;
         }
+        public MsgModel(string text, int code)
+        {
+            this.text = text;
+            this.code = code;
+        }
         public int code { get; set; } = 0;
         public string text { get; set; } = "";
         public string topic { get; set; } = "";

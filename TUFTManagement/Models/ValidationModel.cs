@@ -16,7 +16,7 @@ namespace TUFTManagement.Models
 
         public enum InvalidState
         {
-            E501, E502, E503, E504, E505,
+            E501, E502, E503, E504, E505, E506,
             S200001, S201001, S200002, S200003, S200004,
             E300001, E300002, E300003, E300004, E300005, E300006, E300007, E300008,
             E301001, E301002, E301003, E301004, E301005, E301006, E301007, E301008, E301009,
@@ -39,6 +39,8 @@ namespace TUFTManagement.Models
                     return 504;
                 case InvalidState.E505:
                     return 505;
+                case InvalidState.E506:
+                    return 506;
                 case InvalidState.S201001:
                     return 201001;
                 case InvalidState.E302001:
@@ -87,6 +89,9 @@ namespace TUFTManagement.Models
                     return message;
                 case InvalidState.E505:
                     message.message = "มีการเข้าสู่ระบบจากเครื่องอื่นกรุณา login ใหม่";
+                    return message;
+                case InvalidState.E506:
+                    message.message = "ShareCode ไม่ตรงกัน";
                     return message;
                 case InvalidState.S201001:
                     messagecode = 201001;

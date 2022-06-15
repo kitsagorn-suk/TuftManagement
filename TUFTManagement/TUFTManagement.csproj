@@ -206,6 +206,7 @@
     </Compile>
     <Compile Include="Models\AuthorizationModel.cs" />
     <Compile Include="Models\CheckUserByTokenModel.cs" />
+    <Compile Include="Models\CustomException.cs" />
     <Compile Include="Models\EmpWorkTime.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

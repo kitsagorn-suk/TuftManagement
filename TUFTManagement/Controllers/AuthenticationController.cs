@@ -16,6 +16,7 @@ namespace TUFTManagement.Controllers
     {
         private static AuthenticationController instance = null;
         private SQLManager _sql = SQLManager.Instance;
+
         private AuthenticationController()
         {
             if (_sql == null)
@@ -38,7 +39,9 @@ namespace TUFTManagement.Controllers
         public AuthorizationModel ValidateHeader(string authorization, string lang, string fromProject, string shareCode)
         {
             AuthorizationModel data = new AuthorizationModel();
-            
+
+            var response = new BasicResponse();
+
             #region check auth null
             if (string.IsNullOrEmpty(authorization) || authorization.ToString().Trim().ToLower() == "null")
             {
@@ -48,14 +51,12 @@ namespace TUFTManagement.Controllers
                 GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
                 ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
 
-                var response = new BasicResponse
+                response = new BasicResponse
                 {
                     success = false,
                     msg = new MsgModel(value_return.InvalidMessage)
                 };
-                var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-                error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
-                throw new HttpResponseException(error);
+                ResponseErrorReturn(response);
             }
 
             #endregion
@@ -64,7 +65,7 @@ namespace TUFTManagement.Controllers
             {
                 data = DecodeAuthorization.AuthorizationDecode(authorization);
 
-                #region check business
+                #region check project
                 if (data.fromProject.ToLower() != fromProject.ToLower())
                 {
                     ValidationModel value = new ValidationModel();
@@ -73,15 +74,37 @@ namespace TUFTManagement.Controllers
                     GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
                     ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
 
-                    var response = new BasicResponse
+                    response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel(value_return.InvalidMessage)
+                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
                     };
-                    var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-                    error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
-                    throw new HttpResponseException(error);
+                    ResponseErrorReturn(response);
                 }
+                #endregion
+
+                #region check shareCode
+
+                string[] shareCodeArr = new string[] {""};
+                shareCodeArr = data.shareCodeList.Split(',');
+                int checkDupShareCode = shareCodeArr.Count(x => x == shareCode);
+
+                if (checkDupShareCode == 0)
+                {
+                    ValidationModel value = new ValidationModel();
+                    ValidationModel.InvalidState state;
+                    state = ValidationModel.InvalidState.E506;
+                    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                    ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+
+                    response = new BasicResponse
+                    {
+                        success = false,
+                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
+                    };
+                    ResponseErrorReturn(response);
+                }
+                
                 #endregion
 
                 #region checkhasauthorization
@@ -94,14 +117,12 @@ namespace TUFTManagement.Controllers
                     GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
                     ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
 
-                    //var response = new BasicResponse
-                    //{
-                    //    success = false,
-                    //    msg = new MsgModel(value_return.InvalidMessage)
-                    //};
-                    var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-                    error.Content = new ObjectContent<ValidationModel>(value_return, new JsonMediaTypeFormatter(), "application/json");
-                    throw new HttpResponseException(error);
+                    response = new BasicResponse
+                    {
+                        success = false,
+                        msg = new MsgModel(value_return.InvalidMessage)
+                    };
+                    ResponseErrorReturn(response);
                 }
                 #endregion
 
@@ -118,31 +139,20 @@ namespace TUFTManagement.Controllers
                     GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
                     ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
 
-                    var response = new BasicResponse
+                    response = new BasicResponse
                     {
                         success = false,
                         msg = new MsgModel(value_return.InvalidMessage)
                     };
-                    var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-                    error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
-                    throw new HttpResponseException(error);
+                    ResponseErrorReturn(response);
                 }
                 #endregion
+                
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                ValidationModel value = new ValidationModel();
-                ValidationModel.InvalidState state;
-                state = ValidationModel.InvalidState.E501;
-                GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-
-                ex = new Exception(string.Format("{0} - {1}", getMessage.message, HttpStatusCode.Unauthorized));
-                ex.Data.Add(HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized);  // store "3" and "Invalid Parameters"
                 throw ex;
             }
-
-            
 
             #region checkversion 
             //string platfrom = (data.version_android != "0") ? "ANDROID" : "IOS";
@@ -197,5 +207,12 @@ namespace TUFTManagement.Controllers
 
             return data;
         }
+        public HttpResponseException ResponseErrorReturn(BasicResponse response)
+        {
+            var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+            error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
+            throw new HttpResponseException(error);
+        }
     }
+    
 }
