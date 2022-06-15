@@ -9,7 +9,7 @@ namespace TUFTManagement.Core
 {
     public class GenAuthorization
     {
-        public static string GetAuthorization(string username, string password, string signal, string platform, CheckUserByTokenModel dataFormToken)
+        public static string GetAuthorization(string username, string password, string signal, string fromProject, CheckUserByTokenModel dataFormToken)
         {
             SQLManager _sql = SQLManager.Instance;
             int expire_token = int.Parse(WebConfigurationManager.AppSettings["expire_token"]);
@@ -21,7 +21,7 @@ namespace TUFTManagement.Core
             header = "{";
             header += " \"username\":\"" + username + "\",";
             header += " \"password\":\"" + password + "\",";
-            header += " \"platform_login\":\"" + platform + "\",";
+            header += " \"fromProject\":\"" + fromProject + "\",";
             header += " \"signal\":\"" + signal + "\"";
             header += " }";
 
@@ -30,8 +30,8 @@ namespace TUFTManagement.Core
             payload += " \"expire_date\":" + timestampExpire + ",";
             payload += " \"create_date\":" + timestampNow + ",";
             payload += " \"user_id\":" + dataFormToken.userID + ",";
-            payload += " \"role_id\":" + dataFormToken.roleIDList + ",";
-            payload += " \"share_code\":\"" + dataFormToken.shareCodeList + "\",";
+            payload += " \"roleIDList\":" + dataFormToken.roleIDList + ",";
+            payload += " \"shareCodeList\":\"" + dataFormToken.shareCodeList + "\",";
             payload += " }";
 
             string encryptedHeader = Utility.Base64UrlEncode(header);

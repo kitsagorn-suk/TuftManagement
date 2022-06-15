@@ -669,7 +669,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pBusinessCode = new SqlParameter(@"pBusinessCode", SqlDbType.VarChar, 10);
             pBusinessCode.Direction = ParameterDirection.Input;
-            pBusinessCode.Value = saveEmpProfileDTO.businessCode;
+            pBusinessCode.Value = saveEmpProfileDTO.shareCode;
             sql.Parameters.Add(pBusinessCode);
 
             SqlParameter pIdentityCard = new SqlParameter(@"pIdentityCard", SqlDbType.VarChar, 30);

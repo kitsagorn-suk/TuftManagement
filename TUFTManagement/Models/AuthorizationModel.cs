@@ -14,7 +14,7 @@ namespace TUFTManagement.Models
         public string userName { get; set; } = "";
         public string password { get; set; } = "";
         public string shareCodeList { get; set; } = "";
-        public string typeLogin { get; set; } = "";
+        public string fromProject { get; set; } = "";
         public string signal { get; set; } = "";
         public double createDate { get; set; } = 0;
         public double expireDate { get; set; } = 0;

@@ -31,14 +31,16 @@ namespace TUFTManagement.Core
                 JToken tokenPayload = JObject.Parse(decodePayload);
 
                 dataAuth.userID = int.Parse(tokenPayload["user_id"].ToString());
-                dataAuth.userName = tokenHeader["username"].ToString();
-                dataAuth.password = tokenHeader["password"].ToString();                
                 dataAuth.createDate = Convert.ToDouble(tokenPayload["create_date"].ToString());
                 dataAuth.expireDate = Convert.ToDouble(tokenPayload["expire_date"].ToString());
-                dataAuth.fromProject = tokenHeader["fromProject"].ToString();
-                dataAuth.signal = tokenHeader["signal"].ToString();
                 dataAuth.roleIDList = tokenPayload["roleIDList"].ToString();
                 dataAuth.shareCodeList = tokenPayload["shareCodeList"].ToString();
+
+                dataAuth.userName = tokenHeader["username"].ToString();
+                dataAuth.password = tokenHeader["password"].ToString();
+                dataAuth.fromProject = tokenHeader["fromProject"].ToString();
+                dataAuth.signal = tokenHeader["signal"].ToString();
+                
             }
             catch (Exception ex)
             {

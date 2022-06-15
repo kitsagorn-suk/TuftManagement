@@ -35,14 +35,19 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            //string businesscode = request.Headers["businesscode"]; 
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             try
             {
+                if (string.IsNullOrEmpty(request.Headers["Fromproject"]))
+                {
+                    throw new Exception("invalid : Fromproject ");
+                }
                 string json = JsonConvert.SerializeObject(loginRs);
                 int logID = _sql.InsertLogReceiveData("Login", json, timestampNow.ToString(), authHeader,
-                    0, platform.ToLower());
+                    0, fromProject.ToLower());
+
                 
                 if (string.IsNullOrEmpty(loginRs.username))
                 {
@@ -58,7 +63,7 @@ namespace TUFTManagement.Controllers
 
                 LoginService srv = new LoginService();
 
-                var obj = srv.Login(authHeader, lang, username, password, platform.ToLower(), logID);
+                var obj = srv.Login(authHeader, lang, username, password, fromProject.ToLower(), logID);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -74,17 +79,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 LoginService srv = new LoginService();
 
-                var obj = srv.Logout(authHeader, lang, data.userID, platform.ToLower(), 1);
+                var obj = srv.Logout(authHeader, lang, data.userID, fromProject.ToLower(), 1);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -100,17 +105,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 LoginService srv = new LoginService();
 
-                var obj = srv.VerifyToken(authHeader, lang, platform.ToLower(), 1);
+                var obj = srv.VerifyToken(authHeader, lang, fromProject.ToLower(), 1);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -128,17 +133,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpProfile", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
                 
@@ -154,9 +159,9 @@ namespace TUFTManagement.Controllers
                 {
                     checkMissingOptional += "password ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.businessCode))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.shareCode))
                 {
-                    checkMissingOptional += "businessCode ";
+                    checkMissingOptional += "shareCode ";
                 }
                 if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCard))
                 {
@@ -309,11 +314,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpProfileDTO.empProfileID.Equals(0))
                 {
-                    obj = srv1.InsertEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                    obj = srv1.InsertEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv.UpdateEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                    obj = srv.UpdateEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                 }
 
                 return Ok(obj);
@@ -332,17 +337,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteEmpProfile", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -357,7 +362,7 @@ namespace TUFTManagement.Controllers
                 }
                 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpProfileService(authHeader, lang, platform.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                 
                 return Ok(obj);
             }
@@ -374,19 +379,19 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileService(authHeader, getEmpProfileDTO.lang, platform.ToLower(), 1, data.userID);
+                var obj = srv.GetEmpProfileService(authHeader, getEmpProfileDTO.lang, fromProject.ToLower(), 1, data.userID);
                 
                 return Ok(obj);
             }
@@ -403,17 +408,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(saveEmpRateDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpRate", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -437,11 +442,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpRateDTO.empRateID.Equals(0) || saveEmpRateDTO.empRateID.Equals(null))
                 {
-                    obj = srv.InsertEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
+                    obj = srv.InsertEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv2.UpdateEmpRateService(authHeader, lang, platform.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
+                    obj = srv2.UpdateEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
                 }
                 
 
@@ -460,11 +465,11 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
@@ -476,7 +481,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("Missing Parameter : empID");
                 }
 
-                var obj = srv.GetEmpRateService(authHeader, lang, platform.ToLower(), 1, empRateRequestDTO.empID);
+                var obj = srv.GetEmpRateService(authHeader, lang, fromProject.ToLower(), 1, empRateRequestDTO.empID);
 
                 return Ok(obj);
             }
@@ -493,17 +498,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(empRateRequestDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteEmpRate", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -518,7 +523,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpRateService(authHeader, lang, platform.ToLower(), logID, empRateRequestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpRateService(authHeader, lang, fromProject.ToLower(), logID, empRateRequestDTO, data.roleIDList, data.userID);
 
                 return Ok(obj);
             }
@@ -535,17 +540,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(saveEmpWorkShiftRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkShift", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -577,11 +582,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpWorkShiftRequestDTO.empWorkShiftID.Equals(0) || saveEmpWorkShiftRequestDTO.empWorkShiftID.Equals(null))
                 {
-                    obj = srv.InsertEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                    obj = srv.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv2.UpdateEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                    obj = srv2.UpdateEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
                 }
 
 
@@ -600,17 +605,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(requestDTO);
                 int logID = _sql.InsertLogReceiveData("GetEmpWorkShift", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
 
@@ -619,7 +624,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("Missing Parameter : empWorkShiftID");
                 }
 
-                var obj = srv.GetEmpWorkShiftService(authHeader, lang, platform.ToLower(), 1, requestDTO.empWorkShiftID);
+                var obj = srv.GetEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), 1, requestDTO.empWorkShiftID);
 
                 return Ok(obj);
             }
@@ -636,17 +641,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(requestDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteEmpWorkShift", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -661,7 +666,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, platform.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
 
                 return Ok(obj);
             }
@@ -820,18 +825,18 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTime", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -860,7 +865,7 @@ namespace TUFTManagement.Controllers
                     
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
                 
@@ -879,18 +884,18 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeWorkIn", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -919,7 +924,7 @@ namespace TUFTManagement.Controllers
                     
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
                 
@@ -938,18 +943,18 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeWorkOut", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -978,7 +983,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -997,18 +1002,18 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeFloorIn", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1037,7 +1042,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1056,18 +1061,18 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("SaveEmpWorkTimeFloorOut", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1096,7 +1101,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, platform.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1115,11 +1120,11 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
@@ -1131,7 +1136,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("Missing Parameter : empWorkTimeID");
                 }
 
-                var obj = srv.GetEmpWorkTimeService(authHeader, lang, platform.ToLower(), 1, empWorkTimeRequest.empWorkTimeID);
+                var obj = srv.GetEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), 1, empWorkTimeRequest.empWorkTimeID);
 
                 return Ok(obj);
             }
@@ -1148,18 +1153,18 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 var obj = new object();
                 string json = JsonConvert.SerializeObject(transChangeRequestDTO);
                 int logID = _sql.InsertLogReceiveData("ApproveWorkTimeTransChange", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1182,7 +1187,7 @@ namespace TUFTManagement.Controllers
 
                     if (transChangeRequestDTO.transChangeID.Equals(0) || transChangeRequestDTO.transChangeID.Equals(null))
                     {
-                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, platform.ToLower(), logID, transChangeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, fromProject.ToLower(), logID, transChangeRequestDTO, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1205,17 +1210,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
                 int logID = _sql.InsertLogReceiveData("SaveMasterPosition", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1273,7 +1278,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO, "master_position", data.userID);
+                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "master_position", data.userID);
 
                 return Ok(obj);
             }
@@ -1290,17 +1295,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
                 int logID = _sql.InsertLogReceiveData("GetMasterPosition", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
 
@@ -1308,7 +1313,7 @@ namespace TUFTManagement.Controllers
 
                 if (masterDataDTO.masterID != 0)
                 {
-                    obj = srv.GetMasterService(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID, "master_position");
+                    obj = srv.GetMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, "master_position");
                 }
                 else
                 {
@@ -1331,17 +1336,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject("");
                 int logID = _sql.InsertLogReceiveData("SearchMasterDataPosition", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
 
@@ -1364,7 +1369,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterService(authHeader, lang, platform.ToLower(), logID, searchMasterDataDTO, "master_position", data.roleIDList);
+                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "master_position", data.roleIDList);
 
                 return Ok(obj);
             }
@@ -1381,17 +1386,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(saveBodySetDTO);
                 int logID = _sql.InsertLogReceiveData("SaveBodySet", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1426,11 +1431,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
                 {
-                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
+                    obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
                 }
                 else
                 {
-                    obj = srv.UpdateBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
+                    obj = srv.UpdateBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
                 }
 
 
@@ -1449,17 +1454,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
                 int logID = _sql.InsertLogReceiveData("GetBodySet", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
 
@@ -1467,7 +1472,7 @@ namespace TUFTManagement.Controllers
 
                 if (masterDataDTO.masterID != 0)
                 {
-                    obj = srv.GetMasterBodySetervice(authHeader, lang, platform.ToLower(), logID, masterDataDTO.masterID);
+                    obj = srv.GetMasterBodySetervice(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID);
                 }
                 else
                 {
@@ -1490,17 +1495,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(saveBodySetDTO);
                 int logID = _sql.InsertLogReceiveData("DeleteBodySet", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 //string checkMissingOptional = "";
 
@@ -1535,7 +1540,7 @@ namespace TUFTManagement.Controllers
 
                 if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
                 {
-                    obj = srv.InsertBodySetService(authHeader, lang, platform.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
+                    obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
                 }
                 
 
@@ -1559,17 +1564,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(feedbackDTO);
                 int logID = _sql.InsertLogReceiveData("SaveFeedback", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
@@ -1592,7 +1597,7 @@ namespace TUFTManagement.Controllers
                 
                 InsertService srv = new InsertService();
                 var obj = new object();
-                obj = srv.InsertFeedbackService(authHeader, lang, platform.ToLower(), logID, feedbackDTO, 0, data.userID);
+                obj = srv.InsertFeedbackService(authHeader, lang, fromProject.ToLower(), logID, feedbackDTO, 0, data.userID);
 
                 return Ok(obj);
             }
@@ -1609,17 +1614,17 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string platform = "web";
-            string businesscode = request.Headers["businesscode"];
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, true, businesscode);
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
                 string json = JsonConvert.SerializeObject(feedbackDTO);
                 int logID = _sql.InsertLogReceiveData("GetFeedback", json, timestampNow.ToString(), authHeader,
-                    data.userID, platform.ToLower());
+                    data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
 
@@ -1627,7 +1632,7 @@ namespace TUFTManagement.Controllers
 
                 if (feedbackDTO.EmpID != 0)
                 {
-                    obj = srv.GetFeedbackService(authHeader, lang, platform.ToLower(), logID, feedbackDTO.EmpID);
+                    obj = srv.GetFeedbackService(authHeader, lang, fromProject.ToLower(), logID, feedbackDTO.EmpID);
                 }
                 else
                 {

@@ -13,7 +13,7 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public LoginModel Login(string authorization, string lang, string username, string password, string platform, int logID)
+        public LoginModel Login(string authorization, string lang, string username, string password, string fromProject, int logID)
         {
             if (_sql == null)
             {
@@ -31,7 +31,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    string auth = GenAuthorization.GetAuthorization(username, password, "InventoryComplex", platform.ToLower(), dataFormToken);
+                    string auth = GenAuthorization.GetAuthorization(username, password, "InventoryComplex", fromProject.ToLower(), dataFormToken);
                     value.data = _sql.Login(username, password, auth, lang);
                     value.data.token = auth;
 

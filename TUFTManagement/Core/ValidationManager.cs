@@ -19,23 +19,23 @@ namespace TUFTManagement.Core
             {
                 ValidationModel.InvalidState state;
 
-                #region E300001
-                state = ValidationModel.InvalidState.E300001; //Error Platform
-                if (platform != "web" || platform == null || platform == "")
-                {
-                    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-                }
-                #endregion
+                //#region E300001
+                //state = ValidationModel.InvalidState.E300001; //Error Platform
+                //if (platform != "web" || platform == null || platform == "")
+                //{
+                //    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                //    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                //}
+                //#endregion
 
-                #region E302001
-                state = ValidationModel.InvalidState.E302001; //Data not found
-                if (chkID == 0)
-                {
-                    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-                }
-                #endregion
+                //#region E302001
+                //state = ValidationModel.InvalidState.E302001; //Data not found
+                //if (chkID == 0)
+                //{
+                //    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                //    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                //}
+                //#endregion
 
                 GetMessageTopicDTO getMessageSuccess = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;

@@ -35,7 +35,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        public AuthorizationModel ValidateHeader(string authorization, string lang, bool check_user, string businesscode)
+        public AuthorizationModel ValidateHeader(string authorization, string lang, string fromProject, string shareCode)
         {
             AuthorizationModel data = new AuthorizationModel();
             
@@ -44,7 +44,7 @@ namespace TUFTManagement.Controllers
             {
                 ValidationModel value = new ValidationModel();
                 ValidationModel.InvalidState state;
-                state = ValidationModel.InvalidState.E501;
+                state = ValidationModel.InvalidState.E503;
                 GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
                 ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
 
@@ -65,12 +65,18 @@ namespace TUFTManagement.Controllers
                 data = DecodeAuthorization.AuthorizationDecode(authorization);
 
                 #region check business
-                if (data.shareCodeList != businesscode)
+                if (data.fromProject.ToLower() != fromProject.ToLower())
                 {
+                    ValidationModel value = new ValidationModel();
+                    ValidationModel.InvalidState state;
+                    state = ValidationModel.InvalidState.E504;
+                    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                    ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+
                     var response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel("มีการเข้าสู่ระบบจากด้วย business ไม่ตรงกัน")
+                        msg = new MsgModel(value_return.InvalidMessage)
                     };
                     var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
                     error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
@@ -82,13 +88,19 @@ namespace TUFTManagement.Controllers
                 bool success2 = _sql.CheckToken(authorization);
                 if (!success2)
                 {
-                    var response = new BasicResponse
-                    {
-                        success = false,
-                        msg = new MsgModel("มีการเข้าสู่ระบบจากเครื่องอื่นกรุณา login ใหม่")
-                    };
+                    ValidationModel value = new ValidationModel();
+                    ValidationModel.InvalidState state;
+                    state = ValidationModel.InvalidState.E505;
+                    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                    ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+
+                    //var response = new BasicResponse
+                    //{
+                    //    success = false,
+                    //    msg = new MsgModel(value_return.InvalidMessage)
+                    //};
                     var error = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-                    error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
+                    error.Content = new ObjectContent<ValidationModel>(value_return, new JsonMediaTypeFormatter(), "application/json");
                     throw new HttpResponseException(error);
                 }
                 #endregion
@@ -117,7 +129,7 @@ namespace TUFTManagement.Controllers
                 }
                 #endregion
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ValidationModel value = new ValidationModel();
                 ValidationModel.InvalidState state;
@@ -125,7 +137,7 @@ namespace TUFTManagement.Controllers
                 GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
                 ValidationModel value_return = new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
 
-                var ex = new Exception(string.Format("{0} - {1}", getMessage.message, HttpStatusCode.Unauthorized));
+                ex = new Exception(string.Format("{0} - {1}", getMessage.message, HttpStatusCode.Unauthorized));
                 ex.Data.Add(HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized);  // store "3" and "Invalid Parameters"
                 throw ex;
             }
