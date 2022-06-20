@@ -1302,18 +1302,16 @@ namespace TUFTManagement.Controllers
         public IHttpActionResult GetMasterPosition(MasterDataDTO masterDataDTO)
         {
             var request = HttpContext.Current.Request;
-
-            
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
-            HeadersDTO headerDTO = new HeadersDTO();
-            headerDTO.authHeader = authHeader;
-            headerDTO.lang = lang;
-            headerDTO.fromProject = fromProject;
-            headerDTO.shareCode = shareCode;
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
@@ -1321,7 +1319,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "GetMasterPosition", json, timestampNow.ToString(), headerDTO,
+                int logID = _sql.InsertLogReceiveData(shareCode, "GetMasterPosition", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
@@ -1353,16 +1351,22 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveData("SearchMasterDataPosition", json, timestampNow.ToString(), authHeader,
+                string json = JsonConvert.SerializeObject(searchMasterDataDTO);
+                int logID = _sql.InsertLogReceiveData(shareCode, "SearchMasterDataPosition", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
@@ -1386,7 +1390,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "master_position", data.roleIDList);
+                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "master_position", data.roleIDList, shareCode);
 
                 return Ok(obj);
             }
@@ -1396,6 +1400,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
+
         [Route("1.0/save/master/bodySet")]
         [HttpPost]
         public IHttpActionResult SaveBodySet(SaveBodySetRequestDTO saveBodySetDTO)
@@ -1403,8 +1408,14 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);

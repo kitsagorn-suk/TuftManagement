@@ -118,7 +118,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
@@ -128,18 +128,18 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(logID, 1);
+                _sql.UpdateStatusLog(shareCode, logID, 1);
             }
             return value;
         }
 
-        public SearchMasterDataModel SearchMasterService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList)
+        public SearchMasterDataModel SearchMasterService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
         {
             if (_sql == null)
             {
@@ -151,15 +151,15 @@ namespace TUFTManagement.Services
             {
                 Pagination<SearchMasterData> data = new Pagination<SearchMasterData>();
 
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.SearchMaster(searchMasterDataDTO, TableName);
+                    data = _sql.SearchMaster(shareCode, searchMasterDataDTO, TableName);
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -171,13 +171,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(logID, 1);
+                _sql.UpdateStatusLog(shareCode, logID, 1);
             }
             return value;
         }

@@ -4383,7 +4383,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public Pagination<SearchMasterData> SearchMaster(SearchMasterDataDTO searchMasterDataDTO, string TableName)
+        public Pagination<SearchMasterData> SearchMaster(string shareCode, SearchMasterDataDTO searchMasterDataDTO, string TableName)
         {
             DataTable table = new DataTable();
 
@@ -4431,7 +4431,7 @@ namespace TUFTManagement.Core
             pSortType.Value = searchMasterDataDTO.sortType;
             sql.Parameters.Add(pSortType);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
 
@@ -4446,14 +4446,14 @@ namespace TUFTManagement.Core
                 }
             }
 
-            int total = GetTotalSearchMaster(searchMasterDataDTO, TableName);
+            int total = GetTotalSearchMaster(shareCode, searchMasterDataDTO, TableName);
 
             pagination.SetPagination(total, searchMasterDataDTO.perPage, searchMasterDataDTO.pageInt);
 
             return pagination;
         }
 
-        public int GetTotalSearchMaster(SearchMasterDataDTO searchMasterDataDTO, string TableName)
+        public int GetTotalSearchMaster(string shareCode, SearchMasterDataDTO searchMasterDataDTO, string TableName)
         {
             int total = 0;
 
@@ -4478,7 +4478,7 @@ namespace TUFTManagement.Core
             pNameTH.Value = searchMasterDataDTO.nameTH;
             sql.Parameters.Add(pNameTH);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
