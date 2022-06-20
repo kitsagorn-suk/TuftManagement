@@ -1213,16 +1213,22 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("SaveMasterPosition", json, timestampNow.ToString(), authHeader,
+                int logID = _sql.InsertLogReceiveData(shareCode, "SaveMasterPosition", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
@@ -1281,7 +1287,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "master_position", data.userID);
+                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "master_position", data.userID, shareCode);
 
                 return Ok(obj);
             }
@@ -1296,10 +1302,18 @@ namespace TUFTManagement.Controllers
         public IHttpActionResult GetMasterPosition(MasterDataDTO masterDataDTO)
         {
             var request = HttpContext.Current.Request;
+
+            
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headerDTO = new HeadersDTO();
+            headerDTO.authHeader = authHeader;
+            headerDTO.lang = lang;
+            headerDTO.fromProject = fromProject;
+            headerDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
@@ -1307,7 +1321,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetMasterPosition", json, timestampNow.ToString(), authHeader,
+                int logID = _sql.InsertLogReceiveData(shareCode, "GetMasterPosition", json, timestampNow.ToString(), headerDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
@@ -1316,7 +1330,7 @@ namespace TUFTManagement.Controllers
 
                 if (masterDataDTO.masterID != 0)
                 {
-                    obj = srv.GetMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, "master_position");
+                    obj = srv.GetMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, "master_position", shareCode);
                 }
                 else
                 {

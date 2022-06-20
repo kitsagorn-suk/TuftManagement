@@ -178,6 +178,7 @@
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Core\DecodeConnectionShareCode.cs" />
     <Compile Include="Core\DecodeAuthorization.cs" />
     <Compile Include="Core\GenAuthorization.cs" />
     <Compile Include="Core\LogManager.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="DTO\FeedbackDTO.cs" />
+    <Compile Include="DTO\HeadersDTO.cs" />
     <Compile Include="DTO\GetEmpRateRequestDTO.cs" />
     <Compile Include="DTO\GetEmpProfileDTO.cs" />
     <Compile Include="DTO\GetMessageTopicDTO.cs" />

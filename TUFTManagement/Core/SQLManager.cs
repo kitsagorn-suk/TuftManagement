@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -111,7 +112,64 @@ namespace TUFTManagement.Core
             }
             return id;
         }
+        public int InsertLogReceiveData(string shareCode, string pServiceName, string pReceiveData, string pTimeStampNow, HeadersDTO headersDTO, int pUserID, string pType)
+        {
+            string json_header = JsonConvert.SerializeObject(headersDTO);
+            InsertLogReceiveData(pServiceName, json_header, pTimeStampNow, headersDTO.authHeader, pUserID, pType);
 
+            int id = 0;
+
+            ipAddress = GetIP();
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_log_receive_data @pServiceName, @pReceiveData, @pTimeStampNow, @pAuthorization, @pUserID, " +
+                "@pType, @pDeviceInfo");
+
+            SqlParameter paramServiceName = new SqlParameter(@"pServiceName", SqlDbType.VarChar, 50);
+            paramServiceName.Direction = ParameterDirection.Input;
+            paramServiceName.Value = pServiceName;
+
+            SqlParameter paramReceiveData = new SqlParameter(@"pReceiveData", SqlDbType.Text);
+            paramReceiveData.Direction = ParameterDirection.Input;
+            paramReceiveData.Value = pReceiveData;
+
+            SqlParameter paramTimeStampNow = new SqlParameter(@"pTimeStampNow", SqlDbType.VarChar, 100);
+            paramTimeStampNow.Direction = ParameterDirection.Input;
+            paramTimeStampNow.Value = pTimeStampNow;
+
+            SqlParameter paramAuthorization = new SqlParameter(@"pAuthorization", SqlDbType.Text);
+            paramAuthorization.Direction = ParameterDirection.Input;
+            paramAuthorization.Value = headersDTO.authHeader == null ? "" : headersDTO.authHeader;
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = pUserID;
+
+            SqlParameter paramType = new SqlParameter(@"pType", SqlDbType.VarChar, 100);
+            paramType.Direction = ParameterDirection.Input;
+            paramType.Value = pType;
+
+            SqlParameter paramDeviceInfo = new SqlParameter(@"pDeviceInfo", SqlDbType.Text);
+            paramDeviceInfo.Direction = ParameterDirection.Input;
+            paramDeviceInfo.Value = userAgent;
+
+            sql.Parameters.Add(paramServiceName);
+            sql.Parameters.Add(paramReceiveData);
+            sql.Parameters.Add(paramTimeStampNow);
+            sql.Parameters.Add(paramAuthorization);
+            sql.Parameters.Add(paramUserID);
+            sql.Parameters.Add(paramType);
+            sql.Parameters.Add(paramDeviceInfo);
+            
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+            return id;
+        }
         public int UpdateStatusLog(int pLogID, int pStatus)
         {
             int id = 0;
@@ -139,6 +197,33 @@ namespace TUFTManagement.Core
             }
             return id;
         }
+        public int UpdateStatusLog(string shareCode, int pLogID, int pStatus)
+        {
+            int id = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_status_log_receive_data @pLogID, @pStatus");
+
+            SqlParameter paramLogID = new SqlParameter(@"pLogID", SqlDbType.Int);
+            paramLogID.Direction = ParameterDirection.Input;
+            paramLogID.Value = pLogID;
+
+            SqlParameter paramStatus = new SqlParameter(@"pStatus", SqlDbType.Int);
+            paramStatus.Direction = ParameterDirection.Input;
+            paramStatus.Value = pStatus;
+
+            sql.Parameters.Add(paramLogID);
+            sql.Parameters.Add(paramStatus);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+            return id;
+        }
 
         public GetMessageTopicDTO GetMessageLang(string pLang, int pMsgCode)
         {
@@ -157,6 +242,34 @@ namespace TUFTManagement.Core
             sql.Parameters.Add(paramMsgCode);
 
             table = sql.executeQueryWithReturnTable();
+
+            GetMessageTopicDTO result = new GetMessageTopicDTO();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                result.message = dr["text"].ToString();
+                result.topic = dr["topic"].ToString();
+            }
+            return result;
+        }
+        public GetMessageTopicDTO GetMessageLang(string shareCode, string pLang, int pMsgCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_message_lang @pLang, @pMsgCode");
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = pLang;
+
+            SqlParameter paramMsgCode = new SqlParameter(@"pMsgCode", SqlDbType.Int);
+            paramMsgCode.Direction = ParameterDirection.Input;
+            paramMsgCode.Value = pMsgCode;
+
+            sql.Parameters.Add(paramLang);
+            sql.Parameters.Add(paramMsgCode);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             GetMessageTopicDTO result = new GetMessageTopicDTO();
 
@@ -450,6 +563,33 @@ namespace TUFTManagement.Core
             sql.Parameters.Add(paramErrorText);
 
             table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+            return id;
+        }
+        public int UpdateLogReceiveDataError(string shareCode, int pLogID, string pErrorText)
+        {
+            int id = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_log_receive_data_error @pLogID, @pErrorText");
+
+            SqlParameter paramLogID = new SqlParameter(@"pLogID", SqlDbType.Int);
+            paramLogID.Direction = ParameterDirection.Input;
+            paramLogID.Value = pLogID;
+
+            SqlParameter paramErrorText = new SqlParameter(@"pErrorText", SqlDbType.Text);
+            paramErrorText.Direction = ParameterDirection.Input;
+            paramErrorText.Value = pErrorText;
+
+            sql.Parameters.Add(paramLogID);
+            sql.Parameters.Add(paramErrorText);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -2060,7 +2200,7 @@ namespace TUFTManagement.Core
             return table;
         }
 
-        public DataTable CheckDuplicateMaster(string TableName, MasterDataDTO masterDataDTO)
+        public DataTable CheckDuplicateMaster(string shareCode, string TableName, MasterDataDTO masterDataDTO)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("");
@@ -2087,7 +2227,7 @@ namespace TUFTManagement.Core
             pNameTH.Value = masterDataDTO.nameTH;
             sql.Parameters.Add(pNameTH);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             return table;
         }
@@ -4000,7 +4140,7 @@ namespace TUFTManagement.Core
             pTableName.Value = tableName;
             sql.Parameters.Add(pTableName);
 
-            SqlParameter pFieldName = new SqlParameter(@"pFieldName", SqlDbType.VarChar,100);
+            SqlParameter pFieldName = new SqlParameter(@"pFieldName", SqlDbType.VarChar, 100);
             pFieldName.Direction = ParameterDirection.Input;
             pFieldName.Value = fieldName;
             sql.Parameters.Add(pFieldName);
@@ -4029,8 +4169,57 @@ namespace TUFTManagement.Core
 
             return data;
         }
+        public _ReturnIdModel InsertSystemLogChange(string shareCode, int actionID, string tableName, string fieldName, string newData, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_log_change " +
+                "@pActionID," +
+                "@pTableName," +
+                "@pFieldName," +
+                "@pNewData," +
+                "@pUserID ");
 
-        public _ReturnIdModel InsertMasterData(MasterDataDTO masterDataDTO, string TableName, int userID)
+            SqlParameter pActionID = new SqlParameter(@"pActionID", SqlDbType.Int);
+            pActionID.Direction = ParameterDirection.Input;
+            pActionID.Value = actionID;
+            sql.Parameters.Add(pActionID);
+
+            SqlParameter pTableName = new SqlParameter(@"pTableName", SqlDbType.VarChar, 100);
+            pTableName.Direction = ParameterDirection.Input;
+            pTableName.Value = tableName;
+            sql.Parameters.Add(pTableName);
+
+            SqlParameter pFieldName = new SqlParameter(@"pFieldName", SqlDbType.VarChar,100);
+            pFieldName.Direction = ParameterDirection.Input;
+            pFieldName.Value = fieldName;
+            sql.Parameters.Add(pFieldName);
+
+            SqlParameter pNewData = new SqlParameter(@"pNewData", SqlDbType.VarChar, 4000);
+            pNewData.Direction = ParameterDirection.Input;
+            pNewData.Value = newData;
+            sql.Parameters.Add(pNewData);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertMasterData(string shareCode, MasterDataDTO masterDataDTO, string TableName, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_data " +
@@ -4059,7 +4248,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4074,7 +4263,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel UpdateMasterData(MasterDataDTO masterDataDTO, string TableName, int userID)
+        public _ReturnIdModel UpdateMasterData(string shareCode, MasterDataDTO masterDataDTO, string TableName, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_master_data " +
@@ -4109,7 +4298,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4124,7 +4313,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel DeleteMasterData(MasterDataDTO masterDataDTO, string TableName, int userID)
+        public _ReturnIdModel DeleteMasterData(string shareCode, MasterDataDTO masterDataDTO, string TableName, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec delete_master_data " +
@@ -4147,7 +4336,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4162,7 +4351,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public MasterData GetMasterData(int id, string TableName)
+        public MasterData GetMasterData(string shareCode, int id, string TableName)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_master_data " +
@@ -4178,8 +4367,8 @@ namespace TUFTManagement.Core
             pTableName.Direction = ParameterDirection.Input;
             pTableName.Value = TableName;
             sql.Parameters.Add(pTableName);
-
-            table = sql.executeQueryWithReturnTable();
+            
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             MasterData data = new MasterData();
 
@@ -4335,6 +4524,33 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public string getConnectionEncoded(string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_connection_by_sharecode " +
+                "@pShareCode");
+
+            SqlParameter paramShareCode = new SqlParameter(@"pShareCode", SqlDbType.VarChar, 100);
+            paramShareCode.Direction = ParameterDirection.Input;
+            paramShareCode.Value = shareCode;
+            sql.Parameters.Add(paramShareCode);
+            
+            table = sql.executeQueryWithReturnTable();
+
+            string connectionEncoded = "";
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    connectionEncoded = dr["connectionString"].ToString();
+                }
+            }
+
+            return connectionEncoded;
+        }
+
         public DataTable GetAllEmpCode()
         {
             DataTable table = new DataTable();
@@ -4379,6 +4595,58 @@ namespace TUFTManagement.Core
             DataTable result = null;
 
             string connectionString = WebConfigurationManager.AppSettings["connectionStrings"];
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+                command.CommandText = this.sqlCommand;
+
+                if (this.Parameters != null)
+                    foreach (SqlParameter parameter in this.Parameters)
+                        command.Parameters.Add(parameter);
+                try
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        result = new DataTable();
+                        if (reader.HasRows)
+                        {
+                            result.Load(reader);
+                        }
+                        command.Parameters.Clear();
+                    }
+                    command.Parameters.Clear();
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    connection.Dispose();
+                    connection.Close();
+                }
+            }
+            return result;
+        }
+        public DataTable executeQueryWithReturnTable(string shareCode)
+        {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US", false);
+
+            CultureInfo cultureInfo = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
+            cultureInfo.DateTimeFormat.DateSeparator = "-";
+            cultureInfo.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
+
+            DataTable result = null;
+            
+            DecodeString decode = new DecodeString();
+
+            string connectionString = decode.Connection(shareCode);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

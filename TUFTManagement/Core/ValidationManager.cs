@@ -19,25 +19,30 @@ namespace TUFTManagement.Core
             {
                 ValidationModel.InvalidState state;
 
-                //#region E300001
-                //state = ValidationModel.InvalidState.E300001; //Error Platform
-                //if (platform != "web" || platform == null || platform == "")
-                //{
-                //    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                //    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-                //}
-                //#endregion
 
-                //#region E302001
-                //state = ValidationModel.InvalidState.E302001; //Data not found
-                //if (chkID == 0)
-                //{
-                //    GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                //    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-                //}
-                //#endregion
 
                 GetMessageTopicDTO getMessageSuccess = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
+                value.Success = true;
+                //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
+                value.InvalidMessage = getMessageSuccess.message;
+                value.InvalidText = getMessageSuccess.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+        public static ValidationModel CheckValidation(string shareCode, int chkID, string lang, string platform)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                ValidationModel.InvalidState state;
+                
+
+
+                GetMessageTopicDTO getMessageSuccess = ValidationModel.GetInvalidMessage(shareCode, ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
                 //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessageSuccess.message;
@@ -432,7 +437,7 @@ namespace TUFTManagement.Core
             return value;
         }
 
-        public static ValidationModel CheckValidationDupicateMasterData(string lang, string TableName, MasterDataDTO masterDataDTO)
+        public static ValidationModel CheckValidationDupicateMasterData(string shareCode, string lang, string TableName, MasterDataDTO masterDataDTO)
         {
             if (_sql == null)
             {
@@ -444,25 +449,25 @@ namespace TUFTManagement.Core
                 GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
                 ValidationModel.InvalidState state;
 
-                DataTable dt = _sql.CheckDuplicateMaster(TableName , masterDataDTO);
+                DataTable dt = _sql.CheckDuplicateMaster(shareCode, TableName, masterDataDTO);
 
                 if (dt.Rows.Count > 0)
                 {
                     if (dt.Rows[0]["status_name_en"].ToString() != "0")
                     {
                         state = ValidationModel.InvalidState.E301008;
-                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        getMessage = ValidationModel.GetInvalidMessage(shareCode, state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
                     if (dt.Rows[0]["status_name_th"].ToString() != "0")
                     {
                         state = ValidationModel.InvalidState.E301009;
-                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        getMessage = ValidationModel.GetInvalidMessage(shareCode, state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
                 }
 
-                getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
+                getMessage = ValidationModel.GetInvalidMessage(shareCode, ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
                 //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
