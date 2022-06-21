@@ -17,6 +17,8 @@ namespace TUFTManagement.Models
     {
         public int id { get; set; } = 0;
         public string username { get; set; } = "";
+        public int positionID { get; set; } = 0;
+        public string positionName { get; set; } = "";
         public string token { get; set; } = "";
         public List<RoleIDList> role { get; set; }
         public List<ShareHolderList> shareHolder { get; set; }
@@ -26,8 +28,8 @@ namespace TUFTManagement.Models
         {
             id = int.Parse(dr["id"].ToString());
             username = dr["username"].ToString();
-            //employeeName = dr["firstname"].ToString() + " " + dr["lastname"].ToString();
-            //imageUrl = dr["image_name"].ToString();
+            positionID = int.Parse(dr["position_id"].ToString());
+            positionName = dr["position_name"].ToString();
         }
     }
 

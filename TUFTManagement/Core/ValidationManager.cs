@@ -373,7 +373,7 @@ namespace TUFTManagement.Core
             return value;
         }
 
-        public static ValidationModel CheckValidationDupicateInsertBodySet(string lang, SaveBodySetRequestDTO saveBodySetDTO)
+        public static ValidationModel CheckValidationDupicateInsertBodySet(string shareCode, string lang, SaveBodySetRequestDTO saveBodySetDTO)
         {
             ValidationModel value = new ValidationModel();
             try
@@ -382,7 +382,7 @@ namespace TUFTManagement.Core
 
 
 
-                getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
+                getMessage = ValidationModel.GetInvalidMessage(shareCode, ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
                 //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;

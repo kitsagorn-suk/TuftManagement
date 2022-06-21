@@ -1423,49 +1423,33 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(saveBodySetDTO);
-                int logID = _sql.InsertLogReceiveData("SaveBodySet", json, timestampNow.ToString(), authHeader,
+                int logID = _sql.InsertLogReceiveData(shareCode, "SaveBodySet", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
+                
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = new ValidationModel();
 
-                string checkMissingOptional = "";
-
-                if (string.IsNullOrEmpty(saveBodySetDTO.height.ToString()))
-                {
-                    checkMissingOptional += checkMissingOptional + "height ";
-                }
-                if (string.IsNullOrEmpty(saveBodySetDTO.weight.ToString()))
-                {
-                    checkMissingOptional += checkMissingOptional + "weight ";
-                }
-                if (string.IsNullOrEmpty(saveBodySetDTO.chest.ToString()))
-                {
-                    checkMissingOptional += checkMissingOptional + "chest ";
-                }
-                if (string.IsNullOrEmpty(saveBodySetDTO.waist.ToString()))
-                {
-                    checkMissingOptional += checkMissingOptional + "waist ";
-                }
-                if (string.IsNullOrEmpty(saveBodySetDTO.hip.ToString()))
-                {
-                    checkMissingOptional += checkMissingOptional + "hip ";
-                }
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
+                chkRequestBody = validateService.RequireOptionalBodySet(shareCode, lang, fromProject.ToLower(), logID, saveBodySetDTO);
 
                 MasterDataService srv = new MasterDataService();
-                UpdateService srv2 = new UpdateService();
                 var obj = new object();
-
-                if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
+                obj = chkRequestBody;
+                
+                if (chkRequestBody.Success == true)
                 {
-                    obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
+                    if (saveBodySetDTO.mode.ToLower().Equals("insert"))
+                    {
+                        obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                    }
+                    else if (saveBodySetDTO.mode.ToLower().Equals("update"))
+                    {
+                        obj = srv.UpdateBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                    }
+                    else if (saveBodySetDTO.mode.ToLower().Equals("delete"))
+                    {
+                        obj = srv.DeleteBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                    }
                 }
-                else
-                {
-                    obj = srv.UpdateBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
-                }
-
 
                 return Ok(obj);
             }
@@ -1482,8 +1466,14 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
@@ -1491,7 +1481,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData("GetBodySet", json, timestampNow.ToString(), authHeader,
+                int logID = _sql.InsertLogReceiveData(shareCode, "GetBodySet", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
@@ -1500,79 +1490,13 @@ namespace TUFTManagement.Controllers
 
                 if (masterDataDTO.masterID != 0)
                 {
-                    obj = srv.GetMasterBodySetervice(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID);
+                    obj = srv.GetMasterBodySetervice(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, shareCode);
                 }
                 else
                 {
                     throw new Exception("Missing Parameter : ID ");
                 }
-
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("1.0/delete/master/bodySet")]
-        [HttpPost]
-        public IHttpActionResult DeleteBodySet(SaveBodySetRequestDTO saveBodySetDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(saveBodySetDTO);
-                int logID = _sql.InsertLogReceiveData("DeleteBodySet", json, timestampNow.ToString(), authHeader,
-                    data.userID, fromProject.ToLower());
-
-                //string checkMissingOptional = "";
-
-                //if (string.IsNullOrEmpty(saveBodySetDTO.height.ToString()))
-                //{
-                //    checkMissingOptional += checkMissingOptional + "height ";
-                //}
-                //if (string.IsNullOrEmpty(saveBodySetDTO.weight.ToString()))
-                //{
-                //    checkMissingOptional += checkMissingOptional + "weight ";
-                //}
-                //if (string.IsNullOrEmpty(saveBodySetDTO.chest.ToString()))
-                //{
-                //    checkMissingOptional += checkMissingOptional + "chest ";
-                //}
-                //if (string.IsNullOrEmpty(saveBodySetDTO.waist.ToString()))
-                //{
-                //    checkMissingOptional += checkMissingOptional + "waist ";
-                //}
-                //if (string.IsNullOrEmpty(saveBodySetDTO.hip.ToString()))
-                //{
-                //    checkMissingOptional += checkMissingOptional + "hip ";
-                //}
-                //if (checkMissingOptional != "")
-                //{
-                //    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                //}
-
-                MasterDataService srv = new MasterDataService();
-                UpdateService srv2 = new UpdateService();
-                var obj = new object();
-
-                if (saveBodySetDTO.id.Equals(0) || saveBodySetDTO.id.Equals(null))
-                {
-                    obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID);
-                }
                 
-
-
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -1581,7 +1505,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
-
+        
         #endregion
 
         #region Feedback

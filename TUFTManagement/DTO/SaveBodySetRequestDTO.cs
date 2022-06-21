@@ -7,7 +7,8 @@ namespace TUFTManagement.DTO
 {
     public class SaveBodySetRequestDTO
     {
-        public int id { set; get; } = 0;
+        public string mode { set; get; } = "";
+        public int masterID { set; get; } = 0;
         public float height { set; get; } = 0;
         public float weight { set; get; } = 0;
         public int chest { set; get; } = 0;

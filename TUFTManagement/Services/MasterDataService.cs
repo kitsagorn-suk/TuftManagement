@@ -2192,92 +2192,7 @@ namespace TUFTManagement.Services
         //    }
         //    return value;
         //}
-        //public ReturnIdModel DeleteBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, int roleID, int userID)
-        //{
-        //    if (_sql == null)
-        //    {
-        //        _sql = SQLManager.Instance;
-        //    }
-
-        //    ReturnIdModel value = new ReturnIdModel();
-        //    try
-        //    {
-        //        value.data = new _ReturnIdModel();
-        //        ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
-
-        //        if (validation.Success == true)
-        //        {
-        //            string TableName = "system_body_set";
-        //            _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "status", "0", userID);
-
-
-        //            value.data = _sql.DeleteBodySet(saveBodySetDTO, userID);
-        //        }
-        //        else
-        //        {
-        //            _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-        //        }
-
-        //        value.success = validation.Success;
-        //        value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateBodySetService:");
-        //        if (logID > 0)
-        //        {
-        //            _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-        //        }
-        //        throw ex;
-        //    }
-        //    finally
-        //    {
-        //        _sql.UpdateStatusLog(logID, 1);
-        //    }
-        //    return value;
-        //}
-
-        public ReturnIdModel InsertBodySetService(string authorization, string lang, string platform, int logID,
-            SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
-            ReturnIdModel value = new ReturnIdModel();
-            try
-            {
-                value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertBodySet(lang, saveBodySetDTO);
-                if (validation.Success == true)
-                {
-                    value.data = _sql.InsertBodySet(saveBodySetDTO, userID);
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                }
-
-                value.success = validation.Success;
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpRateService:");
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
-
-        public ReturnIdModel UpdateBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID)
+        public ReturnIdModel DeleteBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -2288,22 +2203,18 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
                     string TableName = "system_body_set";
-                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "height", saveBodySetDTO.height.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "weight", saveBodySetDTO.weight.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "chest", saveBodySetDTO.chest.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "waist", saveBodySetDTO.waist.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveBodySetDTO.id, TableName, "hip", saveBodySetDTO.hip.ToString(), userID);
-
-                    value.data = _sql.UpdateBodySet(saveBodySetDTO, userID);
+                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "status", "0", userID);
+                    
+                    value.data = _sql.DeleteBodySet(shareCode, saveBodySetDTO, userID);
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -2314,19 +2225,107 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateBodySetService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(logID, 1);
+                _sql.UpdateStatusLog(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel InsertBodySetService(string authorization, string lang, string platform, int logID,
+            SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertBodySet(shareCode, lang, saveBodySetDTO);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.InsertBodySet(shareCode, saveBodySetDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpRateService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel UpdateBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    string TableName = "system_body_set";
+                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "height", saveBodySetDTO.height.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "weight", saveBodySetDTO.weight.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "chest", saveBodySetDTO.chest.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "waist", saveBodySetDTO.waist.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "hip", saveBodySetDTO.hip.ToString(), userID);
+
+                    value.data = _sql.UpdateBodySet(shareCode, saveBodySetDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateBodySetService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(shareCode, logID, 1);
             }
             return value;
         }
 
         
-        public GetBodySetModel GetMasterBodySetervice(string authorization, string lang, string platform, int logID, int masterID)
+        public GetBodySetModel GetMasterBodySetervice(string authorization, string lang, string platform, int logID, int masterID, string shareCode)
         {
             if (_sql == null)
             {
@@ -2339,17 +2338,17 @@ namespace TUFTManagement.Services
                 BodySet data = new BodySet();
 
                 
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetBodySet(masterID);
+                    data = _sql.GetBodySet(shareCode, masterID);
                     value.data = data;
                     value.success = validation.Success;
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
@@ -2359,13 +2358,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "GetBodySetService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(logID, 1);
+                _sql.UpdateStatusLog(shareCode, logID, 1);
             }
             return value;
         }

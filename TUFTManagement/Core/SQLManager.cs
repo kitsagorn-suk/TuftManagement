@@ -1920,7 +1920,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public BodySet GetBodySet(int id)
+        public BodySet GetBodySet(string shareCode, int id)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_body_set " +
@@ -1931,7 +1931,7 @@ namespace TUFTManagement.Core
             pId.Value = id;
             sql.Parameters.Add(pId);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             BodySet data = new BodySet();
 
@@ -1946,7 +1946,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel InsertBodySet(SaveBodySetRequestDTO saveBodySetDTO, int userID)
+        public _ReturnIdModel InsertBodySet(string shareCode, SaveBodySetRequestDTO saveBodySetDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_body_set " +
@@ -1987,7 +1987,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -2002,7 +2002,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel UpdateBodySet(SaveBodySetRequestDTO saveBodySetDTO, int userID)
+        public _ReturnIdModel UpdateBodySet(string shareCode, SaveBodySetRequestDTO saveBodySetDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_body_set " +
@@ -2016,7 +2016,7 @@ namespace TUFTManagement.Core
 
             SqlParameter paramBodyID = new SqlParameter(@"pBodyID", SqlDbType.Int);
             paramBodyID.Direction = ParameterDirection.Input;
-            paramBodyID.Value = saveBodySetDTO.id;
+            paramBodyID.Value = saveBodySetDTO.masterID;
             sql.Parameters.Add(paramBodyID);
 
             SqlParameter paramHeight = new SqlParameter(@"pHeight", SqlDbType.Float);
@@ -2096,7 +2096,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel DeleteBodySet(SaveBodySetRequestDTO saveBodySetDTO, int userID)
+        public _ReturnIdModel DeleteBodySet(string shareCode, SaveBodySetRequestDTO saveBodySetDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_body_set " +
@@ -2105,7 +2105,7 @@ namespace TUFTManagement.Core
 
             SqlParameter paramBodyID = new SqlParameter(@"pBodyID", SqlDbType.Int);
             paramBodyID.Direction = ParameterDirection.Input;
-            paramBodyID.Value = saveBodySetDTO.id;
+            paramBodyID.Value = saveBodySetDTO.masterID;
             sql.Parameters.Add(paramBodyID);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
@@ -2113,7 +2113,7 @@ namespace TUFTManagement.Core
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
