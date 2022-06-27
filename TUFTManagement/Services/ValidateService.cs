@@ -97,6 +97,48 @@ namespace TUFTManagement.Services
             }
             return validation;
         }
+        public ValidationModel RequireOptionalAllDropdown(string shareCode, string lang, string platform, int logID, GetDropdownRequestDTO getDropdownRequestDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
 
+            ValidationModel validation = new ValidationModel();
+
+            try
+            {
+                if (string.IsNullOrEmpty(getDropdownRequestDTO.moduleName))
+                {
+                    throw new Exception("Missing Parameter : moduleName ");
+                }
+                else if (getDropdownRequestDTO.moduleName.ToLower() == "district".ToLower() &&
+                         getDropdownRequestDTO.provinceID.Equals(0) || getDropdownRequestDTO.provinceID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : provinceID ");
+                }
+                else if (getDropdownRequestDTO.moduleName.ToLower() == "subDistrict".ToLower() &&
+                         getDropdownRequestDTO.districtID.Equals(0) || getDropdownRequestDTO.districtID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : districtID ");
+                }
+                else
+                {
+                    validation = ValidationManager.CheckValidation(shareCode, 0, lang, platform);
+                }
+
+                return validation;
+
+            }
+            catch (Exception ex)
+            {
+                //LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalAllDropdown:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+        }
     }
 }

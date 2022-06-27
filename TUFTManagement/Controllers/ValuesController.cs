@@ -128,6 +128,62 @@ namespace TUFTManagement.Controllers
         }
         #endregion
 
+        #region Main API
+
+        [Route("1.0/get/dropdownByModuleName")]
+        [HttpPost]
+        public IHttpActionResult GetDropdownByModuleName(GetDropdownRequestDTO getDropdownRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(getDropdownRequestDTO);
+                int logID = _sql.InsertLogReceiveData("GetDropdownByModuleName", json, timestampNow.ToString(), headersDTO.authHeader,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = validateService.RequireOptionalAllDropdown(shareCode, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+
+                var obj = new object();
+                obj = chkRequestBody;
+
+                if (chkRequestBody.Success == true)
+                {
+                    if (getDropdownRequestDTO.moduleName.ToLower() == "subDistrict".ToLower())
+                    {
+                        obj = srv.GetSubDistrictDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    }
+                    else
+                    {
+                        obj = srv.GetAllDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    }
+                }
+                
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        #endregion
+
         #region Add Employees
         [Route("1.0/save/empProfile")]
         [HttpPost]

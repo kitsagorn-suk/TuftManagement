@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TUFTManagement.Core;
+using TUFTManagement.DTO;
 using TUFTManagement.Models;
 
 namespace TUFTManagement.Services
@@ -11,6 +12,93 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
+        public GetAllDropdownModel GetAllDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetAllDropdownModel value = new GetAllDropdownModel();
+            try
+            {
+                value.data = new List<_DropdownAllData>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                if (validation.Success == true)
+                {
+                    if (request.moduleName == "district")
+                    {
+                        value.data = _sql.GetDropdownDistrict(lang, request.provinceID);
+                    }
+                    else
+                    {
+                        value.data = _sql.GetDropdownByModuleName(lang, request.moduleName);
+                    }
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetAllDropdownService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+        public GetSubDistrictDropdownModel GetSubDistrictDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetSubDistrictDropdownModel value = new GetSubDistrictDropdownModel();
+            try
+            {
+                value.data = new List<DropdownSubDistrict>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.GetDropdownSubDistrict(lang, request.districtID);
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetSubDistrictDropdownService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
         public GetEmpProfileModel GetEmpProfileService(string authorization, string lang, string platform, int logID, int userID)
         {
             if (_sql == null)

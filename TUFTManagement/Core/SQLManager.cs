@@ -2049,7 +2049,7 @@ namespace TUFTManagement.Core
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -2099,7 +2099,7 @@ namespace TUFTManagement.Core
         public _ReturnIdModel DeleteBodySet(string shareCode, SaveBodySetRequestDTO saveBodySetDTO, int userID)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec update_body_set " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_body_set " +
                 "@pBodyID, " +
                 "@pUpdateBy");
 
@@ -4570,6 +4570,107 @@ namespace TUFTManagement.Core
 
             return table;
         }
+
+        public List<_DropdownAllData> GetDropdownByModuleName(string lang, string moduleName)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_by_module_name " +
+                "@pLang, " +
+                "@pModuleName");
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+            SqlParameter paramModuleName = new SqlParameter(@"pModuleName", SqlDbType.VarChar, 50);
+            paramModuleName.Direction = ParameterDirection.Input;
+            paramModuleName.Value = moduleName;
+            sql.Parameters.Add(paramModuleName);
+            
+            table = sql.executeQueryWithReturnTable();
+
+            List<_DropdownAllData> listData = new List<_DropdownAllData>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    _DropdownAllData data = new _DropdownAllData();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+        public List<_DropdownAllData> GetDropdownDistrict(string lang, int provinceID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_district " +
+                "@pProvinceID, " +
+                "@pLang");
+
+            SqlParameter pProvinceID = new SqlParameter(@"pProvinceID", SqlDbType.Int);
+            pProvinceID.Direction = ParameterDirection.Input;
+            pProvinceID.Value = provinceID;
+            sql.Parameters.Add(pProvinceID);
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<_DropdownAllData> listData = new List<_DropdownAllData>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    _DropdownAllData data = new _DropdownAllData();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+        public List<DropdownSubDistrict> GetDropdownSubDistrict(string lang, int districtID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_sub_district " +
+                "@pDistrictID, " +
+                "@pLang");
+
+            SqlParameter pDistrictID = new SqlParameter(@"pDistrictID", SqlDbType.Int);
+            pDistrictID.Direction = ParameterDirection.Input;
+            pDistrictID.Value = districtID;
+            sql.Parameters.Add(pDistrictID);
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<DropdownSubDistrict> listData = new List<DropdownSubDistrict>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DropdownSubDistrict data = new DropdownSubDistrict();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
     }
 
     public class SQLCustomExecute
