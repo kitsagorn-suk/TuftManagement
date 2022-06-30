@@ -7,6 +7,7 @@ namespace TUFTManagement.DTO
 {
     public class SearchMasterDataDTO
     {
+        public string paramSearch { set; get; } = "";
         public string nameEN { set; get; } = "";
         public string nameTH { set; get; } = "";
         public int perPage { set; get; } = 0;

@@ -7,6 +7,8 @@ namespace TUFTManagement.DTO
 {
     public class SaveEmpProfileDTO
     {
+        public string mode { set; get; } = "";
+        public int newUserID { set; get; } = 0;
         public int empProfileID { set; get; } = 0;
         public string shareCode { set; get; } = "";
         public string empCode { set; get; } = "";

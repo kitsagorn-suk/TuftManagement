@@ -244,6 +244,7 @@
     <Compile Include="Models\Pagination.cs" />
     <Compile Include="Models\ReturnIdModel.cs" />
     <Compile Include="Models\ReturnVerifyModel.cs" />
+    <Compile Include="Models\SearchMasterDataBodySetModel.cs" />
     <Compile Include="Models\SearchMasterDataModel.cs" />
     <Compile Include="Models\ReturnMessageModel.cs" />
     <Compile Include="Models\UploadModel.cs" />

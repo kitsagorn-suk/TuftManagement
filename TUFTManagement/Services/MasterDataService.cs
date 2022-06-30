@@ -182,7 +182,48 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public SearchMasterDataBodySetModel SearchMasterBodySetService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
 
+            SearchMasterDataBodySetModel value = new SearchMasterDataBodySetModel();
+            try
+            {
+                Pagination<SearchMasterDataBodySet> data = new Pagination<SearchMasterDataBodySet>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchMasterBodySet(shareCode, searchMasterDataDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterBodySetService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(shareCode, logID, 1);
+            }
+            return value;
+        }
 
 
         //public SearchMasterDataModel SearchMasterDataPositionService(string authorization, string lang, string platform, int logID, int perPage, int pageInt, string paramSearch

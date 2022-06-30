@@ -99,7 +99,7 @@ namespace TUFTManagement.Services
             }
             return value;
         }
-        public GetEmpProfileModel GetEmpProfileService(string authorization, string lang, string platform, int logID, int userID)
+        public GetEmpProfileModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, int userID)
         {
             if (_sql == null)
             {
@@ -111,17 +111,17 @@ namespace TUFTManagement.Services
             {
                 EmpProfile data = new EmpProfile();
 
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetEmpProfile(userID, lang);
+                    data = _sql.GetEmpProfile(shareCode, userID, lang);
                     value.data = data;
                     value.success = validation.Success;
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
@@ -131,7 +131,7 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }

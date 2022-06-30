@@ -15,7 +15,7 @@ namespace TUFTManagement.Services
 
         #region Insert Employees
 
-        public InsertLoginModel InsertEmpProfileService(string authorization, string lang, string platform, int logID,
+        public InsertLoginModel InsertEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID,
             SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
         {
             if (_sql == null)
@@ -26,17 +26,20 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new InsertLogin();
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmp(lang, saveEmpProfileDTO); 
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO); 
                 if (validation.Success == true)
                 {
                     //รอเรื่องสิทธิ์
                     //List<string> listobjectID = new List<string>();
                     //listobjectID.Add("100301001");
                     //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
-                    validation = ValidationManager.CheckValidation(1, lang, platform);
-                    if (validation.Success == true)
+
+                    saveEmpProfileDTO.newUserID = _sql.insertUserLogin(saveEmpProfileDTO, userID);
+
+                    if (saveEmpProfileDTO.newUserID != 0)
                     {
-                        value.data = _sql.InsertEmpProfile(saveEmpProfileDTO, userID);
+                        value.data = _sql.InsertEmpProfile(shareCode, saveEmpProfileDTO, userID);
+                        value.data = _sql.InsertEmpAddress(shareCode, saveEmpProfileDTO, userID);
                     }
                     else
                     {

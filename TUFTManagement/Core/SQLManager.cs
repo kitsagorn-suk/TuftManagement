@@ -541,8 +541,8 @@ namespace TUFTManagement.Core
         }
 
 
-
         
+
 
         public int UpdateLogReceiveDataError(int pLogID, string pErrorText)
         {
@@ -677,14 +677,13 @@ namespace TUFTManagement.Core
             return success;
         }
 
-        public DataTable CheckDupicateInsertEmp(SaveEmpProfileDTO saveEmpProfileDTO, int pUserID)
+        public DataTable CheckDupicateInsertEmp(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int pUserID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec check_dupicate_employee " +
                 "@pFirstNameTh, " +
                 "@pLastNameTh, " +
                 "@pEmpCode, " +
-                "@pUserName, " +
                 "@pIdentityCard, " +
                 "@pUserID ");
 
@@ -702,12 +701,7 @@ namespace TUFTManagement.Core
             pEmpCode.Direction = ParameterDirection.Input;
             pEmpCode.Value = saveEmpProfileDTO.empCode;
             sql.Parameters.Add(pEmpCode);
-
-            SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 200);
-            pUserName.Direction = ParameterDirection.Input;
-            pUserName.Value = saveEmpProfileDTO.userName;
-            sql.Parameters.Add(pUserName);
-
+            
             SqlParameter pIdentityCard = new SqlParameter(@"pIdentityCard", SqlDbType.VarChar, 30);
             pIdentityCard.Direction = ParameterDirection.Input;
             pIdentityCard.Value = saveEmpProfileDTO.identityCard;
@@ -718,11 +712,31 @@ namespace TUFTManagement.Core
             paramUserID.Value = pUserID;
             sql.Parameters.Add(paramUserID);
 
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            return table;
+        }
+        public DataTable CheckDupicateUsername(SaveEmpProfileDTO saveEmpProfileDTO, int pUserID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec check_dupicate_username " +
+                "@pUserName, " +
+                "@pUserID ");
+
+            SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 150);
+            pUserName.Direction = ParameterDirection.Input;
+            pUserName.Value = saveEmpProfileDTO.userName;
+            sql.Parameters.Add(pUserName);
+            
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = pUserID;
+            sql.Parameters.Add(paramUserID);
+
             table = sql.executeQueryWithReturnTable();
 
             return table;
         }
-
         public DataTable CheckValidationRoleID(string ObjectID, int RoleID)
         {
             DataTable table = new DataTable();
@@ -744,15 +758,76 @@ namespace TUFTManagement.Core
 
             return table;
         }
+        public int insertUserLogin(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        {
+            int total = 0;
 
-        public InsertLogin InsertEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_user_login " +
+                "@pUserName, " +
+                "@pPassword, " +
+                "@pPositionID, " +
+                "@pCreateBy");
+
+            SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 200);
+            pUserName.Direction = ParameterDirection.Input;
+            pUserName.Value = saveEmpProfileDTO.userName;
+            sql.Parameters.Add(pUserName);
+
+            SqlParameter pPassWord = new SqlParameter(@"pPassWord", SqlDbType.VarChar, 250);
+            pPassWord.Direction = ParameterDirection.Input;
+            pPassWord.Value = saveEmpProfileDTO.password;
+            sql.Parameters.Add(pPassWord);
+
+            SqlParameter pPositionID = new SqlParameter(@"pPositionID", SqlDbType.Int);
+            pPositionID.Direction = ParameterDirection.Input;
+            pPositionID.Value = saveEmpProfileDTO.positionID;
+            sql.Parameters.Add(pPositionID);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                total = int.Parse(dr["id"].ToString());
+            }
+            return total;
+        }
+        public int getUserIdByEmpProfileID(string shareCode, int empProfileID)
+        {
+            int userID = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_user_id_by_emp_id " +
+                "@pEmpProfileID");
+
+            SqlParameter paramEmpProfileID = new SqlParameter(@"pEmpProfileID", SqlDbType.Int);
+            paramEmpProfileID.Direction = ParameterDirection.Input;
+            paramEmpProfileID.Value = empProfileID;
+            sql.Parameters.Add(paramEmpProfileID);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                userID = int.Parse(dr["user_id"].ToString());
+            }
+            return userID;
+        }
+        public InsertLogin InsertEmpProfile(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_profile " +
+                "@pUserID, " +
                 "@pEmpCode, " +
                 "@pUserName, " +
                 "@pPassWord, " +
-                "@pBusinessCode," +
                 "@pIdentityCard, " +
                 "@pIdentityCardExpiry, " +
                 "@pTitleID, " +
@@ -779,18 +854,12 @@ namespace TUFTManagement.Core
                 "@pOccupationID," +
                 "@pBodySetID," +
                 "@pShirtSize," +
-                "@pCAddress," +
-                "@pCSubDistrictID," +
-                "@pCDistrictID," +
-                "@pCProvinceID," +
-                "@pCZipcode," +
-                "@pIsSamePermanentAddress," +
-                "@pPAddress," +
-                "@pPSubDistrictID," +
-                "@pPDistrictID," +
-                "@pPProvinceID," +
-                "@pPZipcode," +
                 "@pCreateBy");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = saveEmpProfileDTO.newUserID;
+            sql.Parameters.Add(pUserID);
 
             SqlParameter pEmpCode = new SqlParameter(@"pEmpCode", SqlDbType.VarChar, 10);
             pEmpCode.Direction = ParameterDirection.Input;
@@ -806,11 +875,6 @@ namespace TUFTManagement.Core
             pPassWord.Direction = ParameterDirection.Input;
             pPassWord.Value = saveEmpProfileDTO.password;
             sql.Parameters.Add(pPassWord);
-
-            SqlParameter pBusinessCode = new SqlParameter(@"pBusinessCode", SqlDbType.VarChar, 10);
-            pBusinessCode.Direction = ParameterDirection.Input;
-            pBusinessCode.Value = saveEmpProfileDTO.shareCode;
-            sql.Parameters.Add(pBusinessCode);
 
             SqlParameter pIdentityCard = new SqlParameter(@"pIdentityCard", SqlDbType.VarChar, 30);
             pIdentityCard.Direction = ParameterDirection.Input;
@@ -941,7 +1005,50 @@ namespace TUFTManagement.Core
             pShirtSize.Direction = ParameterDirection.Input;
             pShirtSize.Value = saveEmpProfileDTO.shirtSize;
             sql.Parameters.Add(pShirtSize);
+            
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
 
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            InsertLogin data = new InsertLogin();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public InsertLogin InsertEmpAddress(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_address " +
+                "@pUserID, " +
+                "@pCAddress," +
+                "@pCSubDistrictID," +
+                "@pCDistrictID," +
+                "@pCProvinceID," +
+                "@pCZipcode," +
+                "@pIsSamePermanentAddress," +
+                "@pPAddress," +
+                "@pPSubDistrictID," +
+                "@pPDistrictID," +
+                "@pPProvinceID," +
+                "@pPZipcode," +
+                "@pCreateBy");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = saveEmpProfileDTO.newUserID;
+            sql.Parameters.Add(pUserID);
+            
             SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);
             pCAddress.Direction = ParameterDirection.Input;
             pCAddress.Value = saveEmpProfileDTO.cAddress;
@@ -1002,7 +1109,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             InsertLogin data = new InsertLogin();
 
@@ -1484,7 +1591,7 @@ namespace TUFTManagement.Core
         #endregion
 
 
-        public _ReturnIdModel UpdateEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        public _ReturnIdModel UpdateEmpProfile(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_profile " +
@@ -1506,7 +1613,6 @@ namespace TUFTManagement.Core
                 "@pMonthlySalary," +
                 "@pDailySalary," +
                 "@pEmploymentTypeID," +
-                "@pRoleID," +
                 "@pMaritalID," +
                 "@pRelationID," +
                 "@pFirstname," +
@@ -1515,17 +1621,6 @@ namespace TUFTManagement.Core
                 "@pOccupationID," +
                 "@pBodySetID," +
                 "@pShirtSize," +
-                "@pCAddress," +
-                "@pCSubDistrictID," +
-                "@pCDistrictID," +
-                "@pCProvinceID," +
-                "@pCZipcode," +
-                "@pIsSamePermanentAddress," +
-                "@pPAddress," +
-                "@pPSubDistrictID," +
-                "@pPDistrictID," +
-                "@pPProvinceID," +
-                "@pPZipcode," +
                 "@pUpdateBy");
 
             SqlParameter pEmpProfileID = new SqlParameter(@"pEmpProfileID", SqlDbType.Int);
@@ -1617,11 +1712,6 @@ namespace TUFTManagement.Core
             pEmploymentTypeID.Direction = ParameterDirection.Input;
             pEmploymentTypeID.Value = saveEmpProfileDTO.employmentTypeID;
             sql.Parameters.Add(pEmploymentTypeID);
-            
-            SqlParameter pRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
-            pRoleID.Direction = ParameterDirection.Input;
-            pRoleID.Value = saveEmpProfileDTO.roleID;
-            sql.Parameters.Add(pRoleID);
 
             SqlParameter pMaritalID = new SqlParameter(@"pMaritalID", SqlDbType.Int);
             pMaritalID.Direction = ParameterDirection.Input;
@@ -1662,6 +1752,49 @@ namespace TUFTManagement.Core
             pShirtSize.Direction = ParameterDirection.Input;
             pShirtSize.Value = saveEmpProfileDTO.shirtSize;
             sql.Parameters.Add(pShirtSize);
+            
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateEmpAddress(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_address " +
+                "@pUserID, " +
+                "@pCAddress," +
+                "@pCSubDistrictID," +
+                "@pCDistrictID," +
+                "@pCProvinceID," +
+                "@pCZipcode," +
+                "@pIsSamePermanentAddress," +
+                "@pPAddress," +
+                "@pPSubDistrictID," +
+                "@pPDistrictID," +
+                "@pPProvinceID," +
+                "@pPZipcode," +
+                "@pUpdateBy");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = saveEmpProfileDTO.newUserID;
+            sql.Parameters.Add(pUserID);
 
             SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);
             pCAddress.Direction = ParameterDirection.Input;
@@ -1723,7 +1856,7 @@ namespace TUFTManagement.Core
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4452,6 +4585,90 @@ namespace TUFTManagement.Core
 
             return pagination;
         }
+        public Pagination<SearchMasterDataBodySet> SearchMasterBodySet(string shareCode, SearchMasterDataDTO searchMasterDataDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_body_set_page " +
+                "@pParamSearch, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchMasterDataDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+            
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchMasterDataDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchMasterDataDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchMasterDataDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchMasterDataDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            Pagination<SearchMasterDataBodySet> pagination = new Pagination<SearchMasterDataBodySet>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchMasterDataBodySet data = new SearchMasterDataBodySet();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchMasterBodySet(shareCode, searchMasterDataDTO);
+
+            pagination.SetPagination(total, searchMasterDataDTO.perPage, searchMasterDataDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchMasterBodySet(string shareCode, SearchMasterDataDTO searchMasterDataDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_body_set_total " +
+                "@pParamSearch " );
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchMasterDataDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
 
         public int GetTotalSearchMaster(string shareCode, SearchMasterDataDTO searchMasterDataDTO, string TableName)
         {
@@ -4492,7 +4709,7 @@ namespace TUFTManagement.Core
             return total;
         }
 
-        public EmpProfile GetEmpProfile(int userID, string lang)
+        public EmpProfile GetEmpProfile(string shareCode, int userID, string lang)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_emp_profile " +
@@ -4509,7 +4726,7 @@ namespace TUFTManagement.Core
             pLang.Value = lang;
             sql.Parameters.Add(pLang);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             EmpProfile data = new EmpProfile();
 

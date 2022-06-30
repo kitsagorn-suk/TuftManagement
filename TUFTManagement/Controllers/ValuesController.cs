@@ -192,8 +192,14 @@ namespace TUFTManagement.Controllers
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
@@ -201,185 +207,28 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
-                int logID = _sql.InsertLogReceiveData("SaveEmpProfile", json, timestampNow.ToString(), authHeader,
+                int logID = _sql.InsertLogReceiveData(shareCode, "SaveEmpProfile", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
-                string checkMissingOptional = "";
-                
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.empCode))
-                {
-                    checkMissingOptional += "empCode ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.userName))
-                {
-                    checkMissingOptional += "userName ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.password))
-                {
-                    checkMissingOptional += "password ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.shareCode))
-                {
-                    checkMissingOptional += "shareCode ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCard))
-                {
-                    checkMissingOptional += "identityCard ";
-                }
-                if (saveEmpProfileDTO.identityCard.Count() != 13)
-                {
-                    checkMissingOptional += "identityCard is incomplete ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCardExpiry))
-                {
-                    checkMissingOptional += "identityCardExpiry ";
-                }
-                if (saveEmpProfileDTO.titleID.Equals(0))
-                {
-                    checkMissingOptional += "titleID ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.firstNameTH))
-                {
-                    checkMissingOptional += "firstNameTH ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.lastNameTH))
-                {
-                    checkMissingOptional += "lastNameTH ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.phoneNumber))
-                {
-                    checkMissingOptional += "phoneNumber ";
-                }
-                if (saveEmpProfileDTO.phoneNumber.Count() < 9 || saveEmpProfileDTO.phoneNumber.Count() > 10)
-                {
-                    checkMissingOptional += "phoneNumber is incomplete ";
-                }
-                if (saveEmpProfileDTO.positionID.Equals(0))
-                {
-                    checkMissingOptional += "positionID ";
-                }
-                if (saveEmpProfileDTO.perNum.Equals(0))
-                {
-                    checkMissingOptional += "perNum ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.dateOfBirth))
-                {
-                    checkMissingOptional += "dateOfBirth ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.joinDate))
-                {
-                    checkMissingOptional += "joinDate ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.proPassDate))
-                {
-                    checkMissingOptional += "proPassDate ";
-                }
-                if (saveEmpProfileDTO.monthlySalary.Equals(0))
-                {
-                    checkMissingOptional += "monthlySalary ";
-                }
-                if (saveEmpProfileDTO.dailySalary.Equals(0))
-                {
-                    checkMissingOptional += "dailySalary ";
-                }
-                if (saveEmpProfileDTO.employmentTypeID.Equals(0))
-                {
-                    checkMissingOptional += "employmentTypeID ";
-                }
-                if (saveEmpProfileDTO.maritalID.Equals(0))
-                {
-                    checkMissingOptional += "maritalID ";
-                }
-                if (saveEmpProfileDTO.pRelationID.Equals(0))
-                {
-                    checkMissingOptional += "pRelationID ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pFirstname))
-                {
-                    checkMissingOptional += "pFirstname ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pLastname))
-                {
-                    checkMissingOptional += "pLastname ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pDateOfBirth))
-                {
-                    checkMissingOptional += "pDateOfBirth ";
-                }
-                if (saveEmpProfileDTO.pOccupationID.Equals(0))
-                {
-                    checkMissingOptional += "pOccupationID ";
-                }
-                if (saveEmpProfileDTO.bodySetID.Equals(0))
-                {
-                    checkMissingOptional += "bodySetID ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.shirtSize))
-                {
-                    checkMissingOptional += "shirtSize ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
-                {
-                    checkMissingOptional += "cAddress ";
-                }
-                if (saveEmpProfileDTO.cSubDistrictID.Equals(0))
-                {
-                    checkMissingOptional += "cSubDistrictID ";
-                }
-                if (saveEmpProfileDTO.cDistrictID.Equals(0))
-                {
-                    checkMissingOptional += "cDistrictID ";
-                }
-                if (saveEmpProfileDTO.cProvinceID.Equals(0))
-                {
-                    checkMissingOptional += "cProvinceID ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.cZipcode))
-                {
-                    checkMissingOptional += "cZipcode ";
-                }
-                if (saveEmpProfileDTO.isSamePermanentAddress.Equals(0))
-                {
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress))
-                    {
-                        checkMissingOptional += "pAddress ";
-                    }
-                    if (saveEmpProfileDTO.pSubDistrictID.Equals(0))
-                    {
-                        checkMissingOptional += "pSubDistrictID ";
-                    }
-                    if (saveEmpProfileDTO.pDistrictID.Equals(0))
-                    {
-                        checkMissingOptional += "pDistrictID ";
-                    }
-                    if (saveEmpProfileDTO.pProvinceID.Equals(0))
-                    {
-                        checkMissingOptional += "pProvinceID ";
-                    }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pZipcode))
-                    {
-                        checkMissingOptional += "pZipcode ";
-                    }
-                }
-                
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-                
-                InsertService srv1 = new InsertService();
-                UpdateService srv = new UpdateService();
+                ValidateService validateService = new ValidateService();
+                saveEmpProfileDTO.shareCode = shareCode;
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
+
                 var obj = new object();
-
-                if (saveEmpProfileDTO.empProfileID.Equals(0))
+                if (chkRequestBody.Success == true)
                 {
-                    obj = srv1.InsertEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                    if (saveEmpProfileDTO.empProfileID.Equals(0) && saveEmpProfileDTO.mode == "insert")
+                    {
+                        InsertService srv = new InsertService();
+                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                    }
+                    else if (saveEmpProfileDTO.empProfileID > 0 && saveEmpProfileDTO.mode == "update")
+                    {
+                        UpdateService srv = new UpdateService();
+                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                    }
                 }
-                else
-                {
-                    obj = srv.UpdateEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
-                }
-
+                
                 return Ok(obj);
 
             }
@@ -433,24 +282,32 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/get/empProfile")]
         [HttpPost]
-        public IHttpActionResult GetEmpProfile(GetEmpProfileDTO getEmpProfileDTO)
+        public IHttpActionResult GetEmpProfile()
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveData(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileService(authHeader, getEmpProfileDTO.lang, fromProject.ToLower(), 1, data.userID);
+                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
                 
                 return Ok(obj);
             }
@@ -1456,6 +1313,61 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/search/master/bodySet")]
+        [HttpPost]
+        public IHttpActionResult SearchMasterDataBodySet(SearchMasterDataDTO searchMasterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchMasterDataDTO);
+                int logID = _sql.InsertLogReceiveData(shareCode, "SearchMasterDataBodySet", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchMasterDataDTO.sortField > 4)
+                {
+                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
+                }
+                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchMasterBodySetService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_body_set", data.roleIDList, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         [Route("1.0/save/master/bodySet")]
         [HttpPost]

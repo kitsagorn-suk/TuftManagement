@@ -300,7 +300,7 @@ namespace TUFTManagement.Core
             return value;
         }
 
-        public static ValidationModel CheckValidationDupicateInsertEmp(string lang, SaveEmpProfileDTO saveEmpProfileDTO)
+        public static ValidationModel CheckValidationDupicateInsertEmp(string shareCode, string lang, SaveEmpProfileDTO saveEmpProfileDTO)
         {
             ValidationModel value = new ValidationModel();
             try
@@ -308,37 +308,44 @@ namespace TUFTManagement.Core
                 GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
                 ValidationModel.InvalidState state;
 
-                DataTable dt = _sql.CheckDupicateInsertEmp(saveEmpProfileDTO, 0);
+                int userIdTarget = _sql.getUserIdByEmpProfileID(shareCode, saveEmpProfileDTO.empProfileID);
 
-                if (dt.Rows.Count > 0)
+                DataTable dt = _sql.CheckDupicateInsertEmp(shareCode, saveEmpProfileDTO, userIdTarget);
+                DataTable dt2 = _sql.CheckDupicateUsername(saveEmpProfileDTO, userIdTarget);
+
+                if (dt2.Rows.Count > 0)
                 {
-                    if (dt.Rows[0]["Name"].ToString() != "0")
-                    {
-                        state = ValidationModel.InvalidState.E301002;
-                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-                    }
-                    if (dt.Rows[0]["EmpCode"].ToString() != "0")
-                    {
-                        state = ValidationModel.InvalidState.E301003;
-                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-                    }
-                    if (dt.Rows[0]["UserName"].ToString() != "0")
+                    if (dt2.Rows[0]["UserName"].ToString() != "0")
                     {
                         state = ValidationModel.InvalidState.E301004;
                         getMessage = ValidationModel.GetInvalidMessage(state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
+                }
+                
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0]["Name"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301002;
+                        getMessage = ValidationModel.GetInvalidMessage(shareCode, state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                    if (dt.Rows[0]["EmpCode"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301003;
+                        getMessage = ValidationModel.GetInvalidMessage(shareCode, state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
                     if (dt.Rows[0]["IdentityCard"].ToString() != "0")
                     {
                         state = ValidationModel.InvalidState.E301005;
-                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        getMessage = ValidationModel.GetInvalidMessage(shareCode, state, lang);
                         return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                     }
                 }
 
-                getMessage = ValidationModel.GetInvalidMessage(ValidationModel.InvalidState.S201001, lang);
+                getMessage = ValidationModel.GetInvalidMessage(shareCode, ValidationModel.InvalidState.S201001, lang);
                 value.Success = true;
                 //value.InvalidCode = ValidationModel.GetInvalidCode(ValidationModel.InvalidState.S201001);
                 value.InvalidMessage = getMessage.message;
