@@ -233,30 +233,6 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "employmentTypeID ";
                 }
-                if (saveEmpProfileDTO.maritalID.Equals(0))
-                {
-                    checkMissingOptional += "maritalID ";
-                }
-                if (saveEmpProfileDTO.pRelationID.Equals(0))
-                {
-                    checkMissingOptional += "pRelationID ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pFirstname))
-                {
-                    checkMissingOptional += "pFirstname ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pLastname))
-                {
-                    checkMissingOptional += "pLastname ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pDateOfBirth))
-                {
-                    checkMissingOptional += "pDateOfBirth ";
-                }
-                if (saveEmpProfileDTO.pOccupationID.Equals(0))
-                {
-                    checkMissingOptional += "pOccupationID ";
-                }
                 if (saveEmpProfileDTO.bodySetID.Equals(0))
                 {
                     checkMissingOptional += "bodySetID ";
@@ -265,6 +241,19 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "shirtSize ";
                 }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.emerFirstname))
+                {
+                    checkMissingOptional += "emerFirstname ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.emerLastname))
+                {
+                    checkMissingOptional += "emerLastname ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.emerContact))
+                {
+                    checkMissingOptional += "emerContact ";
+                }
+
                 if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
                 {
                     checkMissingOptional += "cAddress ";
@@ -307,6 +296,59 @@ namespace TUFTManagement.Services
                     {
                         checkMissingOptional += "pZipcode ";
                     }
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    validation = ValidationManager.CheckValidation(shareCode, 0, lang, platform);
+                }
+
+                return validation;
+
+            }
+            catch (Exception ex)
+            {
+                //LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalAllDropdown:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+        }
+
+        public ValidationModel RequireOptionalSaveEmpWorkShift(string shareCode, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ValidationModel validation = new ValidationModel();
+
+            try
+            {
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.wsCode))
+                {
+                    checkMissingOptional += "wsCode ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.timeStart))
+                {
+                    checkMissingOptional += "timeStart ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.timeEnd))
+                {
+                    checkMissingOptional += "timeEnd ";
+                }
+                if (saveEmpWorkShiftRequestDTO.workTypeID.Equals(0) || saveEmpWorkShiftRequestDTO.workTypeID.Equals(null))
+                {
+                    checkMissingOptional += "workTypeID ";
                 }
 
                 if (checkMissingOptional != "")

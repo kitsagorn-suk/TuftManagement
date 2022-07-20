@@ -52,12 +52,6 @@ namespace TUFTManagement.Services
                     _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);
                     _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "daily_salary", saveEmpProfileDTO.dailySalary.ToString(), userID);
                     _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "employment_type_id", saveEmpProfileDTO.employmentTypeID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "marital_id", saveEmpProfileDTO.maritalID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "p_relation_id", saveEmpProfileDTO.pRelationID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "p_firstname", saveEmpProfileDTO.pFirstname.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "p_lastname", saveEmpProfileDTO.pLastname.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "p_date_of_birth", saveEmpProfileDTO.pDateOfBirth.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "p_occupation_id", saveEmpProfileDTO.pOccupationID.ToString(), userID);
                     _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "body_set_id", saveEmpProfileDTO.bodySetID.ToString(), userID);
                     _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "shirt_size", saveEmpProfileDTO.shirtSize.ToString(), userID);
                     value.data = _sql.UpdateEmpProfile(shareCode, saveEmpProfileDTO, userID);

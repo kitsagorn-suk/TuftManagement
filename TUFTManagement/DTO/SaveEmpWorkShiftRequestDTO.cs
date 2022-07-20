@@ -7,6 +7,7 @@ namespace TUFTManagement.DTO
 {
     public class SaveEmpWorkShiftRequestDTO
     {
+        public string mode { set; get; } = "";
         public int empWorkShiftID { set; get; } = 0;
         public string wsCode { set; get; } = "";
         public string timeStart { set; get; } = "";

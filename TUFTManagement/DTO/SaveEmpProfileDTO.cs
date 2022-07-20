@@ -32,14 +32,12 @@ namespace TUFTManagement.DTO
         public decimal dailySalary { set; get; } = 0;
         public int employmentTypeID { set; get; } = 0;
         public int roleID { set; get; } = 0; 
-        public int maritalID { set; get; } = 0; 
-        public int pRelationID { set; get; } = 0;
-        public string pFirstname { set; get; } = "";
-        public string pLastname { set; get; } = "";
-        public string pDateOfBirth { set; get; } = "";
-        public int pOccupationID { set; get; } = 0;
         public int bodySetID { set; get; } = 0;
         public string shirtSize { set; get; } = "";
+
+        public string emerFirstname { set; get; } = "";
+        public string emerLastname { set; get; } = "";
+        public string emerContact { set; get; } = "";
 
         public string cAddress { set; get; } = "";
         public int cSubDistrictID { set; get; } = 0;
