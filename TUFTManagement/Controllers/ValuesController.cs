@@ -214,6 +214,21 @@ namespace TUFTManagement.Controllers
                 saveEmpProfileDTO.shareCode = shareCode;
                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
 
+                // prepair username 
+                saveEmpProfileDTO.userName = shareCode.ToUpper() + saveEmpProfileDTO.userName;
+
+                // prepair isSamePermanentAddress
+                if (saveEmpProfileDTO.isSamePermanentAddress == 1)
+                {
+                    saveEmpProfileDTO.cCountryID = saveEmpProfileDTO.pCountryID;
+                    saveEmpProfileDTO.cAddress = saveEmpProfileDTO.pAddress;
+                    saveEmpProfileDTO.cProvinceID = saveEmpProfileDTO.pProvinceID;
+                    saveEmpProfileDTO.cDistrictID = saveEmpProfileDTO.pDistrictID;
+                    saveEmpProfileDTO.cSubDistrictID = saveEmpProfileDTO.pSubDistrictID;
+                    saveEmpProfileDTO.cZipcode = saveEmpProfileDTO.pZipcode;
+                    saveEmpProfileDTO.cPhoneContact = saveEmpProfileDTO.pPhoneContact;
+                }
+
                 var obj = new object();
                 if (chkRequestBody.Success == true)
                 {
@@ -225,7 +240,7 @@ namespace TUFTManagement.Controllers
                     else if (saveEmpProfileDTO.empProfileID > 0 && saveEmpProfileDTO.mode.ToLower() == "update")
                     {
                         UpdateService srv = new UpdateService();
-                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                        //obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                     }
                 }
                 

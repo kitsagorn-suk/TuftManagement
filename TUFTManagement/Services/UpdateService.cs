@@ -12,90 +12,90 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public ReturnIdModel UpdateEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
+        //public ReturnIdModel UpdateEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
+        //{
+        //    if (_sql == null)
+        //    {
+        //        _sql = SQLManager.Instance;
+        //    }
 
-            ReturnIdModel value = new ReturnIdModel();
-            try
-            {
-                value.data = new _ReturnIdModel();
+        //    ReturnIdModel value = new ReturnIdModel();
+        //    try
+        //    {
+        //        value.data = new _ReturnIdModel();
 
-                //รอเรื่องสิทธิ์
-                //ValidationModel validation = new ValidationModel();
-                //List<string> listobjectID = new List<string>();
-                //listobjectID.Add("100201001");
-                //listobjectID.Add("100301003");
-                //validation = ValidationManager.CheckValidationUpdate(insertEmpProfileDTO.empProfileID, "emp_profile", lang, listobjectID, roleID);
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO);
+        //        //รอเรื่องสิทธิ์
+        //        //ValidationModel validation = new ValidationModel();
+        //        //List<string> listobjectID = new List<string>();
+        //        //listobjectID.Add("100201001");
+        //        //listobjectID.Add("100301003");
+        //        //validation = ValidationManager.CheckValidationUpdate(insertEmpProfileDTO.empProfileID, "emp_profile", lang, listobjectID, roleID);
+        //        ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO);
                     
-                if (validation.Success == true)
-                {
-                    string TableName = "emp_profile";
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card", saveEmpProfileDTO.identityCard, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card_expiry", saveEmpProfileDTO.identityCard, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "title_id", saveEmpProfileDTO.titleID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_en", saveEmpProfileDTO.firstNameEN, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_th", saveEmpProfileDTO.firstNameTH, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_en", saveEmpProfileDTO.lastNameEN, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_th", saveEmpProfileDTO.lastNameTH, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nickname", saveEmpProfileDTO.nickName, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "phone_number", saveEmpProfileDTO.phoneNumber, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "position_id", saveEmpProfileDTO.positionID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "per_num", saveEmpProfileDTO.perNum.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "date_of_birth", saveEmpProfileDTO.dateOfBirth, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "join_date", saveEmpProfileDTO.joinDate, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "pro_pass_date", saveEmpProfileDTO.proPassDate, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "daily_salary", saveEmpProfileDTO.dailySalary.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "employment_type_id", saveEmpProfileDTO.employmentTypeID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "body_set_id", saveEmpProfileDTO.bodySetID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "shirt_size", saveEmpProfileDTO.shirtSize.ToString(), userID);
-                    value.data = _sql.UpdateEmpProfile(shareCode, saveEmpProfileDTO, userID);
+        //        if (validation.Success == true)
+        //        {
+        //            string TableName = "emp_profile";
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card", saveEmpProfileDTO.identityCard, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card_expiry", saveEmpProfileDTO.identityCard, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "title_id", saveEmpProfileDTO.titleID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_en", saveEmpProfileDTO.firstNameEN, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_th", saveEmpProfileDTO.firstNameTH, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_en", saveEmpProfileDTO.lastNameEN, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_th", saveEmpProfileDTO.lastNameTH, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nickname", saveEmpProfileDTO.nickName, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "phone_number", saveEmpProfileDTO.phoneNumber, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "position_id", saveEmpProfileDTO.positionID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "per_num", saveEmpProfileDTO.perNum.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "date_of_birth", saveEmpProfileDTO.dateOfBirth, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "join_date", saveEmpProfileDTO.joinDate, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "pro_pass_date", saveEmpProfileDTO.proPassDate, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "daily_salary", saveEmpProfileDTO.dailySalary.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "employment_type_id", saveEmpProfileDTO.employmentTypeID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "body_set_id", saveEmpProfileDTO.bodySetID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName, "shirt_size", saveEmpProfileDTO.shirtSizeID.ToString(), userID);
+        //            value.data = _sql.UpdateEmpProfile(shareCode, saveEmpProfileDTO, userID);
 
-                    string TableName2 = "emp_profile_address";
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_address", saveEmpProfileDTO.cAddress, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_sub_district_id", saveEmpProfileDTO.cSubDistrictID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_district_id", saveEmpProfileDTO.cDistrictID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_province_id", saveEmpProfileDTO.cProvinceID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_zipcode", saveEmpProfileDTO.cZipcode, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "is_same_permanent_address", saveEmpProfileDTO.isSamePermanentAddress.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_address", saveEmpProfileDTO.pAddress, userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_sub_district_id", saveEmpProfileDTO.pSubDistrictID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_district_id", saveEmpProfileDTO.pDistrictID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_province_id", saveEmpProfileDTO.pProvinceID.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_zipcode", saveEmpProfileDTO.pZipcode.ToString(), userID);
+        //            string TableName2 = "emp_profile_address";
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_address", saveEmpProfileDTO.cAddress, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_sub_district_id", saveEmpProfileDTO.cSubDistrictID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_district_id", saveEmpProfileDTO.cDistrictID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_province_id", saveEmpProfileDTO.cProvinceID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "c_zipcode", saveEmpProfileDTO.cZipcode, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "is_same_permanent_address", saveEmpProfileDTO.isSamePermanentAddress.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_address", saveEmpProfileDTO.pAddress, userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_sub_district_id", saveEmpProfileDTO.pSubDistrictID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_district_id", saveEmpProfileDTO.pDistrictID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_province_id", saveEmpProfileDTO.pProvinceID.ToString(), userID);
+        //            _sql.InsertSystemLogChange(shareCode, saveEmpProfileDTO.empProfileID, TableName2, "p_zipcode", saveEmpProfileDTO.pZipcode.ToString(), userID);
 
-                    saveEmpProfileDTO.newUserID = _sql.getUserIdByEmpProfileID(shareCode, saveEmpProfileDTO.empProfileID);
-                    _sql.UpdateEmpAddress(shareCode, saveEmpProfileDTO, userID);
+        //            saveEmpProfileDTO.newUserID = _sql.getUserIdByEmpProfileID(shareCode, saveEmpProfileDTO.empProfileID);
+        //            _sql.UpdateEmpAddress(shareCode, saveEmpProfileDTO, userID);
 
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
-                }
+        //        }
+        //        else
+        //        {
+        //            _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+        //        }
                 
-                value.success = validation.Success;
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateEmpProfileService:");
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
-            }
-            return value;
-        }
+        //        value.success = validation.Success;
+        //        value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateEmpProfileService:");
+        //        if (logID > 0)
+        //        {
+        //            _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+        //        }
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        _sql.UpdateStatusLog(shareCode, logID, 1);
+        //    }
+        //    return value;
+        //}
 
         public ReturnIdModel UpdateEmpRateService(string authorization, string lang, string platform, int logID, SaveEmpRateRequestDTO saveEmpRateDTO, string roleIDList, int userID)
         {

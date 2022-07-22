@@ -39,9 +39,20 @@ namespace TUFTManagement.Services
                     if (saveEmpProfileDTO.newUserID != 0)
                     {
                         value.data = _sql.InsertEmpProfile(shareCode, saveEmpProfileDTO, userID);
-                        value.data = _sql.InsertEmpAddress(shareCode, saveEmpProfileDTO, userID);
+                                    _sql.InsertEmpAddress(shareCode, saveEmpProfileDTO, userID);
+                                    _sql.InsertEmpBankAccount(shareCode, saveEmpProfileDTO, userID);
+
+                        SaveEmergencyContact emergencyContact = new SaveEmergencyContact();
+
+                        if (saveEmpProfileDTO.emergencyContact.Count > 0)
+                        {
+                            foreach(SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
+                            {
+                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.newUserID, userID);
+                            }
+                        }
                     }
-                    else
+                        else
                     {
                         _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
                     }

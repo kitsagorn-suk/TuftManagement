@@ -11,44 +11,70 @@ namespace TUFTManagement.DTO
         public int newUserID { set; get; } = 0;
         public int empProfileID { set; get; } = 0;
         public string shareCode { set; get; } = "";
-        public string empCode { set; get; } = "";
+
+
         public string userName { set; get; } = "";
-        public string password { set; get; } = "";
-        public string identityCard { set; get; } = "";
-        public string identityCardExpiry { set; get; } = "";
-        public int titleID { set; get; } = 0;
-        public string firstNameEN { set; get; } = "";
-        public string lastNameEN { set; get; } = "";
-        public string firstNameTH { set; get; } = "";
-        public string lastNameTH { set; get; } = "";
-        public string nickName { set; get; } = "";
-        public string phoneNumber { set; get; } = "";
-        public int positionID { set; get; } = 0;
-        public int perNum { set; get; } = 0;
-        public string dateOfBirth { set; get; } = "";
         public string joinDate { set; get; } = "";
-        public string proPassDate { set; get; } = "";
         public decimal monthlySalary { set; get; } = 0;
         public decimal dailySalary { set; get; } = 0;
+        public int departmentID { set; get; } = 0;
+        public int positionID { set; get; } = 0;
         public int employmentTypeID { set; get; } = 0;
-        public int roleID { set; get; } = 0; 
-        public int bodySetID { set; get; } = 0;
-        public string shirtSize { set; get; } = "";
 
-        public string emerFirstname { set; get; } = "";
-        public string emerLastname { set; get; } = "";
-        public string emerContact { set; get; } = "";
+        public int titleID { set; get; } = 0;
+        public string firstNameTH { set; get; } = "";
+        public string lastNameTH { set; get; } = "";
+        public string nickNameTH { set; get; } = "";
+        public string firstNameEN { set; get; } = "";
+        public string lastNameEN { set; get; } = "";
+        public string nickNameEN { set; get; } = "";
+        public int nationalityID { set; get; } = 0;
+        public int citizenshipID { set; get; } = 0;
+        public int religionID { set; get; } = 0;
+        public string dateOfBirth { set; get; } = "";
+        public string identityCard { set; get; } = "";
+        public string identityCardExpiry { set; get; } = "";
+        public float height { set; get; } = 0;
+        public float weight { set; get; } = 0;
+        public int shirtSizeID { set; get; } = 0;
+        public int bloodTypeID { set; get; } = 0;
+        public string phoneNumber { set; get; } = "";
 
+        public int cCountryID { set; get; } = 0;
         public string cAddress { set; get; } = "";
-        public int cSubDistrictID { set; get; } = 0;
-        public int cDistrictID { set; get; } = 0;
         public int cProvinceID { set; get; } = 0;
+        public int cDistrictID { set; get; } = 0;
+        public int cSubDistrictID { set; get; } = 0;
         public string cZipcode { set; get; } = "";
+        public string cPhoneContact { set; get; } = "";
         public int isSamePermanentAddress { set; get; } = 0;
+        public int pCountryID { set; get; } = 0;
         public string pAddress { set; get; } = "";
-        public int pSubDistrictID { set; get; } = 0;
-        public int pDistrictID { set; get; } = 0;
         public int pProvinceID { set; get; } = 0;
+        public int pDistrictID { set; get; } = 0;
+        public int pSubDistrictID { set; get; } = 0;
         public string pZipcode { set; get; } = "";
+        public string pPhoneContact { set; get; } = "";
+
+        public string bankAccountName { set; get; } = "";
+        public string bankAccountNumber { set; get; } = "";
+        public string bankID { set; get; } = "";
+
+        public List<SaveEmergencyContact> emergencyContact { set; get; }
+
+
+
+        //public int perNum { set; get; } = 0;
+        //public string proPassDate { set; get; } = "";
+        //public int roleID { set; get; } = 0;
+        //public int bodySetID { set; get; } = 0;
+
+    }
+
+    public class SaveEmergencyContact
+    {
+        public string emerFullName { set; get; } = "";
+        public string emerRelationShipID { set; get; } = "";
+        public string emerContact { set; get; } = "";
     }
 }

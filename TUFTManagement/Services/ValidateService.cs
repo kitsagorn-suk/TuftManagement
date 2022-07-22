@@ -153,34 +153,39 @@ namespace TUFTManagement.Services
             {
                 string checkMissingOptional = "";
 
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.empCode) && saveEmpProfileDTO.empProfileID.Equals(0))
-                {
-                    checkMissingOptional += "empCode ";
-                }
                 if (string.IsNullOrEmpty(saveEmpProfileDTO.userName) && saveEmpProfileDTO.empProfileID.Equals(0))
                 {
                     checkMissingOptional += "userName ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.password) && saveEmpProfileDTO.empProfileID.Equals(0))
-                {
-                    checkMissingOptional += "password ";
                 }
                 if (string.IsNullOrEmpty(saveEmpProfileDTO.shareCode))
                 {
                     checkMissingOptional += "shareCode ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCard))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.joinDate))
                 {
-                    checkMissingOptional += "identityCard ";
+                    checkMissingOptional += "joinDate ";
                 }
-                if (saveEmpProfileDTO.identityCard.Count() != 13)
+                if (saveEmpProfileDTO.employmentTypeID.Equals(0))
                 {
-                    checkMissingOptional += "identityCard is incomplete ";
+                    checkMissingOptional += "employmentTypeID ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCardExpiry))
+                if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 9999)
                 {
-                    checkMissingOptional += "identityCardExpiry ";
+                    checkMissingOptional += "monthlySalary ";
                 }
+                if (saveEmpProfileDTO.dailySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 9999)
+                {
+                    checkMissingOptional += "dailySalary ";
+                }
+                if (saveEmpProfileDTO.departmentID.Equals(0))
+                {
+                    checkMissingOptional += "departmentID ";
+                }
+                if (saveEmpProfileDTO.positionID.Equals(0))
+                {
+                    checkMissingOptional += "positionID ";
+                }
+                
                 if (saveEmpProfileDTO.titleID.Equals(0))
                 {
                     checkMissingOptional += "titleID ";
@@ -193,93 +198,77 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "lastNameTH ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.phoneNumber))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.nickNameTH))
                 {
-                    checkMissingOptional += "phoneNumber ";
+                    checkMissingOptional += "nickNameTH ";
                 }
-                if (saveEmpProfileDTO.phoneNumber.Count() < 9 || saveEmpProfileDTO.phoneNumber.Count() > 10)
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.firstNameEN))
                 {
-                    checkMissingOptional += "phoneNumber is incomplete ";
+                    checkMissingOptional += "firstNameEN ";
                 }
-                if (saveEmpProfileDTO.positionID.Equals(0))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.lastNameEN))
                 {
-                    checkMissingOptional += "positionID ";
+                    checkMissingOptional += "lastNameEN ";
                 }
-                if (saveEmpProfileDTO.perNum.Equals(0))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.nickNameEN))
                 {
-                    checkMissingOptional += "perNum ";
+                    checkMissingOptional += "nickNameEN ";
+                }
+                if (saveEmpProfileDTO.nationalityID.Equals(0))
+                {
+                    checkMissingOptional += "nationalityID ";
+                }
+                if (saveEmpProfileDTO.citizenshipID.Equals(0))
+                {
+                    checkMissingOptional += "citizenshipID ";
+                }
+                if (saveEmpProfileDTO.religionID.Equals(0))
+                {
+                    checkMissingOptional += "religionID ";
                 }
                 if (string.IsNullOrEmpty(saveEmpProfileDTO.dateOfBirth))
                 {
                     checkMissingOptional += "dateOfBirth ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.joinDate))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCard) && saveEmpProfileDTO.citizenshipID == 20) //Thai
                 {
-                    checkMissingOptional += "joinDate ";
+                    checkMissingOptional += "identityCard ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.proPassDate))
+                if (saveEmpProfileDTO.identityCard.Count() != 13)
                 {
-                    checkMissingOptional += "proPassDate ";
+                    checkMissingOptional += "identityCard is incomplete ";
                 }
-                if (saveEmpProfileDTO.monthlySalary.Equals(0))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.identityCardExpiry))
                 {
-                    checkMissingOptional += "monthlySalary ";
+                    checkMissingOptional += "identityCardExpiry ";
                 }
-                if (saveEmpProfileDTO.dailySalary.Equals(0))
+                if (saveEmpProfileDTO.height.Equals(0))
                 {
-                    checkMissingOptional += "dailySalary ";
+                    checkMissingOptional += "height ";
                 }
-                if (saveEmpProfileDTO.employmentTypeID.Equals(0))
+                if (saveEmpProfileDTO.weight.Equals(0))
                 {
-                    checkMissingOptional += "employmentTypeID ";
+                    checkMissingOptional += "weight ";
                 }
-                if (saveEmpProfileDTO.bodySetID.Equals(0))
-                {
-                    checkMissingOptional += "bodySetID ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.shirtSize))
+                if (saveEmpProfileDTO.shirtSizeID.Equals(0))
                 {
                     checkMissingOptional += "shirtSize ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.emerFirstname))
+                if (saveEmpProfileDTO.bloodTypeID.Equals(0))
                 {
-                    checkMissingOptional += "emerFirstname ";
+                    checkMissingOptional += "bloodTypeID ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.emerLastname))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.phoneNumber))
                 {
-                    checkMissingOptional += "emerLastname ";
+                    checkMissingOptional += "phoneNumber ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.emerContact))
+                
+                if (saveEmpProfileDTO.pCountryID.Equals(0))
                 {
-                    checkMissingOptional += "emerContact ";
+                    checkMissingOptional += "pCountryID ";
                 }
-
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
+                if (saveEmpProfileDTO.pCountryID == 20) //Thailand
                 {
-                    checkMissingOptional += "cAddress ";
-                }
-                if (saveEmpProfileDTO.cSubDistrictID.Equals(0))
-                {
-                    checkMissingOptional += "cSubDistrictID ";
-                }
-                if (saveEmpProfileDTO.cDistrictID.Equals(0))
-                {
-                    checkMissingOptional += "cDistrictID ";
-                }
-                if (saveEmpProfileDTO.cProvinceID.Equals(0))
-                {
-                    checkMissingOptional += "cProvinceID ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.cZipcode))
-                {
-                    checkMissingOptional += "cZipcode ";
-                }
-                if (saveEmpProfileDTO.isSamePermanentAddress.Equals(0))
-                {
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress))
-                    {
-                        checkMissingOptional += "pAddress ";
-                    }
                     if (saveEmpProfileDTO.pSubDistrictID.Equals(0))
                     {
                         checkMissingOptional += "pSubDistrictID ";
@@ -297,7 +286,78 @@ namespace TUFTManagement.Services
                         checkMissingOptional += "pZipcode ";
                     }
                 }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact))
+                {
+                    checkMissingOptional += "pPhoneContact ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress))
+                {
+                    checkMissingOptional += "pAddress ";
+                }
 
+                if (saveEmpProfileDTO.isSamePermanentAddress.Equals(0))
+                {
+                    if (saveEmpProfileDTO.citizenshipID == 20) //Thai
+                    {
+                        if (saveEmpProfileDTO.cSubDistrictID.Equals(0))
+                        {
+                            checkMissingOptional += "cSubDistrictID ";
+                        }
+                        if (saveEmpProfileDTO.cDistrictID.Equals(0))
+                        {
+                            checkMissingOptional += "cDistrictID ";
+                        }
+                        if (saveEmpProfileDTO.cProvinceID.Equals(0))
+                        {
+                            checkMissingOptional += "cProvinceID ";
+                        }
+                        if (string.IsNullOrEmpty(saveEmpProfileDTO.cZipcode))
+                        {
+                            checkMissingOptional += "cZipcode ";
+                        }
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.cPhoneContact))
+                    {
+                        checkMissingOptional += "cPhoneContact ";
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
+                    {
+                        checkMissingOptional += "cAddress ";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.bankAccountName))
+                {
+                    checkMissingOptional += "bankAccountName ";
+                }
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.bankAccountNumber))
+                {
+                    checkMissingOptional += "bankAccountNumber ";
+                }
+                if (saveEmpProfileDTO.bankID.Equals(0))
+                {
+                    checkMissingOptional += "bankID ";
+                }
+
+                if (saveEmpProfileDTO.emergencyContact.Count > 0)
+                {
+                    foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
+                    {
+                        if (string.IsNullOrEmpty(item.emerFullName))
+                        {
+                            checkMissingOptional += "emerFullName ";
+                        }
+                        if (string.IsNullOrEmpty(item.emerRelationShipID))
+                        {
+                            checkMissingOptional += "emerRelationShipID ";
+                        }
+                        if (string.IsNullOrEmpty(item.emerContact))
+                        {
+                            checkMissingOptional += "emerContact ";
+                        }
+                    }
+                }
+                
                 if (checkMissingOptional != "")
                 {
                     throw new Exception("Missing Parameter : " + checkMissingOptional);
