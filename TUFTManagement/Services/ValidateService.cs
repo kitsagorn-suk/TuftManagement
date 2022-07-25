@@ -169,11 +169,11 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "employmentTypeID ";
                 }
-                if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 9999)
+                if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็นพริตตี้ รายวัน จะไม่เช็ค
                 {
                     checkMissingOptional += "monthlySalary ";
                 }
-                if (saveEmpProfileDTO.dailySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 9999)
+                if (saveEmpProfileDTO.dailySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 1) // ถ้าเป็นพริตตี้ รายเดือน จะไม่เช็ค
                 {
                     checkMissingOptional += "dailySalary ";
                 }
@@ -286,6 +286,7 @@ namespace TUFTManagement.Services
                         checkMissingOptional += "pZipcode ";
                     }
                 }
+                
                 if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact))
                 {
                     checkMissingOptional += "pPhoneContact ";
@@ -338,7 +339,7 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "bankID ";
                 }
-
+                
                 if (saveEmpProfileDTO.emergencyContact.Count > 0)
                 {
                     foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
@@ -347,7 +348,7 @@ namespace TUFTManagement.Services
                         {
                             checkMissingOptional += "emerFullName ";
                         }
-                        if (string.IsNullOrEmpty(item.emerRelationShipID))
+                        if (item.emerRelationShipID.Equals(0))
                         {
                             checkMissingOptional += "emerRelationShipID ";
                         }

@@ -847,7 +847,9 @@ namespace TUFTManagement.Core
                 "@pBloodTypeID, " +
                 "@pPhoneNumber, " +
 
-                "@pCreateBy, ");
+                "@pBodySetID, " +
+                
+                "@pCreateBy ");
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
@@ -978,7 +980,12 @@ namespace TUFTManagement.Core
             pPhoneNumber.Direction = ParameterDirection.Input;
             pPhoneNumber.Value = saveEmpProfileDTO.phoneNumber;
             sql.Parameters.Add(pPhoneNumber);
-            
+
+            SqlParameter pBodySetID = new SqlParameter(@"pBodySetID", SqlDbType.Int);
+            pBodySetID.Direction = ParameterDirection.Input;
+            pBodySetID.Value = saveEmpProfileDTO.bodySetID;
+            sql.Parameters.Add(pBodySetID);
+
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
             pCreateBy.Value = userID;
@@ -1173,7 +1180,7 @@ namespace TUFTManagement.Core
         public InsertLogin InsertEmpEmergencyContact(string shareCode, SaveEmergencyContact saveEmergencyContact, int targetUserID, int userID)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_bank_account " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_emergency_contact " +
                 "@pUserID, " +
                 "@pEmerFullName, " +
                 "@pEmerRelationShipID, " +
@@ -1219,7 +1226,7 @@ namespace TUFTManagement.Core
 
             return data;
         }
-        public _ReturnIdModel InsertEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO, int userID)
+        public _ReturnIdModel InsertEmpRate(string shareCode, SaveEmpRateRequestDTO saveEmpRateDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_rate " +
@@ -1266,7 +1273,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
