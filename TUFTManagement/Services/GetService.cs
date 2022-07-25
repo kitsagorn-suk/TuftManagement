@@ -142,6 +142,51 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public GetEmployeeDetailsModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, int userID, RequestDTO requestDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetEmployeeDetailsModel value = new GetEmployeeDetailsModel();
+            try
+            {
+                EmployeeDetails data = new EmployeeDetails();
+
+                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetEmpProfile(shareCode, userID, lang, requestDTO);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpProfileService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
+
         public GetEmpRateModel GetEmpRateService(string authorization, string lang, string platform, int logID, int userID)
         {
             if (_sql == null)

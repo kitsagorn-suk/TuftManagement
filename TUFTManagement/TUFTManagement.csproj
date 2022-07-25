@@ -197,6 +197,7 @@
     <Compile Include="DTO\MasterDataDTO.cs" />
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
+    <Compile Include="DTO\RequestDTO.cs" />
     <Compile Include="DTO\SaveWorkTimeTransChangeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeTransChangeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeRequestDTO.cs" />
@@ -230,6 +231,7 @@
     </Compile>
     <Compile Include="Models\GetAllDropdownModel.cs" />
     <Compile Include="Models\GetBodySetModel.cs" />
+    <Compile Include="Models\GetEmployeeDetailsModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeModel.cs" />
     <Compile Include="Models\GetEmpWorkShiftModel.cs" />

@@ -4830,7 +4830,37 @@ namespace TUFTManagement.Core
 
             return data;
         }
+        public EmployeeDetails GetEmpProfile(string shareCode, int userID, string lang, RequestDTO requestDTO)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_employee_details " +
+                "@pUserID, " +
+                "@pLang");
 
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 10);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = lang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+
+            EmployeeDetails data = new EmployeeDetails();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
         public string getConnectionEncoded(string shareCode)
         {
             DataTable table = new DataTable();

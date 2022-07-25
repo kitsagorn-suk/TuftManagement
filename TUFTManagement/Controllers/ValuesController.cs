@@ -215,7 +215,7 @@ namespace TUFTManagement.Controllers
                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
 
                 // prepair username 
-                saveEmpProfileDTO.userName = shareCode.ToUpper() + saveEmpProfileDTO.userName;
+                saveEmpProfileDTO.userName = shareCode.ToUpper() + "-" + saveEmpProfileDTO.userName;
 
                 // prepair isSamePermanentAddress
                 if (saveEmpProfileDTO.isSamePermanentAddress == 1)
@@ -253,40 +253,35 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.0/delete/empProfile")]
+        [Route("1.0/get/empProfile")]
         [HttpPost]
-        public IHttpActionResult DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
+        public IHttpActionResult GetEmpProfile(RequestDTO requestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
             try
             {
-                string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
-                int logID = _sql.InsertLogReceiveData("DeleteEmpProfile", json, timestampNow.ToString(), authHeader,
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveData(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
-                string checkMissingOptional = "";
+                GetService srv = new GetService();
 
-                if (saveEmpProfileDTO.empProfileID.Equals(0))
-                {
-                    checkMissingOptional += "empProfileID ";
-                }
-                
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-                
-                DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
-                
+                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, requestDTO);
+
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -294,7 +289,7 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
-
+        
         [Route("1.0/get/empProfile")]
         [HttpPost]
         public IHttpActionResult GetEmpProfile()
@@ -324,6 +319,48 @@ namespace TUFTManagement.Controllers
 
                 var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
                 
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/delete/empProfile")]
+        [HttpPost]
+        public IHttpActionResult DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
+                int logID = _sql.InsertLogReceiveData("DeleteEmpProfile", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpProfileDTO.empProfileID.Equals(0))
+                {
+                    checkMissingOptional += "empProfileID ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                DeleteService srv = new DeleteService();
+                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+
                 return Ok(obj);
             }
             catch (Exception ex)
