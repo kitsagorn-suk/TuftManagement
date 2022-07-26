@@ -161,7 +161,7 @@ namespace TUFTManagement.Core
             sql.Parameters.Add(paramType);
             sql.Parameters.Add(paramDeviceInfo);
             
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -215,7 +215,7 @@ namespace TUFTManagement.Core
             sql.Parameters.Add(paramLogID);
             sql.Parameters.Add(paramStatus);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -269,7 +269,7 @@ namespace TUFTManagement.Core
             sql.Parameters.Add(paramLang);
             sql.Parameters.Add(paramMsgCode);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             GetMessageTopicDTO result = new GetMessageTopicDTO();
 
@@ -589,7 +589,7 @@ namespace TUFTManagement.Core
             sql.Parameters.Add(paramLogID);
             sql.Parameters.Add(paramErrorText);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -712,7 +712,7 @@ namespace TUFTManagement.Core
             paramUserID.Value = pUserID;
             sql.Parameters.Add(paramUserID);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             return table;
         }
@@ -805,7 +805,7 @@ namespace TUFTManagement.Core
             paramEmpProfileID.Value = empProfileID;
             sql.Parameters.Add(paramEmpProfileID);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -991,7 +991,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
             
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             InsertLogin data = new InsertLogin();
 
@@ -1113,7 +1113,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             InsertLogin data = new InsertLogin();
 
@@ -1162,7 +1162,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             InsertLogin data = new InsertLogin();
 
@@ -1212,7 +1212,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             InsertLogin data = new InsertLogin();
 
@@ -1273,7 +1273,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -1946,7 +1946,7 @@ namespace TUFTManagement.Core
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -2154,7 +2154,7 @@ namespace TUFTManagement.Core
             pId.Value = id;
             sql.Parameters.Add(pId);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             BodySet data = new BodySet();
 
@@ -2210,7 +2210,7 @@ namespace TUFTManagement.Core
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -2272,7 +2272,7 @@ namespace TUFTManagement.Core
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -2336,7 +2336,7 @@ namespace TUFTManagement.Core
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -2450,7 +2450,7 @@ namespace TUFTManagement.Core
             pNameTH.Value = masterDataDTO.nameTH;
             sql.Parameters.Add(pNameTH);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             return table;
         }
@@ -4427,7 +4427,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4471,7 +4471,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4521,7 +4521,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4559,7 +4559,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4591,7 +4591,7 @@ namespace TUFTManagement.Core
             pTableName.Value = TableName;
             sql.Parameters.Add(pTableName);
             
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             MasterData data = new MasterData();
 
@@ -4654,7 +4654,7 @@ namespace TUFTManagement.Core
             pSortType.Value = searchMasterDataDTO.sortType;
             sql.Parameters.Add(pSortType);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
 
@@ -4711,7 +4711,7 @@ namespace TUFTManagement.Core
             pSortType.Value = searchMasterDataDTO.sortType;
             sql.Parameters.Add(pSortType);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             Pagination<SearchMasterDataBodySet> pagination = new Pagination<SearchMasterDataBodySet>();
 
@@ -4746,7 +4746,7 @@ namespace TUFTManagement.Core
             pParamSearch.Value = searchMasterDataDTO.paramSearch;
             sql.Parameters.Add(pParamSearch);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -4785,7 +4785,7 @@ namespace TUFTManagement.Core
             pNameTH.Value = searchMasterDataDTO.nameTH;
             sql.Parameters.Add(pNameTH);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -4816,7 +4816,7 @@ namespace TUFTManagement.Core
             pLang.Value = lang;
             sql.Parameters.Add(pLang);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             EmpProfile data = new EmpProfile();
 
@@ -4847,7 +4847,7 @@ namespace TUFTManagement.Core
             pLang.Value = lang;
             sql.Parameters.Add(pLang);
 
-            table = sql.executeQueryWithReturnTable(getConnectionEncoded(shareCode));
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             EmployeeDetails data = new EmployeeDetails();
 
@@ -5071,7 +5071,7 @@ namespace TUFTManagement.Core
             }
             return result;
         }
-        public DataTable executeQueryWithReturnTable(string shareCode)
+        public DataTable executeQueryWithReturnTableOther(string shareCode)
         {
             Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US", false);
 
@@ -5124,58 +5124,6 @@ namespace TUFTManagement.Core
             return result;
         }
 
-        public DataTable executeQueryWithReturnTableBusiness(string connectionString)
-        {
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US", false);
-
-            CultureInfo cultureInfo = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
-            cultureInfo.DateTimeFormat.DateSeparator = "-";
-            cultureInfo.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
-            Thread.CurrentThread.CurrentCulture = cultureInfo;
-
-            DataTable result = null;
-
-            //string cc = "Server=18.138.158.140;Initial Catalog=Inventory_Complex;Database=Lalisa;User ID=sa;Password=Snocko2020;Pooling=false;";
-            //string encode = Utility.Base64UrlEncode(cc);
-            connectionString = Utility.Base64ForUrlDecode(connectionString);
-            //string connectionString = WebConfigurationManager.AppSettings["connectionStrings"];
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-
-                SqlCommand command = new SqlCommand();
-                command.Connection = connection;
-                command.CommandText = this.sqlCommand;
-
-                if (this.Parameters != null)
-                    foreach (SqlParameter parameter in this.Parameters)
-                        command.Parameters.Add(parameter);
-                try
-                {
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        result = new DataTable();
-                        if (reader.HasRows)
-                        {
-                            result.Load(reader);
-                        }
-                        command.Parameters.Clear();
-                    }
-                    command.Parameters.Clear();
-
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-                finally
-                {
-                    connection.Dispose();
-                    connection.Close();
-                }
-            }
-            return result;
-        }
+        
     }
 }

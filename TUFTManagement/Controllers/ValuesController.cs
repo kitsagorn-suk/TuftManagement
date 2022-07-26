@@ -290,9 +290,9 @@ namespace TUFTManagement.Controllers
             }
         }
         
-        [Route("1.0/get/empProfile")]
+        [Route("1.1/get/empProfile")]
         [HttpPost]
-        public IHttpActionResult GetEmpProfile()
+        public IHttpActionResult GetEmpProfileV1_1()
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
