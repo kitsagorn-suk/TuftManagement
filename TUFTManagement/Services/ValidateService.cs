@@ -263,7 +263,7 @@ namespace TUFTManagement.Services
                     checkMissingOptional += "phoneNumber ";
                 }
                 
-                if (saveEmpProfileDTO.pCountryID.Equals(0))
+                if (saveEmpProfileDTO.pCountryID.Equals(0) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
                 {
                     checkMissingOptional += "pCountryID ";
                 }
@@ -287,11 +287,11 @@ namespace TUFTManagement.Services
                     }
                 }
                 
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
                 {
                     checkMissingOptional += "pPhoneContact ";
                 }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress))
+                if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
                 {
                     checkMissingOptional += "pAddress ";
                 }
@@ -358,6 +358,43 @@ namespace TUFTManagement.Services
                         }
                     }
                 }
+
+                if (saveEmpProfileDTO.positionID == 14) //ถ้าเป็นพริตตี้ ต้องกรอก
+                {
+                    if (saveEmpProfileDTO.chest.Equals(0))
+                    {
+                        checkMissingOptional += "chest ";
+                    }
+                    if (saveEmpProfileDTO.chest.Equals(0))
+                    {
+                        checkMissingOptional += "waist ";
+                    }
+                    if (saveEmpProfileDTO.chest.Equals(0))
+                    {
+                        checkMissingOptional += "hip ";
+                    }
+                    if (saveEmpProfileDTO.productCode.Equals(0))
+                    {
+                        checkMissingOptional += "productCode ";
+                    }
+                    if (saveEmpProfileDTO.rateStaff.Equals(0))
+                    {
+                        checkMissingOptional += "rateStaff ";
+                    }
+                    if (saveEmpProfileDTO.rateManager.Equals(0))
+                    {
+                        checkMissingOptional += "rateManager ";
+                    }
+                    if (saveEmpProfileDTO.rateOwner.Equals(0))
+                    {
+                        checkMissingOptional += "rateOwner ";
+                    }
+                    if (saveEmpProfileDTO.rateConfirm.Equals(0))
+                    {
+                        checkMissingOptional += "rateConfirm ";
+                    }
+                }
+
                 
                 if (checkMissingOptional != "")
                 {

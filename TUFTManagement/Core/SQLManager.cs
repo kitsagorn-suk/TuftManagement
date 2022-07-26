@@ -4833,7 +4833,7 @@ namespace TUFTManagement.Core
         public EmployeeDetails GetEmpProfile(string shareCode, int userID, string lang, RequestDTO requestDTO)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_employee_details " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec   " +
                 "@pUserID, " +
                 "@pLang");
 

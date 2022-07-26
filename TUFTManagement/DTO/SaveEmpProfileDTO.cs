@@ -73,18 +73,14 @@ namespace TUFTManagement.DTO
         public int rateManager { set; get; } = 0;
         public int rateOwner { set; get; } = 0;
         public int rateConfirm { set; get; } = 0;
-
-        //public int perNum { set; get; } = 0;
-        //public string proPassDate { set; get; } = "";
-        //public int roleID { set; get; } = 0;
-
-
+        
     }
-
+    
     public class SaveEmergencyContact
     {
         public string emerFullName { set; get; } = "";
         public int emerRelationShipID { set; get; } = 0;
         public string emerContact { set; get; } = "";
     }
+
 }
