@@ -5,6 +5,7 @@ using System.Web;
 using TUFTManagement.Core;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
+using static TUFTManagement.Models.EmployeeDetails;
 
 namespace TUFTManagement.Services
 {
@@ -153,12 +154,15 @@ namespace TUFTManagement.Services
             try
             {
                 EmployeeDetails data = new EmployeeDetails();
+                data.emergencyContact = new List<EmergencyContact>();
 
                 ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
                     data = _sql.GetEmpProfile(shareCode, userID, lang, requestDTO);
+                    data.emergencyContact = _sql.GetEmerContact(shareCode, requestDTO.userID);
+                    data.imageGallary = _sql.GetImgGallary(shareCode, requestDTO.userID);
                     value.data = data;
                     value.success = validation.Success;
                 }

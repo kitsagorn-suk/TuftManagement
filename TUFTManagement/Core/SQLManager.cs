@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
@@ -4829,16 +4830,75 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public List<EmployeeDetails.EmergencyContact> GetEmerContact(string shareCode, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_emergency_contact " +
+                "@pUserID"
+                );
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<EmployeeDetails.EmergencyContact> listData = new List<EmployeeDetails.EmergencyContact>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmployeeDetails.EmergencyContact data = new EmployeeDetails.EmergencyContact();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+        public List<EmployeeDetails.ImageGallary> GetImgGallary(string shareCode, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_image_gallary " +
+                "@pUserID"
+                );
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<EmployeeDetails.ImageGallary> listData = new List<EmployeeDetails.ImageGallary>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmployeeDetails.ImageGallary data = new EmployeeDetails.ImageGallary();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
         public EmployeeDetails GetEmpProfile(string shareCode, int userID, string lang, RequestDTO requestDTO)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec   " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_employee_details  " +
                 "@pUserID, " +
                 "@pLang");
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = userID;
+            pUserID.Value = requestDTO.userID;
             sql.Parameters.Add(pUserID);
 
             SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 10);
@@ -4883,7 +4943,7 @@ namespace TUFTManagement.Core
                     connectionEncoded = dr["connectionString"].ToString();
                 }
             }
-
+            
             return connectionEncoded;
         }
 
@@ -5084,6 +5144,8 @@ namespace TUFTManagement.Core
             DecodeString decode = new DecodeString();
 
             string connectionString = decode.Connection(shareCode);
+
+            connectionString  = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
