@@ -40,6 +40,7 @@ namespace TUFTManagement.DTO
         public int bloodTypeID { set; get; } = 0;
         public string phoneNumber { set; get; } = "";
 
+        public int empAddressID { set; get; } = 0;
         public int cCountryID { set; get; } = 0;
         public string cAddress { set; get; } = "";
         public int cProvinceID { set; get; } = 0;
@@ -56,6 +57,7 @@ namespace TUFTManagement.DTO
         public string pZipcode { set; get; } = "";
         public string pPhoneContact { set; get; } = "";
 
+        public int empBankAccountID { set; get; } = 0;
         public string bankAccountName { set; get; } = "";
         public string bankAccountNumber { set; get; } = "";
         public int bankID { set; get; } = 0;
@@ -73,11 +75,15 @@ namespace TUFTManagement.DTO
         public int rateManager { set; get; } = 0;
         public int rateOwner { set; get; } = 0;
         public int rateConfirm { set; get; } = 0;
-        
+
+        public string imageProfileCode { set; get; } = "";
+        public string imageGalleryCode { set; get; } = "";
+
     }
     
     public class SaveEmergencyContact
     {
+        public int emergencyContactID { set; get; } = 0;
         public string emerFullName { set; get; } = "";
         public int emerRelationShipID { set; get; } = 0;
         public string emerContact { set; get; } = "";

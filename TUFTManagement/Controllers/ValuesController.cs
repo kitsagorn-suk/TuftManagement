@@ -276,7 +276,7 @@ namespace TUFTManagement.Controllers
                     else if (saveEmpProfileDTO.empProfileID > 0 && saveEmpProfileDTO.mode.ToLower() == "update")
                     {
                         UpdateService srv = new UpdateService();
-                        //obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
                     }
                 }
                 
@@ -452,7 +452,7 @@ namespace TUFTManagement.Controllers
                 }
                 else
                 {
-                    obj = srv2.UpdateEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
+                    obj = srv2.UpdateEmpRateService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
                 }
                 
 
