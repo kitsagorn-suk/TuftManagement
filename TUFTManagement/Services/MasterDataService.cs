@@ -34,7 +34,7 @@ namespace TUFTManagement.Services
                         //List<string> listobjectID = new List<string>();
                         //listobjectID.Add("100401001");
                         //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
                         value.data = _sql.InsertMasterData(shareCode, masterDataDTO, TableName, userID);
                     }
                     else if (masterDataDTO.mode.ToLower() == "update")
@@ -43,16 +43,16 @@ namespace TUFTManagement.Services
                         //List<string> listobjectID = new List<string>();
                         //listobjectID.Add("100401002");
                         //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
                         if (validation.Success == true)
                         {
-                            _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
-                            _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                             value.data = _sql.UpdateMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
                         else
                         {
-                            _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                         }
                     }
                     else if (masterDataDTO.mode.ToLower() == "delete")
@@ -61,20 +61,20 @@ namespace TUFTManagement.Services
                         //List<string> listobjectID = new List<string>();
                         //listobjectID.Add("100401002");
                         //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
                         if (validation.Success == true)
                         {
                             value.data = _sql.DeleteMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
                         else
                         {
-                            _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                         }
                     }
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -85,13 +85,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "SaveMasterService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }
@@ -118,7 +118,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
@@ -128,13 +128,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }
@@ -151,7 +151,7 @@ namespace TUFTManagement.Services
             {
                 Pagination<SearchMasterData> data = new Pagination<SearchMasterData>();
 
-                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
@@ -159,7 +159,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -171,13 +171,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }
@@ -194,7 +194,7 @@ namespace TUFTManagement.Services
             {
                 Pagination<SearchMasterDataBodySet> data = new Pagination<SearchMasterDataBodySet>();
 
-                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
@@ -202,7 +202,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -214,13 +214,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterBodySetService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }
@@ -2244,18 +2244,18 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
                     string TableName = "system_body_set";
-                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "status", "0", userID);
+                    _sql.InsertSystemLogChangeWithShareCode(shareCode, saveBodySetDTO.masterID, TableName, "status", "0", userID);
                     
                     value.data = _sql.DeleteBodySet(shareCode, saveBodySetDTO, userID);
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -2266,13 +2266,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateBodySetService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }
@@ -2295,7 +2295,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -2306,13 +2306,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpRateService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }
@@ -2328,22 +2328,22 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
                     string TableName = "system_body_set";
-                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "height", saveBodySetDTO.height.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "weight", saveBodySetDTO.weight.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "chest", saveBodySetDTO.chest.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "waist", saveBodySetDTO.waist.ToString(), userID);
-                    _sql.InsertSystemLogChange(shareCode, saveBodySetDTO.masterID, TableName, "hip", saveBodySetDTO.hip.ToString(), userID);
+                    _sql.InsertSystemLogChangeWithShareCode(shareCode, saveBodySetDTO.masterID, TableName, "height", saveBodySetDTO.height.ToString(), userID);
+                    _sql.InsertSystemLogChangeWithShareCode(shareCode, saveBodySetDTO.masterID, TableName, "weight", saveBodySetDTO.weight.ToString(), userID);
+                    _sql.InsertSystemLogChangeWithShareCode(shareCode, saveBodySetDTO.masterID, TableName, "chest", saveBodySetDTO.chest.ToString(), userID);
+                    _sql.InsertSystemLogChangeWithShareCode(shareCode, saveBodySetDTO.masterID, TableName, "waist", saveBodySetDTO.waist.ToString(), userID);
+                    _sql.InsertSystemLogChangeWithShareCode(shareCode, saveBodySetDTO.masterID, TableName, "hip", saveBodySetDTO.hip.ToString(), userID);
 
                     value.data = _sql.UpdateBodySet(shareCode, saveBodySetDTO, userID);
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -2354,13 +2354,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateBodySetService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }
@@ -2379,7 +2379,7 @@ namespace TUFTManagement.Services
                 BodySet data = new BodySet();
 
                 
-                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
@@ -2389,7 +2389,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
@@ -2399,13 +2399,13 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "GetBodySetService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
             finally
             {
-                _sql.UpdateStatusLog(shareCode, logID, 1);
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
             }
             return value;
         }

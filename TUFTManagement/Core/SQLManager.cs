@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Configuration;
@@ -112,7 +111,7 @@ namespace TUFTManagement.Core
             }
             return id;
         }
-        public int InsertLogReceiveData(string shareCode, string pServiceName, string pReceiveData, string pTimeStampNow, HeadersDTO headersDTO, int pUserID, string pType)
+        public int InsertLogReceiveDataWithShareCode(string shareCode, string pServiceName, string pReceiveData, string pTimeStampNow, HeadersDTO headersDTO, int pUserID, string pType)
         {
             string json_header = JsonConvert.SerializeObject(headersDTO);
             InsertLogReceiveData(pServiceName, json_header, pTimeStampNow, headersDTO.authHeader, pUserID, pType);
@@ -197,7 +196,7 @@ namespace TUFTManagement.Core
             }
             return id;
         }
-        public int UpdateStatusLog(string shareCode, int pLogID, int pStatus)
+        public int UpdateStatusLogWithShareCode(string shareCode, int pLogID, int pStatus)
         {
             int id = 0;
 
@@ -253,7 +252,7 @@ namespace TUFTManagement.Core
             }
             return result;
         }
-        public GetMessageTopicDTO GetMessageLang(string shareCode, string pLang, int pMsgCode)
+        public GetMessageTopicDTO GetMessageLangWithShareCode(string shareCode, string pLang, int pMsgCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_message_lang @pLang, @pMsgCode");
@@ -571,7 +570,7 @@ namespace TUFTManagement.Core
             }
             return id;
         }
-        public int UpdateLogReceiveDataError(string shareCode, int pLogID, string pErrorText)
+        public int UpdateLogReceiveDataErrorWithShareCode(string shareCode, int pLogID, string pErrorText)
         {
             int id = 0;
 
@@ -4392,7 +4391,7 @@ namespace TUFTManagement.Core
 
             return data;
         }
-        public _ReturnIdModel InsertSystemLogChange(string shareCode, int actionID, string tableName, string fieldName, string newData, int userID)
+        public _ReturnIdModel InsertSystemLogChangeWithShareCode(string shareCode, int actionID, string tableName, string fieldName, string newData, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_log_change " +

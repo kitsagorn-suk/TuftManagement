@@ -126,6 +126,42 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.1/decode")]
+        [HttpPost]
+        public IHttpActionResult DecodeString()
+        {
+            var request = HttpContext.Current.Request;
+            string strText = (request.Headers["strText"] == null ? "" : request.Headers["strText"]);
+            string type = (request.Headers["type"] == null ? "" : request.Headers["type"]);
+
+            try
+            {
+                var obj = new object();
+
+                if (type == "encode")
+                {
+                    obj = new
+                    {
+                        value = Utility.Base64UrlEncode(strText)
+                    };
+                }
+                if (type == "decode")
+                {
+                    obj = new
+                    {
+                        value = Utility.Base64ForUrlDecode(strText)
+                    };
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
         #endregion
 
         #region Main API
@@ -157,7 +193,7 @@ namespace TUFTManagement.Controllers
 
                 GetService srv = new GetService();
                 ValidateService validateService = new ValidateService();
-                ValidationModel chkRequestBody = validateService.RequireOptionalAllDropdown(shareCode, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                ValidationModel chkRequestBody = validateService.RequireOptionalAllDropdown(lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
 
                 var obj = new object();
                 obj = chkRequestBody;
@@ -207,7 +243,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(saveEmpProfileDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "SaveEmpProfile", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveEmpProfile", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 ValidateService validateService = new ValidateService();
@@ -275,7 +311,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(data.userID);
-                int logID = _sql.InsertLogReceiveData(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
@@ -290,6 +326,8 @@ namespace TUFTManagement.Controllers
             }
         }
         
+
+
         [Route("1.1/get/empProfile")]
         [HttpPost]
         public IHttpActionResult GetEmpProfileV1_1()
@@ -312,7 +350,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(data.userID);
-                int logID = _sql.InsertLogReceiveData(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
@@ -527,7 +565,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(saveEmpWorkShiftRequestDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "SaveEmpWorkShift", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveEmpWorkShift", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 ValidateService validateService = new ValidateService();
@@ -1190,7 +1228,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "SaveMasterPosition", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveMasterPosition", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
@@ -1281,7 +1319,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "GetMasterPosition", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetMasterPosition", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
@@ -1328,7 +1366,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(searchMasterDataDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "SearchMasterDataPosition", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchMasterDataPosition", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
@@ -1384,7 +1422,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(searchMasterDataDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "SearchMasterDataBodySet", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchMasterDataBodySet", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();
@@ -1440,7 +1478,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(saveBodySetDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "SaveBodySet", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveBodySet", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
                 
                 ValidateService validateService = new ValidateService();
@@ -1498,7 +1536,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(masterDataDTO);
-                int logID = _sql.InsertLogReceiveData(shareCode, "GetBodySet", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetBodySet", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 MasterDataService srv = new MasterDataService();

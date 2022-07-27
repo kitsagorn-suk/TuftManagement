@@ -78,7 +78,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    validation = ValidationManager.CheckValidation(shareCode, saveBodySetDTO.masterID, lang, platform);
+                    validation = ValidationManager.CheckValidationWithShareCode(shareCode, saveBodySetDTO.masterID, lang, platform);
                 }
                 
             }
@@ -87,7 +87,7 @@ namespace TUFTManagement.Services
                 //LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalBodySet:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
@@ -97,7 +97,7 @@ namespace TUFTManagement.Services
             }
             return validation;
         }
-        public ValidationModel RequireOptionalAllDropdown(string shareCode, string lang, string platform, int logID, GetDropdownRequestDTO getDropdownRequestDTO)
+        public ValidationModel RequireOptionalAllDropdown(string lang, string platform, int logID, GetDropdownRequestDTO getDropdownRequestDTO)
         {
             if (_sql == null)
             {
@@ -124,7 +124,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    validation = ValidationManager.CheckValidation(shareCode, 0, lang, platform);
+                    validation = ValidationManager.CheckValidation(0, lang, platform);
                 }
 
                 return validation;
@@ -402,7 +402,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    validation = ValidationManager.CheckValidation(shareCode, 0, lang, platform);
+                    validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, platform);
                 }
 
                 return validation;
@@ -455,7 +455,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    validation = ValidationManager.CheckValidation(shareCode, 0, lang, platform);
+                    validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, platform);
                 }
 
                 return validation;

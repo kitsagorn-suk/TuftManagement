@@ -111,7 +111,7 @@ namespace TUFTManagement.Services
             {
                 EmpProfile data = new EmpProfile();
 
-                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
@@ -121,7 +121,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
@@ -131,7 +131,7 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }
@@ -154,7 +154,7 @@ namespace TUFTManagement.Services
             {
                 EmployeeDetails data = new EmployeeDetails();
 
-                ValidationModel validation = ValidationManager.CheckValidation(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
@@ -164,7 +164,7 @@ namespace TUFTManagement.Services
                 }
                 else
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, validation.InvalidMessage);
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
 
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
@@ -174,7 +174,7 @@ namespace TUFTManagement.Services
                 LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpProfileService:");
                 if (logID > 0)
                 {
-                    _sql.UpdateLogReceiveDataError(shareCode, logID, ex.ToString());
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
                 }
                 throw ex;
             }

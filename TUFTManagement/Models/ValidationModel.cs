@@ -146,7 +146,7 @@ namespace TUFTManagement.Models
 
             }
         }
-        public static GetMessageTopicDTO GetInvalidMessage(string shareCode, InvalidState state, string lang)
+        public static GetMessageTopicDTO GetInvalidMessageWithShareCode(string shareCode, InvalidState state, string lang)
         {
             SQLManager _sql = SQLManager.Instance;
             GetMessageTopicDTO message = new GetMessageTopicDTO();
@@ -173,50 +173,50 @@ namespace TUFTManagement.Models
                     return message;
                 case InvalidState.S201001:
                     messagecode = 201001;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E301001:
                     messagecode = 301001;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     //message = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
                     return message;
                 case InvalidState.E301002:
                     messagecode = 301002;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     //message = "คุณยังไม่ได้เปลี่ยนรหัสผ่านครั้งแรก";
                     return message;
                 case InvalidState.E301003:
                     messagecode = 301003;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     //message = "บัญชีของคุณถูกระงับ โปรดติดต่อฝ่ายบุคคล";
                     return message;
                 case InvalidState.E301004:
                     messagecode = 301004;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E301005:
                     messagecode = 301005;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E301006:
                     messagecode = 301006;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E301007:
                     messagecode = 301007;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E301008:
                     messagecode = 301008;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E301009:
                     messagecode = 301009;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E302001:
                     messagecode = 302001;
-                    message = _sql.GetMessageLang(shareCode, lang.ToLower(), messagecode);
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
 
                 default:
