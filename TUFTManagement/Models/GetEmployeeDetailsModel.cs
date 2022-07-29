@@ -15,6 +15,7 @@ namespace TUFTManagement.Models
 
     public class EmployeeDetails
     {
+        public int userId { set; get; } = 0;
         public string empCode { set; get; } = "";
 
         public string userName { set; get; } = "";
@@ -84,12 +85,14 @@ namespace TUFTManagement.Models
 
         public class EmergencyContact
         {
+            public int emerContactID { set; get; } = 0;
             public string emerFullName { set; get; } = "";
             public int emerRelationShipID { set; get; } = 0;
             public string emerContact { set; get; } = "";
 
             public void loadData(DataRow dr)
             {
+                emerContactID = Convert.ToInt32(dr["id"]);
                 emerFullName = dr["emer_full_name"].ToString();
                 emerRelationShipID = Convert.ToInt32(dr["emer_relationship_id"]);
                 emerContact = dr["emer_contact"].ToString();
@@ -108,6 +111,7 @@ namespace TUFTManagement.Models
 
         public void loadData(DataRow dr)
         {
+            userId = Convert.ToInt32(dr["user_id"]);
             empCode = dr["emp_code"].ToString();
             userName = dr["username"].ToString();
             joinDate = dr["join_date"].ToString();
