@@ -290,7 +290,7 @@ namespace TUFTManagement.Controllers
                 newFileName = Guid.NewGuid() + Path.GetExtension(fileName);
 
 
-                if (keyName != "upload_image_profile" || keyName == "upload_image_gallery")
+                if (keyName == "upload_image_profile" || keyName == "upload_image_gallery")
                 {
                     AuthenticationController _auth = AuthenticationController.Instance;
                     AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
@@ -305,17 +305,17 @@ namespace TUFTManagement.Controllers
                 }
                 if (keyName == "upload_image_gallery")
                 {
-                    subFolder = userID + "\\ProFilePath";
+                    subFolder = userID + "\\GalleryPath";
                     diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
                     //newFileName = _sql.GenImageProfile(userID);
-                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], userID + "/ProFilePath", newFileName);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], userID + "/GalleryPath", newFileName);
                 }
 
                 var fullPath = Path.Combine(diskFolderPath, newFileName);
                 var fileInfo = new FileInfo(fullPath);
                 while (fileInfo.Exists)
                 {
-                    if (keyName == "upload_user_profile")
+                    if (keyName == "upload_user_profile" || keyName == "upload_image_gallery")
                     {
                         File.Delete(fullPath);
                     }
@@ -352,9 +352,33 @@ namespace TUFTManagement.Controllers
                         {
                             string fileCode = "random-gen";
 
-                            _sql.InsertUploadFileDetails(shareCode, "", fileCode, "", fileName, fileURL, userID);
+                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
                             value.success = validation.Success;
                             
+                            value.data.fileCode = fileCode;
+                            value.data.fileName = fileName;
+                            value.data.fileSize = fileSize.ToString();
+                            value.msg = new MsgModel() { code = 0, text = "อัพโหลดสำเร็จ", topic = "สำเร็จ" };
+                        }
+                        else
+                        {
+                            value.success = validation.Success;
+                            value.msg = new MsgModel() { code = 0, text = validation.InvalidMessage, topic = validation.InvalidText };
+                        }
+
+                    }
+
+                    if (keyName == "upload_image_gallery")
+                    {
+                        ValidationModel validation = new ValidationModel();
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, "");
+                        if (validation.Success == true)
+                        {
+                            string fileCode = "random-gen";
+
+                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            value.success = validation.Success;
+
                             value.data.fileCode = fileCode;
                             value.data.fileName = fileName;
                             value.data.fileSize = fileSize.ToString();

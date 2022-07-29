@@ -2340,12 +2340,12 @@ namespace TUFTManagement.Core
             paramFileExtendtion.Value = fileExtendtion;
             sql.Parameters.Add(paramFileExtendtion);
 
-            SqlParameter paramFileName = new SqlParameter(@"pFileName", SqlDbType.Int);
+            SqlParameter paramFileName = new SqlParameter(@"pFileName", SqlDbType.VarChar, 20);
             paramFileName.Direction = ParameterDirection.Input;
             paramFileName.Value = fileName;
             sql.Parameters.Add(paramFileName);
 
-            SqlParameter paramFileUrl = new SqlParameter(@"pFileUrl", SqlDbType.Int);
+            SqlParameter paramFileUrl = new SqlParameter(@"pFileUrl", SqlDbType.VarChar, 250);
             paramFileUrl.Direction = ParameterDirection.Input;
             paramFileUrl.Value = fileUrl;
             sql.Parameters.Add(paramFileUrl);
@@ -5508,7 +5508,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            connectionString  = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
