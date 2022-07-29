@@ -2410,5 +2410,51 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        #region searchService
+        public SearchAllEmployeeModel SearchAllEmployee(string authorization, string lang, string platform, int logID, PageRequestDTO pageRequestDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllEmployeeModel value = new SearchAllEmployeeModel();
+            try
+            {
+                Pagination<SearchAllEmployee> data = new Pagination<SearchAllEmployee>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchAllEmployee(shareCode, pageRequestDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllEmployee:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
+        #endregion
     }
 }

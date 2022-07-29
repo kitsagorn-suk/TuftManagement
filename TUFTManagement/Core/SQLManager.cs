@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
@@ -2844,7 +2845,53 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        
+        public int GetTotalSearchAllEmployee(string shareCode, PageRequestDTO pageRequest)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_employee_total " +
+                 "@pTextSearch, " +
+                "@pDepartmentID, " +
+                "@pEmpType, " +
+                "@pStatus " );
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = pageRequest.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pDepartmentID = new SqlParameter(@"pDepartmentID", SqlDbType.VarChar, 255);
+            pDepartmentID.Direction = ParameterDirection.Input;
+            pDepartmentID.Value = pageRequest.departmentSearch;
+            sql.Parameters.Add(pDepartmentID);
+
+            SqlParameter pEmpType = new SqlParameter(@"pEmpType", SqlDbType.VarChar, 255);
+            pEmpType.Direction = ParameterDirection.Input;
+            pEmpType.Value = pageRequest.empTypeSearch;
+            sql.Parameters.Add(pEmpType);
+
+            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.VarChar, 255);
+            pStatus.Direction = ParameterDirection.Input;
+            pStatus.Value = pageRequest.statusSearch;
+            sql.Parameters.Add(pStatus);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+
+
 
         public _ReturnIdModel InsertMasterPosition(MasterDataDTO masterDataDTO, int userID)
         {
@@ -5063,16 +5110,75 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public List<EmployeeDetails.EmergencyContact> GetEmerContact(string shareCode, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_emergency_contact " +
+                "@pUserID"
+                );
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<EmployeeDetails.EmergencyContact> listData = new List<EmployeeDetails.EmergencyContact>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmployeeDetails.EmergencyContact data = new EmployeeDetails.EmergencyContact();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+        public List<EmployeeDetails.ImageGallary> GetImgGallary(string shareCode, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_image_gallary " +
+                "@pUserID"
+                );
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<EmployeeDetails.ImageGallary> listData = new List<EmployeeDetails.ImageGallary>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmployeeDetails.ImageGallary data = new EmployeeDetails.ImageGallary();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
         public EmployeeDetails GetEmpProfile(string shareCode, int userID, string lang, RequestDTO requestDTO)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec   " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_employee_details  " +
                 "@pUserID, " +
                 "@pLang");
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = userID;
+            pUserID.Value = requestDTO.userID;
             sql.Parameters.Add(pUserID);
 
             SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 10);
@@ -5094,6 +5200,89 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public Pagination<SearchAllEmployee> SearchAllEmployee(string shareCode, PageRequestDTO pageRequest)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_employee " +
+                "@pTextSearch, " +
+                "@pDepartmentID, " +
+                "@pEmpType, " +
+                "@pStatus, " +
+                "@pLang, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = pageRequest.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pDepartmentID = new SqlParameter(@"pDepartmentID", SqlDbType.VarChar, 255);
+            pDepartmentID.Direction = ParameterDirection.Input;
+            pDepartmentID.Value = pageRequest.departmentSearch;
+            sql.Parameters.Add(pDepartmentID);
+
+            SqlParameter pEmpType = new SqlParameter(@"pEmpType", SqlDbType.VarChar, 255);
+            pEmpType.Direction = ParameterDirection.Input;
+            pEmpType.Value = pageRequest.empTypeSearch;
+            sql.Parameters.Add(pEmpType);
+
+            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.VarChar, 255);
+            pStatus.Direction = ParameterDirection.Input;
+            pStatus.Value = pageRequest.statusSearch;
+            sql.Parameters.Add(pStatus);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = pageRequest.lang;
+            sql.Parameters.Add(pLang);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = pageRequest.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = pageRequest.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = pageRequest.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = pageRequest.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllEmployee> pagination = new Pagination<SearchAllEmployee>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllEmployee data = new SearchAllEmployee();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllEmployee(shareCode, pageRequest);
+
+            pagination.SetPagination(total, pageRequest.perPage, pageRequest.pageInt);
+
+            return pagination;
+        }
+
         public string getConnectionEncoded(string shareCode)
         {
             DataTable table = new DataTable();
@@ -5117,7 +5306,7 @@ namespace TUFTManagement.Core
                     connectionEncoded = dr["connectionString"].ToString();
                 }
             }
-
+            
             return connectionEncoded;
         }
 
@@ -5319,7 +5508,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            //connectionString = "Server=18.138.158.140;Initial Catalog=Inventory_Complex;Database=Palazo;User ID=sa;Password=Snocko2020;Pooling=false;";
+            connectionString  = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -5359,6 +5548,6 @@ namespace TUFTManagement.Core
             return result;
         }
 
-        
+
     }
 }
