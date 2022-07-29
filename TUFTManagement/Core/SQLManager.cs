@@ -2313,6 +2313,62 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel InsertUploadFileDetails(string shareCode, string actionName, string fileCode, string fileExtendtion, string fileName, string fileUrl, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_file_details " +
+                "@pActionName, " +
+                "@pFileCode, " +
+                "@pFileExtendtion, " +
+                "@pFileName," +
+                "@pFileUrl, " +
+                "@pCreateBy");
+
+            SqlParameter paramActionName = new SqlParameter(@"pActionName", SqlDbType.VarChar, 20);
+            paramActionName.Direction = ParameterDirection.Input;
+            paramActionName.Value = actionName;
+            sql.Parameters.Add(paramActionName);
+
+            SqlParameter paramFileCode = new SqlParameter(@"pFileCode", SqlDbType.VarChar, 10);
+            paramFileCode.Direction = ParameterDirection.Input;
+            paramFileCode.Value = fileCode;
+            sql.Parameters.Add(paramFileCode);
+
+            SqlParameter paramFileExtendtion = new SqlParameter(@"pFileExtendtion", SqlDbType.VarChar, 20);
+            paramFileExtendtion.Direction = ParameterDirection.Input;
+            paramFileExtendtion.Value = fileExtendtion;
+            sql.Parameters.Add(paramFileExtendtion);
+
+            SqlParameter paramFileName = new SqlParameter(@"pFileName", SqlDbType.Int);
+            paramFileName.Direction = ParameterDirection.Input;
+            paramFileName.Value = fileName;
+            sql.Parameters.Add(paramFileName);
+
+            SqlParameter paramFileUrl = new SqlParameter(@"pFileUrl", SqlDbType.Int);
+            paramFileUrl.Direction = ParameterDirection.Input;
+            paramFileUrl.Value = fileUrl;
+            sql.Parameters.Add(paramFileUrl);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel InsertBodySet(string shareCode, SaveBodySetRequestDTO saveBodySetDTO, int userID)
         {
             DataTable table = new DataTable();

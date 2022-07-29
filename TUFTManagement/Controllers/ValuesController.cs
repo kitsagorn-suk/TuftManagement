@@ -218,6 +218,162 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/user/upload/file")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> UploadFile()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            
+
+            //var obj = new Object();
+            UploadModel value = new UploadModel();
+            value.data = new _ServiceUploadData();
+
+            int ActionUserID = 0;
+            int userID = 0;
+            string diskFolderPath = string.Empty;
+            string subFolder = string.Empty;
+            string keyName = string.Empty;
+            string fileName = string.Empty;
+            string newFileName = string.Empty;
+            string fileURL = string.Empty;
+            var fileSize = long.MinValue;
+
+            var path = WebConfigurationManager.AppSettings["body_path"];
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            if (!Request.Content.IsMimeMultipartContent("form-data"))
+            {
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.UnsupportedMediaType));
+            }
+
+            MultipartFormDataStreamProvider streamProvider = new MultipartFormDataStreamProvider(path);
+
+            await Request.Content.ReadAsMultipartAsync(streamProvider);
+
+            //get userID for action
+            foreach (var findUserID in streamProvider.FormData.AllKeys)
+            {
+                foreach (var val in streamProvider.FormData.GetValues(findUserID))
+                {
+                    if (findUserID == "userID")
+                    {
+                        ActionUserID = int.Parse(val);
+                    }
+                }
+            }
+
+            foreach (MultipartFileData fileData in streamProvider.FileData)
+            {
+                fileSize = new FileInfo(fileData.LocalFileName).Length;
+                if (fileSize > 3100000)
+                {
+                    throw new Exception("error file size limit 3.00 MB");
+                }
+
+                keyName = fileData.Headers.ContentDisposition.Name.Replace("\"", "");
+                fileName = fileData.Headers.ContentDisposition.FileName.Replace("\"", "");
+                newFileName = Guid.NewGuid() + Path.GetExtension(fileName);
+
+
+                if (keyName != "upload_image_profile" || keyName == "upload_image_gallery")
+                {
+                    AuthenticationController _auth = AuthenticationController.Instance;
+                    AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+                    userID = data.userID;
+                }
+                if (keyName == "upload_image_profile")
+                {
+                    subFolder = userID + "\\ProFilePath";
+                    diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
+                    //newFileName = _sql.GenImageProfile(userID);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], userID + "/ProFilePath", newFileName);
+                }
+                if (keyName == "upload_image_gallery")
+                {
+                    subFolder = userID + "\\ProFilePath";
+                    diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
+                    //newFileName = _sql.GenImageProfile(userID);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], userID + "/ProFilePath", newFileName);
+                }
+
+                var fullPath = Path.Combine(diskFolderPath, newFileName);
+                var fileInfo = new FileInfo(fullPath);
+                while (fileInfo.Exists)
+                {
+                    if (keyName == "upload_user_profile")
+                    {
+                        File.Delete(fullPath);
+                    }
+                    else
+                    {
+                        newFileName = fileInfo.Name.Replace(fileInfo.Extension, "");
+                        newFileName = newFileName + Guid.NewGuid().ToString() + fileInfo.Extension;
+                    }
+
+                    fullPath = Path.Combine(diskFolderPath, newFileName);
+                    fileInfo = new FileInfo(fullPath);
+                    break;
+                }
+
+                if (!Directory.Exists(fileInfo.Directory.FullName))
+                {
+                    Directory.CreateDirectory(fileInfo.Directory.FullName);
+                }
+                File.Move(fileData.LocalFileName, fullPath);
+
+                if (!File.Exists(fullPath))
+                {
+                    value.success = false;
+                    value.data.fileSize = fileSize.ToString();
+                    value.msg = new MsgModel() { code = 0, text = "อัพโหลดไม่สำเร็จ", topic = "ไม่สำเร็จ" };
+                }
+                else
+                {
+                    if (keyName == "upload_image_profile")
+                    {
+                        ValidationModel validation = new ValidationModel();
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, "");
+                        if (validation.Success == true)
+                        {
+                            string fileCode = "random-gen";
+
+                            _sql.InsertUploadFileDetails(shareCode, "", fileCode, "", fileName, fileURL, userID);
+                            value.success = validation.Success;
+                            
+                            value.data.fileCode = fileCode;
+                            value.data.fileName = fileName;
+                            value.data.fileSize = fileSize.ToString();
+                            value.msg = new MsgModel() { code = 0, text = "อัพโหลดสำเร็จ", topic = "สำเร็จ" };
+                        }
+                        else
+                        {
+                            value.success = validation.Success;
+                            value.msg = new MsgModel() { code = 0, text = validation.InvalidMessage, topic = validation.InvalidText };
+                        }
+
+                    }
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, value, Configuration.Formatters.JsonFormatter);
+        }
+
+
         #endregion
 
         #region Add Employees
