@@ -1176,7 +1176,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public InsertLogin UpdateEmpBankAccount(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        public _ReturnIdModel UpdateEmpBankAccount(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_bank_account " +
@@ -1213,7 +1213,7 @@ namespace TUFTManagement.Core
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
-            InsertLogin data = new InsertLogin();
+            _ReturnIdModel data = new _ReturnIdModel();
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -1275,7 +1275,7 @@ namespace TUFTManagement.Core
 
             return data;
         }
-        public InsertLogin UpdateEmpEmergencyContact(string shareCode, SaveEmergencyContact saveEmergencyContact, int userID)
+        public _ReturnIdModel UpdateEmpEmergencyContact(string shareCode, SaveEmergencyContact saveEmergencyContact, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_emergency_contact " +
@@ -1312,7 +1312,7 @@ namespace TUFTManagement.Core
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
-            InsertLogin data = new InsertLogin();
+            _ReturnIdModel data = new _ReturnIdModel();
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -1952,6 +1952,16 @@ namespace TUFTManagement.Core
             pPhoneNumber.Direction = ParameterDirection.Input;
             pPhoneNumber.Value = saveEmpProfileDTO.phoneNumber;
             sql.Parameters.Add(pPhoneNumber);
+
+            SqlParameter pImageProfileCode = new SqlParameter(@"pImageProfileCode", SqlDbType.VarChar, 250);
+            pImageProfileCode.Direction = ParameterDirection.Input;
+            pImageProfileCode.Value = saveEmpProfileDTO.imageProfileCode;
+            sql.Parameters.Add(pImageProfileCode);
+
+            SqlParameter pImageGalleryCode = new SqlParameter(@"pImageGalleryCode", SqlDbType.VarChar, 250);
+            pImageGalleryCode.Direction = ParameterDirection.Input;
+            pImageGalleryCode.Value = saveEmpProfileDTO.imageGalleryCode;
+            sql.Parameters.Add(pImageGalleryCode);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;
@@ -4336,7 +4346,7 @@ namespace TUFTManagement.Core
             return total;
         }
 
-        public int GetIdUpdateByUserID(string targetTable, string userID)
+        public int GetIdUpdateByUserID(string shareCode, string targetTable, string userID)
         {
             int total = 0;
 
@@ -4355,7 +4365,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -5252,6 +5262,8 @@ namespace TUFTManagement.Core
             DecodeString decode = new DecodeString();
 
             string connectionString = decode.Connection(shareCode);
+
+            //connectionString = "Server=18.138.158.140;Initial Catalog=Inventory_Complex;Database=Palazo;User ID=sa;Password=Snocko2020;Pooling=false;";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
