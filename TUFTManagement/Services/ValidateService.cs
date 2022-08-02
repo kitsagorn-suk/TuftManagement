@@ -97,7 +97,8 @@ namespace TUFTManagement.Services
             }
             return validation;
         }
-        public ValidationModel RequireOptionalAllDropdown(string lang, string platform, int logID, GetDropdownRequestDTO getDropdownRequestDTO)
+        public ValidationModel RequireOptionalAllDropdown(string lang, string platform, int logID, 
+            GetDropdownRequestDTO getDropdownRequestDTO)
         {
             if (_sql == null)
             {

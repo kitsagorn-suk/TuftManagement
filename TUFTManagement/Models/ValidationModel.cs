@@ -42,7 +42,7 @@ namespace TUFTManagement.Models
                 case InvalidState.E506:
                     return 506;
                 case InvalidState.S201001:
-                    return 201001;
+                    return 0;
                 case InvalidState.E302001:
                     return 302001;
                 case InvalidState.E301001:

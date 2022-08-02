@@ -173,8 +173,8 @@ D:\_Tuft_Management\TUFTManagement\bin\System.Web.WebPages.Deployment.xml
 D:\_Tuft_Management\TUFTManagement\bin\System.Web.WebPages.Razor.xml
 D:\_Tuft_Management\TUFTManagement\bin\Antlr3.Runtime.pdb
 D:\_Tuft_Management\TUFTManagement\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\_Tuft_Management\TUFTManagement\obj\Release\TUFTManagement.csprojAssemblyReference.cache
 D:\_Tuft_Management\TUFTManagement\obj\Release\TUFTManagement.csproj.CoreCompileInputs.cache
 D:\_Tuft_Management\TUFTManagement\obj\Release\TUFTManagement.csproj.CopyComplete
 D:\_Tuft_Management\TUFTManagement\obj\Release\TUFTManagement.dll
 D:\_Tuft_Management\TUFTManagement\obj\Release\TUFTManagement.pdb
+D:\_Tuft_Management\TUFTManagement\obj\Release\TUFTManagement.csprojAssemblyReference.cache

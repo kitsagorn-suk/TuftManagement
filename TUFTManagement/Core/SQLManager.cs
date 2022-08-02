@@ -57,14 +57,16 @@ namespace TUFTManagement.Core
             }
         }
 
-        public int InsertLogReceiveData(string pServiceName, string pReceiveData, string pTimeStampNow, string pAuthorization, int pUserID, string pType)
+        public int InsertLogReceiveData(string pServiceName, string pReceiveData, string pTimeStampNow, string pAuthorization, 
+            int pUserID, string pType)
         {
             int id = 0;
             
             ipAddress = GetIP();
 
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec insert_log_receive_data @pServiceName, @pReceiveData, @pTimeStampNow, @pAuthorization, @pUserID, " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_log_receive_data @pServiceName, @pReceiveData, " +
+                "@pTimeStampNow, @pAuthorization, @pUserID, " +
                 "@pType, @pDeviceInfo");
 
             SqlParameter paramServiceName = new SqlParameter(@"pServiceName", SqlDbType.VarChar, 50);
@@ -112,7 +114,8 @@ namespace TUFTManagement.Core
             }
             return id;
         }
-        public int InsertLogReceiveDataWithShareCode(string shareCode, string pServiceName, string pReceiveData, string pTimeStampNow, HeadersDTO headersDTO, int pUserID, string pType)
+        public int InsertLogReceiveDataWithShareCode(string shareCode, string pServiceName, string pReceiveData, string pTimeStampNow, 
+            HeadersDTO headersDTO, int pUserID, string pType)
         {
             string json_header = JsonConvert.SerializeObject(headersDTO);
             InsertLogReceiveData(pServiceName, json_header, pTimeStampNow, headersDTO.authHeader, pUserID, pType);
@@ -122,7 +125,8 @@ namespace TUFTManagement.Core
             ipAddress = GetIP();
 
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec insert_log_receive_data @pServiceName, @pReceiveData, @pTimeStampNow, @pAuthorization, @pUserID, " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_log_receive_data @pServiceName, @pReceiveData, " +
+                "@pTimeStampNow, @pAuthorization, @pUserID, " +
                 "@pType, @pDeviceInfo");
 
             SqlParameter paramServiceName = new SqlParameter(@"pServiceName", SqlDbType.VarChar, 50);

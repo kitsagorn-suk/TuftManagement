@@ -192,27 +192,40 @@ namespace TUFTManagement.Controllers
                     data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
-                ValidateService validateService = new ValidateService();
-                ValidationModel chkRequestBody = validateService.RequireOptionalAllDropdown(lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                //ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = new ValidationModel(); //validateService.RequireOptionalAllDropdown(lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
 
                 var obj = new object();
                 obj = chkRequestBody;
 
-                if (chkRequestBody.Success == true)
+                if (getDropdownRequestDTO.moduleName.ToLower() == "subDistrict".ToLower())
                 {
-                    if (getDropdownRequestDTO.moduleName.ToLower() == "subDistrict".ToLower())
-                    {
-                        obj = srv.GetSubDistrictDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
-                    }
-                    if (getDropdownRequestDTO.moduleName.ToLower() == "titlename".ToLower())
-                    {
-                        obj = srv.GetTitleNameDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
-                    }
-                    else
-                    {
-                        obj = srv.GetAllDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
-                    }
+                    obj = srv.GetSubDistrictDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                 }
+                if (getDropdownRequestDTO.moduleName.ToLower() == "titlename".ToLower())
+                {
+                    obj = srv.GetTitleNameDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                }
+                else
+                {
+                    obj = srv.GetAllDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                }
+
+                //if (chkRequestBody.Success == true)
+                //{
+                //    if (getDropdownRequestDTO.moduleName.ToLower() == "subDistrict".ToLower())
+                //    {
+                //        obj = srv.GetSubDistrictDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                //    }
+                //    if (getDropdownRequestDTO.moduleName.ToLower() == "titlename".ToLower())
+                //    {
+                //        obj = srv.GetTitleNameDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                //    }
+                //    else
+                //    {
+                //        obj = srv.GetAllDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                //    }
+                //}
                 
                 return Ok(obj);
             }

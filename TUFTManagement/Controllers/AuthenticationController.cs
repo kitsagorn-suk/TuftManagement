@@ -54,7 +54,7 @@ namespace TUFTManagement.Controllers
                 response = new BasicResponse
                 {
                     success = false,
-                    msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
+                    msg = new MsgModel() { code = value_return.InvalidCode, text = value_return.InvalidMessage, topic = value_return.InvalidText }
                 };
                 ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
             }
@@ -68,7 +68,6 @@ namespace TUFTManagement.Controllers
                 #region check project
                 if (data.fromProject.ToLower() != fromProject.ToLower())
                 {
-                    ValidationModel value = new ValidationModel();
                     ValidationModel.InvalidState state;
                     state = ValidationModel.InvalidState.E504;
                     GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
@@ -77,7 +76,7 @@ namespace TUFTManagement.Controllers
                     response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
+                        msg = new MsgModel() { code = value_return.InvalidCode, text = value_return.InvalidMessage, topic = value_return.InvalidText }
                     };
                     ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
@@ -92,7 +91,6 @@ namespace TUFTManagement.Controllers
 
                 if (checkDupShareCode == 0)
                 {
-                    ValidationModel value = new ValidationModel();
                     ValidationModel.InvalidState state;
                     state = ValidationModel.InvalidState.E506;
                     GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
@@ -101,7 +99,7 @@ namespace TUFTManagement.Controllers
                     response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
+                        msg = new MsgModel() { code = value_return.InvalidCode, text = value_return.InvalidMessage, topic = value_return.InvalidText }
                     };
                     ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
@@ -112,7 +110,6 @@ namespace TUFTManagement.Controllers
                 bool success2 = _sql.CheckToken(authorization);
                 if (!success2)
                 {
-                    ValidationModel value = new ValidationModel();
                     ValidationModel.InvalidState state;
                     state = ValidationModel.InvalidState.E505;
                     GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
@@ -121,7 +118,7 @@ namespace TUFTManagement.Controllers
                     response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
+                        msg = new MsgModel() { code = value_return.InvalidCode, text = value_return.InvalidMessage, topic = value_return.InvalidText }
                     };
                     ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
@@ -134,7 +131,6 @@ namespace TUFTManagement.Controllers
                 bool status_expire = (DateTime.Now > dateTime) ? true : false;
                 if (status_expire)
                 {
-                    ValidationModel value = new ValidationModel();
                     ValidationModel.InvalidState state;
                     state = ValidationModel.InvalidState.E502;
                     GetMessageTopicDTO getMessage = ValidationModel.GetInvalidMessage(state, lang);
@@ -143,7 +139,7 @@ namespace TUFTManagement.Controllers
                     response = new BasicResponse
                     {
                         success = false,
-                        msg = new MsgModel(value_return.InvalidMessage, value_return.InvalidCode)
+                        msg = new MsgModel() { code = value_return.InvalidCode, text = value_return.InvalidMessage, topic = value_return.InvalidText }
                     };
                     ResponseErrorReturn(response, HttpStatusCode.Unauthorized);
                 }
