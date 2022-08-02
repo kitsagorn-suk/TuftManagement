@@ -20,6 +20,10 @@ namespace TUFTManagement.Models
         public string nickName { set; get; } = "";
         public string phoneNumber { set; get; } = "";
 
+        public List<RoleIDList> role { get; set; }
+        public List<ShareHolderList> shareHolder { get; set; }
+        public List<AccessRole> accessList { get; set; }
+
         public void loadData(DataRow dr)
         {
             empCode = dr["emp_code"].ToString();

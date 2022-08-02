@@ -158,6 +158,15 @@ namespace TUFTManagement.Services
                 {
                     data = _sql.GetEmpProfile(shareCode, userID, lang);
                     value.data = data;
+
+                    value.data.role = new List<RoleIDList>();
+                    value.data.role = _sql.GetUserRole(userID, lang);
+
+                    value.data.shareHolder = new List<ShareHolderList>();
+                    value.data.shareHolder = _sql.GetUserShareHolder(userID, lang);
+
+                    value.data.accessList = new List<AccessRole>();
+
                     value.success = validation.Success;
                 }
                 else
