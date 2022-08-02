@@ -19,6 +19,7 @@ namespace TUFTManagement.Models
         public string empCode { set; get; } = "";
         public string empName { set; get; } = "";
         public string departmentName { set; get; } = "";
+        public string positionName { set; get; } = "";
         public string empType { set; get; } = "";
         public string phoneNum { set; get; } = "";
         public string status { set; get; } = "";
@@ -27,7 +28,18 @@ namespace TUFTManagement.Models
         {
             id = int.Parse(dr["id"].ToString());
             empCode = dr["emp_code"].ToString();
-            empName = dr["emp_name"].ToString();
+
+            dr["emp_nick_name"].ToString();
+            if (!string.IsNullOrEmpty(dr["emp_nick_name"].ToString()))
+            {
+                empName = dr["emp_name"].ToString() + "(" + dr["emp_nick_name"].ToString() + ")";
+            }
+            else
+            {
+                empName = dr["emp_name"].ToString();
+            }
+            
+            positionName = dr["position_name"].ToString();
             departmentName = dr["department_name"].ToString();
             empType = dr["emp_type"].ToString();
             phoneNum = dr["phone_number"].ToString();

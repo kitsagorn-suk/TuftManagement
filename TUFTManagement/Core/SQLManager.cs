@@ -2256,6 +2256,38 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel DeleteEmpfile(string shareCode, int id, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec delete_emp_file " +
+                "@pFileID, " +
+                "@pUpdateBy");
+
+            SqlParameter pFileID = new SqlParameter(@"pFileID", SqlDbType.Int);
+            pFileID.Direction = ParameterDirection.Input;
+            pFileID.Value = id;
+            sql.Parameters.Add(pFileID);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public _ReturnIdModel DeleteEmpRate(EmpRateRequestDTO empRateRequestDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -2314,6 +2346,35 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public List<DropdownTitleName> GetDropdownTitle(string lang)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_title " +
+                "@pLang ");
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<DropdownTitleName> listData = new List<DropdownTitleName>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DropdownTitleName data = new DropdownTitleName();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
         public _ReturnIdModel InsertUploadFileDetails(string shareCode, string actionName, string fileCode, string fileExtendtion, string fileName, string fileUrl, int userID)
         {
             DataTable table = new DataTable();
@@ -2330,7 +2391,7 @@ namespace TUFTManagement.Core
             paramActionName.Value = actionName;
             sql.Parameters.Add(paramActionName);
 
-            SqlParameter paramFileCode = new SqlParameter(@"pFileCode", SqlDbType.VarChar, 10);
+            SqlParameter paramFileCode = new SqlParameter(@"pFileCode", SqlDbType.VarChar, 50);
             paramFileCode.Direction = ParameterDirection.Input;
             paramFileCode.Value = fileCode;
             sql.Parameters.Add(paramFileCode);

@@ -14,8 +14,16 @@ namespace TUFTManagement.Models
 
     public class _ServiceUploadData
     {
-        public string fileName { get; set; } = "";
         public string fileCode { get; set; } = "";
+        public List<_fileDetails> fileDetails { get; set; }
+    }
+
+    public class _fileDetails
+    {
+        public int id { get; set; } = 0;
+        public string fileName { get; set; } = "";
+        public string fileUrl { get; set; } = "";
         public string fileSize { get; set; } = "";
     }
+
 }

@@ -204,6 +204,10 @@ namespace TUFTManagement.Controllers
                     {
                         obj = srv.GetSubDistrictDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                     }
+                    if (getDropdownRequestDTO.moduleName.ToLower() == "titlename".ToLower())
+                    {
+                        obj = srv.GetTitleNameDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    }
                     else
                     {
                         obj = srv.GetAllDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
@@ -239,6 +243,7 @@ namespace TUFTManagement.Controllers
             //var obj = new Object();
             UploadModel value = new UploadModel();
             value.data = new _ServiceUploadData();
+            value.data.fileDetails = new List<_fileDetails>();
 
             int ActionUserID = 0;
             int userID = 0;
@@ -249,6 +254,13 @@ namespace TUFTManagement.Controllers
             string newFileName = string.Empty;
             string fileURL = string.Empty;
             var fileSize = long.MinValue;
+            string fileCode = string.Empty;
+
+            #region gen file code
+            Random rnd = new Random();
+            int passwordRandom = rnd.Next(100000, 999999);
+            fileCode = Utility.MD5Hash(passwordRandom.ToString() + "_" + ActionUserID.ToString()).ToUpper();
+            #endregion
 
             var path = WebConfigurationManager.AppSettings["body_path"];
             if (!Directory.Exists(path))
@@ -298,17 +310,17 @@ namespace TUFTManagement.Controllers
                 }
                 if (keyName == "upload_image_profile")
                 {
-                    subFolder = userID + "\\ProFilePath";
+                    subFolder = ActionUserID + "\\ProFilePath";
                     diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
                     //newFileName = _sql.GenImageProfile(userID);
-                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], userID + "/ProFilePath", newFileName);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], ActionUserID + "/ProFilePath", newFileName);
                 }
                 if (keyName == "upload_image_gallery")
                 {
-                    subFolder = userID + "\\GalleryPath";
+                    subFolder = ActionUserID + "\\GalleryPath";
                     diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
                     //newFileName = _sql.GenImageProfile(userID);
-                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], userID + "/GalleryPath", newFileName);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], ActionUserID + "/GalleryPath", newFileName);
                 }
 
                 var fullPath = Path.Combine(diskFolderPath, newFileName);
@@ -339,7 +351,6 @@ namespace TUFTManagement.Controllers
                 if (!File.Exists(fullPath))
                 {
                     value.success = false;
-                    value.data.fileSize = fileSize.ToString();
                     value.msg = new MsgModel() { code = 0, text = "อัพโหลดไม่สำเร็จ", topic = "ไม่สำเร็จ" };
                 }
                 else
@@ -350,14 +361,19 @@ namespace TUFTManagement.Controllers
                         validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, "");
                         if (validation.Success == true)
                         {
-                            string fileCode = "random-gen";
 
-                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, ActionUserID);
                             value.success = validation.Success;
-                            
+
+                            _fileDetails file = new _fileDetails();
+                            file.id = result.id;
+                            file.fileUrl = fileURL;
+                            file.fileName = fileName;
+                            file.fileSize = fileSize.ToString();
+
                             value.data.fileCode = fileCode;
-                            value.data.fileName = fileName;
-                            value.data.fileSize = fileSize.ToString();
+                            value.data.fileDetails.Add(file);
+
                             value.msg = new MsgModel() { code = 0, text = "อัพโหลดสำเร็จ", topic = "สำเร็จ" };
                         }
                         else
@@ -374,14 +390,18 @@ namespace TUFTManagement.Controllers
                         validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, "");
                         if (validation.Success == true)
                         {
-                            string fileCode = "random-gen";
 
-                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, ActionUserID);
                             value.success = validation.Success;
 
+                            _fileDetails file = new _fileDetails();
+                            file.fileUrl = fileURL;
+                            file.fileName = fileName;
+                            file.fileSize = fileSize.ToString();
+
                             value.data.fileCode = fileCode;
-                            value.data.fileName = fileName;
-                            value.data.fileSize = fileSize.ToString();
+                            value.data.fileDetails.Add(file);
+
                             value.msg = new MsgModel() { code = 0, text = "อัพโหลดสำเร็จ", topic = "สำเร็จ" };
                         }
                         else
@@ -397,10 +417,60 @@ namespace TUFTManagement.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, value, Configuration.Formatters.JsonFormatter);
         }
 
+        [Route("1.0/user/delete/file")]
+        [HttpPost]
+        public IHttpActionResult DeleteFile(RequestDTO requestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(requestDTO);
+                int logID = _sql.InsertLogReceiveData("DeleteFile", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (requestDTO.id.Equals(0))
+                {
+                    checkMissingOptional += "id ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                DeleteService srv = new DeleteService();
+                var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         #endregion
 
         #region Employees
+
+
+
         [Route("1.0/save/empProfile")]
         [HttpPost]
         public IHttpActionResult SaveEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
@@ -469,7 +539,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.0/get/empProfile")]
+        [Route("1.0/get/empProfileDetails")]
         [HttpPost]
         public IHttpActionResult GetEmpProfile(RequestDTO requestDTO)
         {

@@ -101,10 +101,11 @@ namespace TUFTManagement.Models
 
         public class ImageGallary
         {
+            public int id { set; get; } = 0;
             public string imgUrl { set; get; } = "";
             public void loadData(DataRow dr)
             {
-               
+                id =  int.Parse(dr["id"].ToString());
                 imgUrl = dr["url"].ToString();
             }
         }
