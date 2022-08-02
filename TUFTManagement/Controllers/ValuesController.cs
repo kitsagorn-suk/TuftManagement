@@ -482,8 +482,6 @@ namespace TUFTManagement.Controllers
 
         #region Employees
 
-
-
         [Route("1.0/save/empProfile")]
         [HttpPost]
         public IHttpActionResult SaveEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO)
@@ -855,6 +853,37 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.0/update/EmpStatus")]
+        [HttpPost]
+        public IHttpActionResult UpdateEmployeeStatus(SaveEmpStatusDTO saveEmpStatusDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveEmpStatusDTO);
+                int logID = _sql.InsertLogReceiveData("UpdateEmployeeStatus", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                UpdateService srv = new UpdateService();
+                var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO, data.roleIDList, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
 
         #endregion
 

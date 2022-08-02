@@ -2228,6 +2228,45 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel UpdateEmpStatus(string shareCode, SaveEmpStatusDTO saveEmpStatusDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_status " +
+                "@pEmpId, " +
+                "@pStatus, " +
+                "@pUpdateBy");
+
+            SqlParameter paramID = new SqlParameter(@"pEmpId", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = saveEmpStatusDTO.empID;
+            sql.Parameters.Add(paramID);
+
+            SqlParameter paramStatus = new SqlParameter(@"pProductCd", SqlDbType.VarChar, 10);
+            paramStatus.Direction = ParameterDirection.Input;
+            paramStatus.Value = saveEmpStatusDTO.status;
+            sql.Parameters.Add(paramStatus);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
         public _ReturnIdModel DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -4724,7 +4763,7 @@ namespace TUFTManagement.Core
             sql.Parameters.Add(pUserID);
 
             table = sql.executeQueryWithReturnTable();
-
+           
             _ReturnIdModel data = new _ReturnIdModel();
 
             if (table != null && table.Rows.Count > 0)

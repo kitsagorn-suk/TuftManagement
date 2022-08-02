@@ -392,5 +392,49 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public ReturnIdModel UpdateEmpStatusService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpStatusDTO saveEmpStatusDTO, string roleIDList, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    string TableName = "emp_profile";
+                    //_sql.InsertSystemLogChange(saveEmpStatusDTO.empID, TableName, "status", saveEmpStatusDTO.status.ToString(), userID);
+                    
+                    value.data = _sql.UpdateEmpStatus(shareCode, saveEmpStatusDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateEmpStatusService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
     }
 }
