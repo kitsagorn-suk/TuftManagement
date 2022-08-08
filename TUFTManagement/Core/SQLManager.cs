@@ -2447,7 +2447,7 @@ namespace TUFTManagement.Core
                 "@pFileUrl, " +
                 "@pCreateBy");
 
-            SqlParameter paramActionName = new SqlParameter(@"pActionName", SqlDbType.VarChar, 20);
+            SqlParameter paramActionName = new SqlParameter(@"pActionName", SqlDbType.VarChar, 30);
             paramActionName.Direction = ParameterDirection.Input;
             paramActionName.Value = actionName;
             sql.Parameters.Add(paramActionName);

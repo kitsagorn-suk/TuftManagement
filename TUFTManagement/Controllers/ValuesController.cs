@@ -299,6 +299,10 @@ namespace TUFTManagement.Controllers
                     {
                         ActionUserID = int.Parse(val);
                     }
+                    if (findUserID == "fileCode")
+                    {
+                        fileCode = val.ToString();
+                    }
                 }
             }
 
@@ -315,7 +319,7 @@ namespace TUFTManagement.Controllers
                 newFileName = Guid.NewGuid() + Path.GetExtension(fileName);
 
 
-                if (keyName == "upload_image_profile" || keyName == "upload_image_gallery")
+                if (keyName == "upload_image_profile" || keyName == "upload_image_gallery" || keyName == "upload_image_identity")
                 {
                     AuthenticationController _auth = AuthenticationController.Instance;
                     AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
@@ -323,24 +327,31 @@ namespace TUFTManagement.Controllers
                 }
                 if (keyName == "upload_image_profile")
                 {
-                    subFolder = ActionUserID + "\\ProFilePath";
+                    subFolder = "\\ProFilePath";
                     diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
                     //newFileName = _sql.GenImageProfile(userID);
-                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], ActionUserID + "/ProFilePath", newFileName);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], "ProFilePath", newFileName);
                 }
                 if (keyName == "upload_image_gallery")
                 {
-                    subFolder = ActionUserID + "\\GalleryPath";
+                    subFolder = "\\GalleryPath";
                     diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
                     //newFileName = _sql.GenImageProfile(userID);
-                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], ActionUserID + "/GalleryPath", newFileName);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], "GalleryPath", newFileName);
+                }
+                if (keyName == "upload_image_identity")
+                {
+                    subFolder = "\\IdentityPath";
+                    diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
+                    //newFileName = _sql.GenImageProfile(userID);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], "IdentityPath", newFileName);
                 }
 
                 var fullPath = Path.Combine(diskFolderPath, newFileName);
                 var fileInfo = new FileInfo(fullPath);
                 while (fileInfo.Exists)
                 {
-                    if (keyName == "upload_user_profile" || keyName == "upload_image_gallery")
+                    if (keyName == "upload_user_profile" || keyName == "upload_image_gallery" || keyName == "upload_image_identity")
                     {
                         File.Delete(fullPath);
                     }
@@ -375,7 +386,7 @@ namespace TUFTManagement.Controllers
                         if (validation.Success == true)
                         {
 
-                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, ActionUserID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
                             value.success = validation.Success;
 
                             _fileDetails file = new _fileDetails();
@@ -404,7 +415,36 @@ namespace TUFTManagement.Controllers
                         if (validation.Success == true)
                         {
 
-                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, ActionUserID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            value.success = validation.Success;
+
+                            _fileDetails file = new _fileDetails();
+
+                            file.id = result.id;
+                            file.fileUrl = fileURL;
+                            file.fileName = fileName;
+                            file.fileSize = fileSize.ToString();
+
+                            value.data.fileCode = fileCode;
+                            value.data.fileDetails.Add(file);
+
+                            value.msg = new MsgModel() { code = 0, text = "อัพโหลดสำเร็จ", topic = "สำเร็จ" };
+                        }
+                        else
+                        {
+                            value.success = validation.Success;
+                            value.msg = new MsgModel() { code = 0, text = validation.InvalidMessage, topic = validation.InvalidText };
+                        }
+
+                    }
+                    if (keyName == "upload_image_identity")
+                    {
+                        ValidationModel validation = new ValidationModel();
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, "");
+                        if (validation.Success == true)
+                        {
+
+                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
                             value.success = validation.Success;
 
                             _fileDetails file = new _fileDetails();
