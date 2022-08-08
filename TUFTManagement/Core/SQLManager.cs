@@ -5934,7 +5934,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
