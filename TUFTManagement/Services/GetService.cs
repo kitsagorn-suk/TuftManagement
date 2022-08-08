@@ -283,6 +283,49 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public GetLeaveDetailModel GetLeaveDetailService(string authorization, string lang, string platform, int logID, GetLeaveDetailRequestDTO leaveDetailDTO,string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetLeaveDetailModel value = new GetLeaveDetailModel();
+            try
+            {
+                GetLeaveDetail data = new GetLeaveDetail();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetLeaveDetail(leaveDetailDTO, shareCode);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetLeaveDetailService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
 
         public GetFeedbackModel GetFeedbackService(string authorization, string lang, string platform, int logID, int userID)
         {

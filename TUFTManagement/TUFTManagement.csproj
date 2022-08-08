@@ -186,7 +186,9 @@
     <Compile Include="Core\SQLManager.cs" />
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\ValidationManager.cs" />
+    <Compile Include="DTO\ActionLeaveFormDTO.cs" />
     <Compile Include="DTO\FeedbackDTO.cs" />
+    <Compile Include="DTO\GetLeaveDetailRequestDTO.cs" />
     <Compile Include="DTO\HeadersDTO.cs" />
     <Compile Include="DTO\GetEmpRateRequestDTO.cs" />
     <Compile Include="DTO\GetEmpProfileDTO.cs" />
@@ -199,12 +201,14 @@
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\RequestDTO.cs" />
     <Compile Include="DTO\SaveEmpStatusDTO.cs" />
+    <Compile Include="DTO\SaveLeaveDetailDTO.cs" />
     <Compile Include="DTO\SaveWorkTimeTransChangeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeTransChangeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkShiftRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpRateRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpProfileDTO.cs" />
+    <Compile Include="DTO\SearchLeaveDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -238,6 +242,7 @@
     <Compile Include="Models\GetEmpWorkShiftModel.cs" />
     <Compile Include="Models\GetEmpRateModel.cs" />
     <Compile Include="Models\GetFeedbackModel.cs" />
+    <Compile Include="Models\GetLeaveDetailModel.cs" />
     <Compile Include="Models\GetMasterDataModel.cs" />
     <Compile Include="Models\GetDropdownTitleNameModel.cs" />
     <Compile Include="Models\GetSubDistrictDropdownModel.cs" />
@@ -249,6 +254,7 @@
     <Compile Include="Models\ReturnIdModel.cs" />
     <Compile Include="Models\ReturnVerifyModel.cs" />
     <Compile Include="Models\SearchAllEmployeeModel.cs" />
+    <Compile Include="Models\SearchAllLeaveModel.cs" />
     <Compile Include="Models\SearchMasterDataBodySetModel.cs" />
     <Compile Include="Models\SearchMasterDataModel.cs" />
     <Compile Include="Models\ReturnMessageModel.cs" />
