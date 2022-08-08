@@ -471,5 +471,63 @@ namespace TUFTManagement.Services
                 throw ex;
             }
         }
+
+        public ValidationModel RequireOptionalSaveLeaveDetail(string shareCode, string lang, string platform, int logID, SaveLeaveDetailDTO saveLeaveDetailDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ValidationModel validation = new ValidationModel();
+
+            try
+            {
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(saveLeaveDetailDTO.leaveId.ToString()))
+                {
+                    checkMissingOptional += "leaveID ";
+                }
+                if (string.IsNullOrEmpty(saveLeaveDetailDTO.leavetypeId.ToString()))
+                {
+                    checkMissingOptional += "leaveTypeID ";
+                }
+                if (string.IsNullOrEmpty(saveLeaveDetailDTO.startdate))
+                {
+                    checkMissingOptional += "startDate ";
+                }
+                if (string.IsNullOrEmpty(saveLeaveDetailDTO.enddate))
+                {
+                    checkMissingOptional += "endDate ";
+                }
+                if (string.IsNullOrEmpty(saveLeaveDetailDTO.leavereason))
+                {
+                    checkMissingOptional += "leaveReason ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, platform);
+                }
+
+                return validation;
+
+            }
+            catch (Exception ex)
+            {
+                //LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalAllDropdown:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+        }
+
     }
 }

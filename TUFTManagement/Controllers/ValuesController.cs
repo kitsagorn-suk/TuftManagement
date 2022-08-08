@@ -1988,5 +1988,296 @@ namespace TUFTManagement.Controllers
             }
         }
         #endregion
+
+        #region leave
+        [Route("1.0/search/allleave")]
+        [HttpPost]
+        public IHttpActionResult GetSearchAllLeave(SearchLeaveDTO searchLeaveDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject("");
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchAllLeave", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+
+                if (searchLeaveDTO.pageInt.Equals(null) || searchLeaveDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchLeaveDTO.perPage.Equals(null) || searchLeaveDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchLeaveDTO.sortField > 3)
+                {
+                    throw new Exception("invalid : sortField " + searchLeaveDTO.sortField);
+                }
+                if (!(searchLeaveDTO.sortType == "a" || searchLeaveDTO.sortType == "d" || searchLeaveDTO.sortType == "A" || searchLeaveDTO.sortType == "D" || searchLeaveDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllLeave(authHeader, lang, fromProject.ToLower(), logID, searchLeaveDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/leavedetail")]
+        [HttpPost]
+        public IHttpActionResult GetLeaveDetail(GetLeaveDetailRequestDTO leaveDetailDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+
+                GetService srv = new GetService();
+
+                if (leaveDetailDTO.leaveID.Equals(0) || leaveDetailDTO.leaveID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : leaveID");
+                }
+
+                var obj = srv.GetLeaveDetailService(authHeader, lang, fromProject.ToLower(), 1, leaveDetailDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/LeaveDetail")]
+        [HttpPost]
+        public IHttpActionResult SaveLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveLeaveDetailDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveLeaveDetail", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveLeaveDetail(shareCode, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO);
+
+
+                InsertService srvInsert = new InsertService();
+                UpdateService srvUpdate = new UpdateService();
+                DeleteService srvDelete = new DeleteService();
+                var obj = new object();
+
+                if (chkRequestBody.Success == true)
+                {
+                    if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
+                    {
+                        //obj = srvInsert.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID);
+                    }
+                    else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
+                    {
+                        obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID, shareCode);
+                    }
+                    else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
+                    {
+                        //obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/cancel/leaveForm")]
+        [HttpPost]
+        public IHttpActionResult CancelLeaveForm(ActionLeaveFormDTO actionLeaveFormDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            try
+            {
+                string json = JsonConvert.SerializeObject(actionLeaveFormDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "CancelLeaveForm", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                #region msgCheck
+                string msgCheck = "";
+                if (actionLeaveFormDTO.leaveID.Equals(0) || actionLeaveFormDTO.leaveID.Equals(null))
+                {
+                    msgCheck += "leaveID ";
+                }
+                if (string.IsNullOrEmpty(actionLeaveFormDTO.cancelReason))
+                {
+                    msgCheck += "cancelReason ";
+                }
+
+                if (!string.IsNullOrEmpty(msgCheck))
+                {
+                    throw new Exception(msgCheck);
+                }
+                #endregion
+
+                UpdateService srv = new UpdateService();
+                var obj = srv.CancelLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+                return Ok(obj);
+            }
+            catch(Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/reject/leaveForm")]
+        [HttpPost]
+        public IHttpActionResult RejectLeaveForm(ActionLeaveFormDTO actionLeaveFormDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            try
+            {
+                string json = JsonConvert.SerializeObject(actionLeaveFormDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "CancelLeaveForm", json, timestampNow.ToString(), headersDTO,
+                   data.userID, fromProject.ToLower());
+
+                #region msgCheck
+                string msgCheck = "";
+                if (actionLeaveFormDTO.leaveID.Equals(0) || actionLeaveFormDTO.leaveID.Equals(null))
+                {
+                    msgCheck += "leaveID ";
+                }
+                if (string.IsNullOrEmpty(actionLeaveFormDTO.rejectReason))
+                {
+                    msgCheck += "rejectReason ";
+                }
+
+                if (!string.IsNullOrEmpty(msgCheck))
+                {
+                    throw new Exception(msgCheck);
+                }
+                #endregion
+
+                UpdateService srv = new UpdateService();
+                var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/approve/leaveForm")]
+        [HttpPost]
+        public IHttpActionResult ApproveLeaveForm(ActionLeaveFormDTO actionLeaveFormDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            try
+            {
+                string json = JsonConvert.SerializeObject(actionLeaveFormDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "CancelLeaveForm", json, timestampNow.ToString(), headersDTO,
+                   data.userID, fromProject.ToLower());
+
+                if (actionLeaveFormDTO.leaveID.Equals(null) || actionLeaveFormDTO.leaveID.Equals(0))
+                {
+                    throw new Exception("leaveID ");
+                }
+
+                UpdateService srv = new UpdateService();
+                var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        #endregion
     }
 }

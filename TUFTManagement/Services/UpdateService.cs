@@ -436,5 +436,209 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public ReturnIdModel UpdateLeaveDetailService(string authorization, string lang, string platform, int logID, SaveLeaveDetailDTO saveLeaveDetailDTO, string roleIDList, int userID,string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    string TableName = "emp_leave";
+                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "ws_code", saveLeaveDetailDTO.leavetypeId.ToString(), userID);
+                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "time_start", saveLeaveDetailDTO.startdate, userID);
+                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "time_end", saveLeaveDetailDTO.enddate, userID);
+                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "work_type_id", saveLeaveDetailDTO.numdays.ToString(), userID);
+                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "work_type_id", saveLeaveDetailDTO.leavereason.ToString(), userID);
+
+                    value.data = _sql.UpdateLeaveDetail(saveLeaveDetailDTO, userID, shareCode);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateLeaveDetailService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel CancelLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO
+            , int userID,string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                //MailModel mail = new MailModel();
+
+               
+                if (validation.Success == true)
+                {
+                    value.data = _sql.CancelLeaveForm(actionLeaveFormDTO.leaveID, userID, actionLeaveFormDTO.cancelReason, shareCode);
+
+                    //MailService srv = new MailService();
+                    //mail = srv.SendMailLeave(lang, logID, value.data.id, 4);
+                    //value.mail = mail;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "CancelLeaveFormService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO
+    , int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                //MailModel mail = new MailModel();
+               
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    value.data = _sql.RejectLeaveForm(actionLeaveFormDTO.leaveID, userID, actionLeaveFormDTO.rejectReason , shareCode);
+
+                    //MailService srv = new MailService();
+                    //if (_sql.CheckleaveIsEdit(value.data.id))
+                    //{
+                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 5);
+                    //}
+                    //else
+                    //{
+                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 2);
+                    //}
+                    //value.mail = mail;
+                //}
+                //else
+                //{
+                //    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "RejectLeaveFormService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel ApproveLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID,string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            //MailModel mail = new MailModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    value.data = _sql.ApproveLeaveForm(actionLeaveFormDTO.leaveID, userID, shareCode);
+
+                    //MailService srv = new MailService();
+                    //if (_sql.CheckleaveIsEdit(value.data.id))
+                    //{
+                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 5);
+                    //}
+                    //else
+                    //{
+                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 2);
+                    //}
+                    //value.mail = mail;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "ApproveLeaveFormService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
     }
 }
