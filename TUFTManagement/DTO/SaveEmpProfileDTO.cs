@@ -12,6 +12,12 @@ namespace TUFTManagement.DTO
         public int empProfileID { set; get; } = 0;
         public string shareCode { set; get; } = "";
 
+        #region param เจาะรูไว้ ตอนนี้ defaut 
+        public int agentID { set; get; } = 1;
+        public int shareID { set; get; } = 1;
+        public int roleID { set; get; } = 7;
+        #endregion
+
 
         public string userName { set; get; } = "";
         public string joinDate { set; get; } = "";

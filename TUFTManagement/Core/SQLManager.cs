@@ -770,6 +770,9 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_user_login " +
                 "@pUserName, " +
                 "@pPositionID, " +
+                "@pShareID, " +
+                "@pAgentID, " +
+                "@pRoleID, " +
                 "@pCreateBy");
 
             SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 200);
@@ -781,6 +784,21 @@ namespace TUFTManagement.Core
             pPositionID.Direction = ParameterDirection.Input;
             pPositionID.Value = saveEmpProfileDTO.positionID;
             sql.Parameters.Add(pPositionID);
+
+            SqlParameter pShareID = new SqlParameter(@"pShareID", SqlDbType.Int);
+            pShareID.Direction = ParameterDirection.Input;
+            pShareID.Value = saveEmpProfileDTO.shareID;
+            sql.Parameters.Add(pShareID);
+
+            SqlParameter pAgentID = new SqlParameter(@"pAgentID", SqlDbType.Int);
+            pAgentID.Direction = ParameterDirection.Input;
+            pAgentID.Value = saveEmpProfileDTO.agentID;
+            sql.Parameters.Add(pAgentID);
+
+            SqlParameter pRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
+            pRoleID.Direction = ParameterDirection.Input;
+            pRoleID.Value = saveEmpProfileDTO.roleID;
+            sql.Parameters.Add(pRoleID);
 
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
