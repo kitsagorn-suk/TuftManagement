@@ -2246,6 +2246,69 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel InsertLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_leave " +
+                "@pUserID, " +
+                "@pLeaveTypeID, " +
+                "@pStartDate, " +
+                "@pEndDate, " +
+                "@pNumberOfDays," +
+                "@pLeaveReason," +
+                "@pCreateBy");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = saveLeaveDetailDTO.empId;
+            sql.Parameters.Add(pUserID);
+
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.Int);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = saveLeaveDetailDTO.leavetypeId;
+            sql.Parameters.Add(pLeaveTypeID);
+
+            SqlParameter pStartDate = new SqlParameter(@"pStartDate", SqlDbType.VarChar, 100);
+            pStartDate.Direction = ParameterDirection.Input;
+            pStartDate.Value = saveLeaveDetailDTO.startdate;
+            sql.Parameters.Add(pStartDate);
+
+            SqlParameter pEndDate = new SqlParameter(@"pEndDate", SqlDbType.VarChar, 100);
+            pEndDate.Direction = ParameterDirection.Input;
+            pEndDate.Value = saveLeaveDetailDTO.enddate;
+            sql.Parameters.Add(pEndDate);
+
+            SqlParameter pNumberOfDays = new SqlParameter(@"pNumberOfDays", SqlDbType.Int);
+            pNumberOfDays.Direction = ParameterDirection.Input;
+            pNumberOfDays.Value = saveLeaveDetailDTO.numdays;
+            sql.Parameters.Add(pNumberOfDays);
+
+            SqlParameter pLeaveReason = new SqlParameter(@"pLeaveReason", SqlDbType.VarChar, 250);
+            pLeaveReason.Direction = ParameterDirection.Input;
+            pLeaveReason.Value = saveLeaveDetailDTO.leavereason;
+            sql.Parameters.Add(pLeaveReason);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
         public _ReturnIdModel UpdateLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
         {
             DataTable table = new DataTable();
@@ -5956,7 +6019,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

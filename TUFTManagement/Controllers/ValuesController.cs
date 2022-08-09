@@ -2163,23 +2163,23 @@ namespace TUFTManagement.Controllers
 
                 InsertService srvInsert = new InsertService();
                 UpdateService srvUpdate = new UpdateService();
-                DeleteService srvDelete = new DeleteService();
+                //DeleteService srvDelete = new DeleteService();
                 var obj = new object();
 
                 if (chkRequestBody.Success == true)
                 {
                     if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
                     {
-                        //obj = srvInsert.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID);
+                        obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID, shareCode);
                     }
                     else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
                     {
                         obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID, shareCode);
                     }
-                    else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
-                    {
+                    //else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
+                    //{
                         //obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID);
-                    }
+                    //}
                 }
 
                 return Ok(obj);
