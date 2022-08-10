@@ -339,6 +339,7 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+
         public ReturnIdModel ApproveWorkTimeTransChangeService(string authorization, string lang, string platform, int logID, SaveWorkTimeTransChangeRequestDTO transChangeRequest, string roleIDList, int userID)
         {
             if (_sql == null)
@@ -452,11 +453,11 @@ namespace TUFTManagement.Services
                 if (validation.Success == true)
                 {
                     string TableName = "emp_leave";
-                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "ws_code", saveLeaveDetailDTO.leavetypeId.ToString(), userID);
-                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "time_start", saveLeaveDetailDTO.startdate, userID);
-                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "time_end", saveLeaveDetailDTO.enddate, userID);
-                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "work_type_id", saveLeaveDetailDTO.numdays.ToString(), userID);
-                    //_sql.InsertSystemLogChange(saveLeaveDetailDTO.leaveId, TableName, "work_type_id", saveLeaveDetailDTO.leavereason.ToString(), userID);
+                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "leave_type_id", saveLeaveDetailDTO.leavetypeId.ToString(), userID);
+                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "start_date", saveLeaveDetailDTO.startdate, userID);
+                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "end_date", saveLeaveDetailDTO.enddate, userID);
+                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "numbers_of_days", saveLeaveDetailDTO.numdays.ToString(), userID);
+                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "leave_reason00", saveLeaveDetailDTO.leavereason.ToString(), userID);
 
                     value.data = _sql.UpdateLeaveDetail(saveLeaveDetailDTO, userID, shareCode);
                 }
@@ -484,8 +485,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel CancelLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO
-            , int userID,string shareCode)
+        public ReturnIdModel CancelLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID,string shareCode)
         {
             if (_sql == null)
             {
@@ -532,8 +532,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO
-    , int userID, string shareCode)
+        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {

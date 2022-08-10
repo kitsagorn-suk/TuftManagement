@@ -2262,7 +2262,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(actionLeaveFormDTO);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "CancelLeaveForm", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "RejectLeaveForm", json, timestampNow.ToString(), headersDTO,
                    data.userID, fromProject.ToLower());
 
                 #region msgCheck
@@ -2313,7 +2313,7 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(actionLeaveFormDTO);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "CancelLeaveForm", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "ApproveLeaveForm", json, timestampNow.ToString(), headersDTO,
                    data.userID, fromProject.ToLower());
 
                 if (actionLeaveFormDTO.leaveID.Equals(null) || actionLeaveFormDTO.leaveID.Equals(0))

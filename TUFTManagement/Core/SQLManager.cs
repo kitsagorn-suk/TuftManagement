@@ -1813,6 +1813,397 @@ namespace TUFTManagement.Core
 
         #endregion
 
+        #region leave
+
+        public _ReturnIdModel InsertLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_leave " +
+                "@pUserID, " +
+                "@pLeaveTypeID, " +
+                "@pStartDate, " +
+                "@pEndDate, " +
+                "@pNumberOfDays," +
+                "@pLeaveReason," +
+                "@pCreateBy");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = saveLeaveDetailDTO.empId;
+            sql.Parameters.Add(pUserID);
+
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.Int);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = saveLeaveDetailDTO.leavetypeId;
+            sql.Parameters.Add(pLeaveTypeID);
+
+            SqlParameter pStartDate = new SqlParameter(@"pStartDate", SqlDbType.VarChar, 100);
+            pStartDate.Direction = ParameterDirection.Input;
+            pStartDate.Value = saveLeaveDetailDTO.startdate;
+            sql.Parameters.Add(pStartDate);
+
+            SqlParameter pEndDate = new SqlParameter(@"pEndDate", SqlDbType.VarChar, 100);
+            pEndDate.Direction = ParameterDirection.Input;
+            pEndDate.Value = saveLeaveDetailDTO.enddate;
+            sql.Parameters.Add(pEndDate);
+
+            SqlParameter pNumberOfDays = new SqlParameter(@"pNumberOfDays", SqlDbType.Int);
+            pNumberOfDays.Direction = ParameterDirection.Input;
+            pNumberOfDays.Value = saveLeaveDetailDTO.numdays;
+            sql.Parameters.Add(pNumberOfDays);
+
+            SqlParameter pLeaveReason = new SqlParameter(@"pLeaveReason", SqlDbType.VarChar, 250);
+            pLeaveReason.Direction = ParameterDirection.Input;
+            pLeaveReason.Value = saveLeaveDetailDTO.leavereason;
+            sql.Parameters.Add(pLeaveReason);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_leave " +
+                "@pLeaveID, " +
+                "@pLeaveTypeID, " +
+                "@pStartDate, " +
+                "@pEndDate, " +
+                "@pNumberOfDays," +
+                "@pLeaveReason," +
+                "@pUpdateBy");
+
+            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
+            pLeaveID.Direction = ParameterDirection.Input;
+            pLeaveID.Value = saveLeaveDetailDTO.leaveId;
+            sql.Parameters.Add(pLeaveID);
+
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.VarChar, 50);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = saveLeaveDetailDTO.leavetypeId;
+            sql.Parameters.Add(pLeaveTypeID);
+
+            SqlParameter pStartDate = new SqlParameter(@"pStartDate", SqlDbType.VarChar, 100);
+            pStartDate.Direction = ParameterDirection.Input;
+            pStartDate.Value = saveLeaveDetailDTO.startdate;
+            sql.Parameters.Add(pStartDate);
+
+            SqlParameter pEndDate = new SqlParameter(@"pEndDate", SqlDbType.VarChar, 100);
+            pEndDate.Direction = ParameterDirection.Input;
+            pEndDate.Value = saveLeaveDetailDTO.enddate;
+            sql.Parameters.Add(pEndDate);
+
+            SqlParameter pNumberOfDays = new SqlParameter(@"pNumberOfDays", SqlDbType.Int);
+            pNumberOfDays.Direction = ParameterDirection.Input;
+            pNumberOfDays.Value = saveLeaveDetailDTO.numdays;
+            sql.Parameters.Add(pNumberOfDays);
+
+            SqlParameter pLeaveReason = new SqlParameter(@"pLeaveReason", SqlDbType.VarChar, 250);
+            pLeaveReason.Direction = ParameterDirection.Input;
+            pLeaveReason.Value = saveLeaveDetailDTO.leavereason;
+            sql.Parameters.Add(pLeaveReason);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel CancelLeaveForm(int leaveID, int userID, string cancelReason,string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_cancel_leave " +
+                "@pLeaveID," +
+                "@pCancelReason," +
+                "@pCancelBy");
+
+            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
+            pLeaveID.Direction = ParameterDirection.Input;
+            pLeaveID.Value = leaveID;
+            sql.Parameters.Add(pLeaveID);
+
+            SqlParameter pCancelReason = new SqlParameter(@"pCancelReason", SqlDbType.VarChar);
+            pCancelReason.Direction = ParameterDirection.Input;
+            pCancelReason.Value = cancelReason;
+            sql.Parameters.Add(pCancelReason);
+
+            SqlParameter pCancelBy = new SqlParameter(@"pCancelBy", SqlDbType.Int);
+            pCancelBy.Direction = ParameterDirection.Input;
+            pCancelBy.Value = userID;
+            sql.Parameters.Add(pCancelBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+            return data;
+        }
+
+        public _ReturnIdModel ApproveLeaveForm(int leaveID, int userID, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_approve_leave " +
+                "@pLeaveID," +
+                "@pApproveBy");
+
+            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
+            pLeaveID.Direction = ParameterDirection.Input;
+            pLeaveID.Value = leaveID;
+            sql.Parameters.Add(pLeaveID);
+
+            SqlParameter pApproveBy = new SqlParameter(@"pApproveBy", SqlDbType.Int);
+            pApproveBy.Direction = ParameterDirection.Input;
+            pApproveBy.Value = userID;
+            sql.Parameters.Add(pApproveBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+            return data;
+        }
+
+        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID, string rejectReason, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_reject_leave " +
+                "@pLeaveID," +
+                "@pRejectReason," +
+                "@pRejectBy");
+
+            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
+            pLeaveID.Direction = ParameterDirection.Input;
+            pLeaveID.Value = leaveID;
+            sql.Parameters.Add(pLeaveID);
+
+            SqlParameter pRejectReason = new SqlParameter(@"pRejectReason", SqlDbType.VarChar);
+            pRejectReason.Direction = ParameterDirection.Input;
+            pRejectReason.Value = rejectReason;
+            sql.Parameters.Add(pRejectReason);
+
+            SqlParameter pRejectBy = new SqlParameter(@"pRejectBy", SqlDbType.Int);
+            pRejectBy.Direction = ParameterDirection.Input;
+            pRejectBy.Value = userID;
+            sql.Parameters.Add(pRejectBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+            return data;
+        }
+
+        public GetLeaveDetail GetLeaveDetail(GetLeaveDetailRequestDTO leaveDetailDTO, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_leave_detail " +
+                "@pID ," +
+                 "@pLang");
+
+            SqlParameter paramID = new SqlParameter(@"pID", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = leaveDetailDTO.leaveID;
+            sql.Parameters.Add(paramID);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 2);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = leaveDetailDTO.pLang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            GetLeaveDetail data = new GetLeaveDetail();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchAllLeave> SearchAllLeave(string shareCode, SearchLeaveDTO searchLeaveDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_page " +
+                "@pTextSearch, " +
+                "@pLeaveTypeID, " +
+                "@pFromDate, " +
+                "@pToDate, " +
+                "@pLang, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchLeaveDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.VarChar, 255);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = searchLeaveDTO.leaveTypeSearch;
+            sql.Parameters.Add(pLeaveTypeID);
+
+            SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
+            pFromDate.Direction = ParameterDirection.Input;
+            pFromDate.Value = searchLeaveDTO.leaveFrom;
+            sql.Parameters.Add(pFromDate);
+
+            SqlParameter pToDate = new SqlParameter(@"pToDate", SqlDbType.VarChar, 255);
+            pToDate.Direction = ParameterDirection.Input;
+            pToDate.Value = searchLeaveDTO.leaveTo;
+            sql.Parameters.Add(pToDate);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = searchLeaveDTO.lang;
+            sql.Parameters.Add(pLang);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchLeaveDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchLeaveDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchLeaveDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchLeaveDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllLeave> pagination = new Pagination<SearchAllLeave>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllLeave data = new SearchAllLeave();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllLeave(shareCode, searchLeaveDTO);
+
+            pagination.SetPagination(total, searchLeaveDTO.perPage, searchLeaveDTO.pageInt);
+
+            return pagination;
+        }
+        
+        public int GetTotalSearchAllLeave(string shareCode, SearchLeaveDTO searchLeaveDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_total " +
+                 "@pTextSearch, " +
+                "@pLeaveTypeID, " +
+                "@pFromDate, " +
+                "@pToDate ");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchLeaveDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.VarChar, 255);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = searchLeaveDTO.leaveTypeSearch;
+            sql.Parameters.Add(pLeaveTypeID);
+
+            SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
+            pFromDate.Direction = ParameterDirection.Input;
+            pFromDate.Value = searchLeaveDTO.leaveFrom;
+            sql.Parameters.Add(pFromDate);
+
+            SqlParameter pToDate = new SqlParameter(@"pToDate", SqlDbType.VarChar, 255);
+            pToDate.Direction = ParameterDirection.Input;
+            pToDate.Value = searchLeaveDTO.leaveTo;
+            sql.Parameters.Add(pToDate);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        #endregion
 
         public _ReturnIdModel UpdateEmpProfile(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
@@ -2246,237 +2637,6 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel InsertLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec insert_leave " +
-                "@pUserID, " +
-                "@pLeaveTypeID, " +
-                "@pStartDate, " +
-                "@pEndDate, " +
-                "@pNumberOfDays," +
-                "@pLeaveReason," +
-                "@pCreateBy");
-
-            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
-            pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = saveLeaveDetailDTO.empId;
-            sql.Parameters.Add(pUserID);
-
-            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.Int);
-            pLeaveTypeID.Direction = ParameterDirection.Input;
-            pLeaveTypeID.Value = saveLeaveDetailDTO.leavetypeId;
-            sql.Parameters.Add(pLeaveTypeID);
-
-            SqlParameter pStartDate = new SqlParameter(@"pStartDate", SqlDbType.VarChar, 100);
-            pStartDate.Direction = ParameterDirection.Input;
-            pStartDate.Value = saveLeaveDetailDTO.startdate;
-            sql.Parameters.Add(pStartDate);
-
-            SqlParameter pEndDate = new SqlParameter(@"pEndDate", SqlDbType.VarChar, 100);
-            pEndDate.Direction = ParameterDirection.Input;
-            pEndDate.Value = saveLeaveDetailDTO.enddate;
-            sql.Parameters.Add(pEndDate);
-
-            SqlParameter pNumberOfDays = new SqlParameter(@"pNumberOfDays", SqlDbType.Int);
-            pNumberOfDays.Direction = ParameterDirection.Input;
-            pNumberOfDays.Value = saveLeaveDetailDTO.numdays;
-            sql.Parameters.Add(pNumberOfDays);
-
-            SqlParameter pLeaveReason = new SqlParameter(@"pLeaveReason", SqlDbType.VarChar, 250);
-            pLeaveReason.Direction = ParameterDirection.Input;
-            pLeaveReason.Value = saveLeaveDetailDTO.leavereason;
-            sql.Parameters.Add(pLeaveReason);
-
-            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
-            pCreateBy.Direction = ParameterDirection.Input;
-            pCreateBy.Value = userID;
-            sql.Parameters.Add(pCreateBy);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            _ReturnIdModel data = new _ReturnIdModel();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-
-            return data;
-        }
-
-
-        public _ReturnIdModel UpdateLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec update_leave " +
-                "@pLeaveID, " +
-                "@pLeaveTypeID, " +
-                "@pStartDate, " +
-                "@pEndDate, " +
-                "@pNumberOfDays," +
-                "@pLeaveReason," +
-                "@pUpdateBy");
-
-            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
-            pLeaveID.Direction = ParameterDirection.Input;
-            pLeaveID.Value = saveLeaveDetailDTO.leaveId;
-            sql.Parameters.Add(pLeaveID);
-
-            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.VarChar, 50);
-            pLeaveTypeID.Direction = ParameterDirection.Input;
-            pLeaveTypeID.Value = saveLeaveDetailDTO.leavetypeId;
-            sql.Parameters.Add(pLeaveTypeID);
-
-            SqlParameter pStartDate = new SqlParameter(@"pStartDate", SqlDbType.VarChar, 100);
-            pStartDate.Direction = ParameterDirection.Input;
-            pStartDate.Value = saveLeaveDetailDTO.startdate;
-            sql.Parameters.Add(pStartDate);
-
-            SqlParameter pEndDate = new SqlParameter(@"pEndDate", SqlDbType.VarChar, 100);
-            pEndDate.Direction = ParameterDirection.Input;
-            pEndDate.Value = saveLeaveDetailDTO.enddate;
-            sql.Parameters.Add(pEndDate);
-
-            SqlParameter pNumberOfDays = new SqlParameter(@"pNumberOfDays", SqlDbType.Int);
-            pNumberOfDays.Direction = ParameterDirection.Input;
-            pNumberOfDays.Value = saveLeaveDetailDTO.numdays;
-            sql.Parameters.Add(pNumberOfDays);
-
-            SqlParameter pLeaveReason = new SqlParameter(@"pLeaveReason", SqlDbType.VarChar, 250);
-            pLeaveReason.Direction = ParameterDirection.Input;
-            pLeaveReason.Value = saveLeaveDetailDTO.leavereason;
-            sql.Parameters.Add(pLeaveReason);
-
-            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
-            pUpdateBy.Direction = ParameterDirection.Input;
-            pUpdateBy.Value = userID;
-            sql.Parameters.Add(pUpdateBy);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            _ReturnIdModel data = new _ReturnIdModel();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-
-            return data;
-        }
-
-        public _ReturnIdModel CancelLeaveForm(int leaveID, int userID, string cancelReason,string shareCode)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec update_cancel_leave " +
-                "@pLeaveID," +
-                "@pCancelReason," +
-                "@pCancelBy");
-
-            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
-            pLeaveID.Direction = ParameterDirection.Input;
-            pLeaveID.Value = leaveID;
-            sql.Parameters.Add(pLeaveID);
-
-            SqlParameter pCancelReason = new SqlParameter(@"pCancelReason", SqlDbType.VarChar);
-            pCancelReason.Direction = ParameterDirection.Input;
-            pCancelReason.Value = cancelReason;
-            sql.Parameters.Add(pCancelReason);
-
-            SqlParameter pCancelBy = new SqlParameter(@"pCancelBy", SqlDbType.Int);
-            pCancelBy.Direction = ParameterDirection.Input;
-            pCancelBy.Value = userID;
-            sql.Parameters.Add(pCancelBy);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            _ReturnIdModel data = new _ReturnIdModel();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-            return data;
-        }
-
-        public _ReturnIdModel ApproveLeaveForm(int leaveID, int userID, string shareCode)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec update_approve_leave " +
-                "@pLeaveID," +
-                "@pApproveBy");
-
-            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
-            pLeaveID.Direction = ParameterDirection.Input;
-            pLeaveID.Value = leaveID;
-            sql.Parameters.Add(pLeaveID);
-
-            SqlParameter pApproveBy = new SqlParameter(@"pApproveBy", SqlDbType.Int);
-            pApproveBy.Direction = ParameterDirection.Input;
-            pApproveBy.Value = userID;
-            sql.Parameters.Add(pApproveBy);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            _ReturnIdModel data = new _ReturnIdModel();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-            return data;
-        }
-
-        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID, string rejectReason, string shareCode)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec update_reject_leave " +
-                "@pLeaveID," +
-                "@pRejectReason," +
-                "@pRejectBy");
-
-            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
-            pLeaveID.Direction = ParameterDirection.Input;
-            pLeaveID.Value = leaveID;
-            sql.Parameters.Add(pLeaveID);
-
-            SqlParameter pRejectReason = new SqlParameter(@"pRejectReason", SqlDbType.VarChar);
-            pRejectReason.Direction = ParameterDirection.Input;
-            pRejectReason.Value = rejectReason;
-            sql.Parameters.Add(pRejectReason);
-
-            SqlParameter pRejectBy = new SqlParameter(@"pRejectBy", SqlDbType.Int);
-            pRejectBy.Direction = ParameterDirection.Input;
-            pRejectBy.Value = userID;
-            sql.Parameters.Add(pRejectBy);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            _ReturnIdModel data = new _ReturnIdModel();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-            return data;
-        }
-
-
         public _ReturnIdModel UpdateEmpStatus(string shareCode, SaveEmpStatusDTO saveEmpStatusDTO, int userID)
         {
             DataTable table = new DataTable();
@@ -2514,7 +2674,6 @@ namespace TUFTManagement.Core
 
             return data;
         }
-
 
         public _ReturnIdModel DeleteEmpProfile(SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
@@ -3145,39 +3304,7 @@ namespace TUFTManagement.Core
 
             return data;
         }
-
-        public GetLeaveDetail GetLeaveDetail(GetLeaveDetailRequestDTO leaveDetailDTO,string shareCode)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_leave_detail " +
-                "@pID ,"+
-                 "@pLang");
-
-            SqlParameter paramID = new SqlParameter(@"pID", SqlDbType.Int);
-            paramID.Direction = ParameterDirection.Input;
-            paramID.Value = leaveDetailDTO.leaveID;
-            sql.Parameters.Add(paramID);
-
-            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 2);
-            pLang.Direction = ParameterDirection.Input;
-            pLang.Value = leaveDetailDTO.pLang;
-            sql.Parameters.Add(pLang);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            GetLeaveDetail data = new GetLeaveDetail();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-
-            return data;
-        }
-
+        
         public GetFeedback GetFeedback(int userID)
         {
             DataTable table = new DataTable();
@@ -3275,50 +3402,6 @@ namespace TUFTManagement.Core
             return total;
         }
 
-        public int GetTotalSearchAllLeave(string shareCode, SearchLeaveDTO searchLeaveDTO)
-        {
-            int total = 0;
-
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_total " +
-                 "@pTextSearch, " +
-                "@pLeaveTypeID, " +
-                "@pFromDate, " +
-                "@pToDate ");
-
-            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
-            pTextSearch.Direction = ParameterDirection.Input;
-            pTextSearch.Value = searchLeaveDTO.paramSearch;
-            sql.Parameters.Add(pTextSearch);
-
-            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.VarChar, 255);
-            pLeaveTypeID.Direction = ParameterDirection.Input;
-            pLeaveTypeID.Value = searchLeaveDTO.leaveTypeSearch;
-            sql.Parameters.Add(pLeaveTypeID);
-
-            SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
-            pFromDate.Direction = ParameterDirection.Input;
-            pFromDate.Value = searchLeaveDTO.leaveFrom;
-            sql.Parameters.Add(pFromDate);
-
-            SqlParameter pToDate = new SqlParameter(@"pToDate", SqlDbType.VarChar, 255);
-            pToDate.Direction = ParameterDirection.Input;
-            pToDate.Value = searchLeaveDTO.leaveTo;
-            sql.Parameters.Add(pToDate);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    DataRow dr = table.Rows[0];
-                    total = int.Parse(dr["total"].ToString());
-                }
-            }
-
-            return total;
-        }
 
 
 
@@ -5712,87 +5795,6 @@ namespace TUFTManagement.Core
             return pagination;
         }
 
-        public Pagination<SearchAllLeave> SearchAllLeave(string shareCode, SearchLeaveDTO searchLeaveDTO)
-        {
-            DataTable table = new DataTable();
-
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_page " +
-                "@pTextSearch, " +
-                "@pLeaveTypeID, " +
-                "@pFromDate, " +
-                "@pToDate, " +
-                "@pLang, " +
-                "@pPage, " +
-                "@pPerPage, " +
-                "@pSortField, " +
-                "@pSortType");
-
-            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
-            pTextSearch.Direction = ParameterDirection.Input;
-            pTextSearch.Value = searchLeaveDTO.paramSearch;
-            sql.Parameters.Add(pTextSearch);
-
-            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.VarChar, 255);
-            pLeaveTypeID.Direction = ParameterDirection.Input;
-            pLeaveTypeID.Value = searchLeaveDTO.leaveTypeSearch;
-            sql.Parameters.Add(pLeaveTypeID);
-
-            SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
-            pFromDate.Direction = ParameterDirection.Input;
-            pFromDate.Value = searchLeaveDTO.leaveFrom;
-            sql.Parameters.Add(pFromDate);
-
-            SqlParameter pToDate = new SqlParameter(@"pToDate", SqlDbType.VarChar, 255);
-            pToDate.Direction = ParameterDirection.Input;
-            pToDate.Value = searchLeaveDTO.leaveTo;
-            sql.Parameters.Add(pToDate);
-
-            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
-            pLang.Direction = ParameterDirection.Input;
-            pLang.Value = searchLeaveDTO.lang;
-            sql.Parameters.Add(pLang);
-
-            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
-            pPage.Direction = ParameterDirection.Input;
-            pPage.Value = searchLeaveDTO.pageInt;
-            sql.Parameters.Add(pPage);
-
-            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
-            pPerPage.Direction = ParameterDirection.Input;
-            pPerPage.Value = searchLeaveDTO.perPage;
-            sql.Parameters.Add(pPerPage);
-
-            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
-            pSortField.Direction = ParameterDirection.Input;
-            pSortField.Value = searchLeaveDTO.sortField;
-            sql.Parameters.Add(pSortField);
-
-            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
-            pSortType.Direction = ParameterDirection.Input;
-            pSortType.Value = searchLeaveDTO.sortType;
-            sql.Parameters.Add(pSortType);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            Pagination<SearchAllLeave> pagination = new Pagination<SearchAllLeave>();
-
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    SearchAllLeave data = new SearchAllLeave();
-                    data.loadData(row);
-                    pagination.data.Add(data);
-                }
-            }
-
-            int total = GetTotalSearchAllLeave(shareCode, searchLeaveDTO);
-
-            pagination.SetPagination(total, searchLeaveDTO.perPage, searchLeaveDTO.pageInt);
-
-            return pagination;
-        }
 
         public string getConnectionEncoded(string shareCode)
         {
