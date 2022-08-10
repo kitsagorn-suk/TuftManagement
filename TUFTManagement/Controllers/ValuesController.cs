@@ -346,12 +346,19 @@ namespace TUFTManagement.Controllers
                     //newFileName = _sql.GenImageProfile(userID);
                     fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], "IdentityPath", newFileName);
                 }
+                if (keyName == "upload_image_employment_document")
+                {
+                    subFolder = "\\EmploymentDocument";
+                    diskFolderPath = string.Format(WebConfigurationManager.AppSettings["file_user_path"], subFolder);
+                    //newFileName = _sql.GenImageProfile(userID);
+                    fileURL = string.Format(WebConfigurationManager.AppSettings["file_user_url"], "EmploymentDocument", newFileName);
+                }
 
                 var fullPath = Path.Combine(diskFolderPath, newFileName);
                 var fileInfo = new FileInfo(fullPath);
                 while (fileInfo.Exists)
                 {
-                    if (keyName == "upload_user_profile" || keyName == "upload_image_gallery" || keyName == "upload_image_identity")
+                    if (keyName == "upload_user_profile" || keyName == "upload_image_gallery" || keyName == "upload_image_identity" || keyName == "upload_image_employment_document")
                     {
                         File.Delete(fullPath);
                     }
@@ -444,10 +451,40 @@ namespace TUFTManagement.Controllers
                         if (validation.Success == true)
                         {
 
-                            _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
                             value.success = validation.Success;
 
                             _fileDetails file = new _fileDetails();
+                            file.id = result.id;
+                            file.fileUrl = fileURL;
+                            file.fileName = fileName;
+                            file.fileSize = fileSize.ToString();
+
+                            value.data.fileCode = fileCode;
+                            value.data.fileDetails.Add(file);
+
+                            value.msg = new MsgModel() { code = 0, text = "อัพโหลดสำเร็จ", topic = "สำเร็จ" };
+                        }
+                        else
+                        {
+                            value.success = validation.Success;
+                            value.msg = new MsgModel() { code = 0, text = validation.InvalidMessage, topic = validation.InvalidText };
+                        }
+
+                    }
+
+                    if (keyName == "upload_image_employment_document")
+                    {
+                        ValidationModel validation = new ValidationModel();
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, "");
+                        if (validation.Success == true)
+                        {
+
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            value.success = validation.Success;
+
+                            _fileDetails file = new _fileDetails();
+                            file.id = result.id;
                             file.fileUrl = fileURL;
                             file.fileName = fileName;
                             file.fileSize = fileSize.ToString();
@@ -509,6 +546,54 @@ namespace TUFTManagement.Controllers
 
                 DeleteService srv = new DeleteService();
                 var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/user/get/file")]
+        [HttpPost]
+        public IHttpActionResult GetFileByCode(RequestDTO requestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(requestDTO);
+                int logID = _sql.InsertLogReceiveData("GetFileByCode", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (requestDTO.fileCode.Equals(0))
+                {
+                    checkMissingOptional += "fileCode ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                GetService srv = new GetService();
+                var obj = srv.GetFileByCodeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, requestDTO.fileCode);
 
                 return Ok(obj);
             }

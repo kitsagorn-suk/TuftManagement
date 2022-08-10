@@ -237,6 +237,7 @@
     <Compile Include="Models\GetAllDropdownModel.cs" />
     <Compile Include="Models\GetBodySetModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
+    <Compile Include="Models\GetfileByCodeModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeModel.cs" />
     <Compile Include="Models\GetEmpWorkShiftModel.cs" />

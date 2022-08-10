@@ -2837,7 +2837,7 @@ namespace TUFTManagement.Core
                 "@pFileUrl, " +
                 "@pCreateBy");
 
-            SqlParameter paramActionName = new SqlParameter(@"pActionName", SqlDbType.VarChar, 30);
+            SqlParameter paramActionName = new SqlParameter(@"pActionName", SqlDbType.VarChar, 50);
             paramActionName.Direction = ParameterDirection.Input;
             paramActionName.Value = actionName;
             sql.Parameters.Add(paramActionName);
@@ -5621,6 +5621,34 @@ namespace TUFTManagement.Core
             }
 
             return data;
+        }
+
+        public List<_GetfileByCode> GetEmpFileByCode(string shareCode, int userID, string lang, string fileCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_file_by_file_code " +
+                "@pFileCode");
+
+            SqlParameter pFileCode = new SqlParameter(@"pFileCode", SqlDbType.VarChar, 200);
+            pFileCode.Direction = ParameterDirection.Input;
+            pFileCode.Value = fileCode;
+            sql.Parameters.Add(pFileCode);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<_GetfileByCode> listData = new List<_GetfileByCode>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    _GetfileByCode data = new _GetfileByCode();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
         }
 
         public List<EmployeeDetails.EmergencyContact> GetEmerContact(string shareCode, int userID)
