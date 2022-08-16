@@ -2826,6 +2826,35 @@ namespace TUFTManagement.Core
             return listData;
         }
 
+        public List<DropdownTitleName> GetDropdownPositionFilter(string lang)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_title " +
+                "@pLang ");
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<DropdownTitleName> listData = new List<DropdownTitleName>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DropdownTitleName data = new DropdownTitleName();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
         public _ReturnIdModel InsertUploadFileDetails(string shareCode, string actionName, string fileCode, string fileExtendtion, string fileName, string fileUrl, int userID)
         {
             DataTable table = new DataTable();
@@ -6049,7 +6078,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
