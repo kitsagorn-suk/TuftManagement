@@ -107,22 +107,6 @@ namespace TUFTManagement.Services
 
                     if (saveEmpProfileDTO.positionID == 14) //ถ้าเป็นพริตตีถึงอัพเดตได้
                     {
-                        string TableName5 = "system_body_set";
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.bodySetID, TableName5, "height", saveEmpProfileDTO.height.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.bodySetID, TableName5, "weight", saveEmpProfileDTO.weight.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.bodySetID, TableName5, "chest", saveEmpProfileDTO.chest.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.bodySetID, TableName5, "waist", saveEmpProfileDTO.waist.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.bodySetID, TableName5, "hip", saveEmpProfileDTO.hip.ToString(), userID);
-
-                        SaveBodySetRequestDTO saveBodySetRequestDTO = new SaveBodySetRequestDTO();
-                        saveBodySetRequestDTO.masterID = saveEmpProfileDTO.bodySetID;
-                        saveBodySetRequestDTO.height = saveEmpProfileDTO.height;
-                        saveBodySetRequestDTO.weight = saveEmpProfileDTO.weight;
-                        saveBodySetRequestDTO.chest = saveEmpProfileDTO.chest;
-                        saveBodySetRequestDTO.waist = saveEmpProfileDTO.waist;
-                        saveBodySetRequestDTO.hip = saveEmpProfileDTO.hip;
-                        _sql.UpdateBodySet(shareCode, saveBodySetRequestDTO, userID);
-
                         string TableName6 = "emp_rate";
                         int empRateID = _sql.GetIdUpdateByUserID(shareCode, TableName6, saveEmpProfileDTO.newUserID.ToString());
                         //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "product_code", saveEmpProfileDTO.productCode.ToString(), userID);
@@ -133,7 +117,9 @@ namespace TUFTManagement.Services
 
                         SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
                         saveEmpRateRequestDTO.empRateID = empRateID;
-                        saveEmpRateRequestDTO.productCode = saveEmpProfileDTO.productCode;
+                        saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
+                        saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
+                        saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
                         saveEmpRateRequestDTO.rateStaff = saveEmpProfileDTO.rateStaff;
                         saveEmpRateRequestDTO.rateManager = saveEmpProfileDTO.rateManager;
                         saveEmpRateRequestDTO.rateOwner = saveEmpProfileDTO.rateOwner;
@@ -182,7 +168,7 @@ namespace TUFTManagement.Services
                 if (validation.Success == true)
                 {
                     string TableName = "emp_rate";
-                    _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "product_code", saveEmpRateDTO.productCode, userID);
+                    _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "service_no", saveEmpRateDTO.serviceNo.ToString(), userID);
                     _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "rate_staff", saveEmpRateDTO.rateStaff.ToString(), userID);
                     _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "rate_manager", saveEmpRateDTO.rateManager.ToString(), userID);
                     _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "rate_owner", saveEmpRateDTO.rateOwner.ToString(), userID);
@@ -410,7 +396,7 @@ namespace TUFTManagement.Services
                 {
                     string TableName = "emp_profile";
                     //_sql.InsertSystemLogChange(saveEmpStatusDTO.empID, TableName, "status", saveEmpStatusDTO.status.ToString(), userID);
-                    
+
                     value.data = _sql.UpdateEmpStatus(shareCode, saveEmpStatusDTO, userID);
                 }
                 else

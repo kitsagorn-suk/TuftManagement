@@ -869,8 +869,13 @@ namespace TUFTManagement.Core
                 "@pBloodTypeID, " +
                 "@pPhoneNumber, " +
 
-                "@pBodySetID, " +
-                
+                "@pChest, " +
+                "@pWaist, " +
+                "@pHip, " +
+
+                "@pImageProfileCode, " +
+                "@pImageGalleryCode, " +
+
                 "@pCreateBy ");
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
@@ -978,12 +983,12 @@ namespace TUFTManagement.Core
             pIdentityCardExpiry.Value = saveEmpProfileDTO.identityCardExpiry;
             sql.Parameters.Add(pIdentityCardExpiry);
 
-            SqlParameter pHeight = new SqlParameter(@"pHeight", SqlDbType.Float);
+            SqlParameter pHeight = new SqlParameter(@"pHeight", SqlDbType.Decimal);
             pHeight.Direction = ParameterDirection.Input;
             pHeight.Value = saveEmpProfileDTO.height;
             sql.Parameters.Add(pHeight);
 
-            SqlParameter pWeight = new SqlParameter(@"pWeight", SqlDbType.Float);
+            SqlParameter pWeight = new SqlParameter(@"pWeight", SqlDbType.Decimal);
             pWeight.Direction = ParameterDirection.Input;
             pWeight.Value = saveEmpProfileDTO.weight;
             sql.Parameters.Add(pWeight);
@@ -1003,10 +1008,30 @@ namespace TUFTManagement.Core
             pPhoneNumber.Value = saveEmpProfileDTO.phoneNumber;
             sql.Parameters.Add(pPhoneNumber);
 
-            SqlParameter pBodySetID = new SqlParameter(@"pBodySetID", SqlDbType.Int);
-            pBodySetID.Direction = ParameterDirection.Input;
-            pBodySetID.Value = saveEmpProfileDTO.bodySetID;
-            sql.Parameters.Add(pBodySetID);
+            SqlParameter pChest = new SqlParameter(@"pChest", SqlDbType.Decimal);
+            pChest.Direction = ParameterDirection.Input;
+            pChest.Value = saveEmpProfileDTO.chest;
+            sql.Parameters.Add(pChest);
+
+            SqlParameter pWaist = new SqlParameter(@"pWaist", SqlDbType.Decimal);
+            pWaist.Direction = ParameterDirection.Input;
+            pWaist.Value = saveEmpProfileDTO.waist;
+            sql.Parameters.Add(pWaist);
+
+            SqlParameter pHip = new SqlParameter(@"pHip", SqlDbType.Decimal);
+            pHip.Direction = ParameterDirection.Input;
+            pHip.Value = saveEmpProfileDTO.hip;
+            sql.Parameters.Add(pHip);
+
+            SqlParameter pImageProfileCode = new SqlParameter(@"pImageProfileCode", SqlDbType.VarChar, 250);
+            pImageProfileCode.Direction = ParameterDirection.Input;
+            pImageProfileCode.Value = saveEmpProfileDTO.imageProfileCode;
+            sql.Parameters.Add(pImageProfileCode);
+
+            SqlParameter pImageGalleryCode = new SqlParameter(@"pImageGalleryCode", SqlDbType.VarChar, 250);
+            pImageGalleryCode.Direction = ParameterDirection.Input;
+            pImageGalleryCode.Value = saveEmpProfileDTO.imageGalleryCode;
+            sql.Parameters.Add(pImageGalleryCode);
 
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
@@ -1352,7 +1377,9 @@ namespace TUFTManagement.Core
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_rate " +
                 "@pEmpID, " +
-                "@pProductCd, " +
+                "@pServiceNo, " +
+                "@pStartDrink, " +
+                "@pFullDrink, " +
                 "@pRateStaff, " +
                 "@pRateManager," +
                 "@pRateOwner, " +
@@ -1364,10 +1391,20 @@ namespace TUFTManagement.Core
             paramEmpID.Value = saveEmpRateDTO.empID;
             sql.Parameters.Add(paramEmpID);
 
-            SqlParameter paramProductCd = new SqlParameter(@"pProductCd", SqlDbType.VarChar, 10);
-            paramProductCd.Direction = ParameterDirection.Input;
-            paramProductCd.Value = saveEmpRateDTO.productCode;
-            sql.Parameters.Add(paramProductCd);
+            SqlParameter paramServiceNo = new SqlParameter(@"pServiceNo", SqlDbType.Int);
+            paramServiceNo.Direction = ParameterDirection.Input;
+            paramServiceNo.Value = saveEmpRateDTO.serviceNo;
+            sql.Parameters.Add(paramServiceNo);
+
+            SqlParameter paramStartDrink = new SqlParameter(@"pStartDrink", SqlDbType.Int);
+            paramStartDrink.Direction = ParameterDirection.Input;
+            paramStartDrink.Value = saveEmpRateDTO.startDrink;
+            sql.Parameters.Add(paramStartDrink);
+
+            SqlParameter paramFullDrink = new SqlParameter(@"pFullDrink", SqlDbType.Int);
+            paramFullDrink.Direction = ParameterDirection.Input;
+            paramFullDrink.Value = saveEmpRateDTO.fullDrink;
+            sql.Parameters.Add(paramFullDrink);
 
             SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Int);
             paramRateStaff.Direction = ParameterDirection.Input;
@@ -2237,6 +2274,10 @@ namespace TUFTManagement.Core
                 "@pBloodTypeID, " +
                 "@pPhoneNumber, " +
 
+                "@pChest, " +
+                "@pWaist, " +
+                "@pHip, " +
+
                 "@pImageProfileCode, " +
                 "@pImageGalleryCode, " +
 
@@ -2342,12 +2383,12 @@ namespace TUFTManagement.Core
             pIdentityCardExpiry.Value = saveEmpProfileDTO.identityCardExpiry;
             sql.Parameters.Add(pIdentityCardExpiry);
 
-            SqlParameter pHeight = new SqlParameter(@"pHeight", SqlDbType.Float);
+            SqlParameter pHeight = new SqlParameter(@"pHeight", SqlDbType.Decimal);
             pHeight.Direction = ParameterDirection.Input;
             pHeight.Value = saveEmpProfileDTO.height;
             sql.Parameters.Add(pHeight);
 
-            SqlParameter pWeight = new SqlParameter(@"pWeight", SqlDbType.Float);
+            SqlParameter pWeight = new SqlParameter(@"pWeight", SqlDbType.Decimal);
             pWeight.Direction = ParameterDirection.Input;
             pWeight.Value = saveEmpProfileDTO.weight;
             sql.Parameters.Add(pWeight);
@@ -2366,6 +2407,21 @@ namespace TUFTManagement.Core
             pPhoneNumber.Direction = ParameterDirection.Input;
             pPhoneNumber.Value = saveEmpProfileDTO.phoneNumber;
             sql.Parameters.Add(pPhoneNumber);
+
+            SqlParameter pChest = new SqlParameter(@"pChest", SqlDbType.Decimal);
+            pChest.Direction = ParameterDirection.Input;
+            pChest.Value = saveEmpProfileDTO.chest;
+            sql.Parameters.Add(pChest);
+
+            SqlParameter pWaist = new SqlParameter(@"pWaist", SqlDbType.Decimal);
+            pWaist.Direction = ParameterDirection.Input;
+            pWaist.Value = saveEmpProfileDTO.waist;
+            sql.Parameters.Add(pWaist);
+
+            SqlParameter pHip = new SqlParameter(@"pHip", SqlDbType.Decimal);
+            pHip.Direction = ParameterDirection.Input;
+            pHip.Value = saveEmpProfileDTO.hip;
+            sql.Parameters.Add(pHip);
 
             SqlParameter pImageProfileCode = new SqlParameter(@"pImageProfileCode", SqlDbType.VarChar, 250);
             pImageProfileCode.Direction = ParameterDirection.Input;
@@ -2524,7 +2580,9 @@ namespace TUFTManagement.Core
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_rate " +
                 "@pId, " +
-                "@pProductCd, " +
+                "@pServiceNo, " +
+                "@pStartDrink, " +
+                "@pFullDrink, " +
                 "@pRateStaff, " +
                 "@pRateManager," +
                 "@pRateOwner," +
@@ -2536,10 +2594,20 @@ namespace TUFTManagement.Core
             paramID.Value = saveEmpRateDTO.empRateID;
             sql.Parameters.Add(paramID);
 
-            SqlParameter paramProductCd = new SqlParameter(@"pProductCd", SqlDbType.VarChar, 10);
-            paramProductCd.Direction = ParameterDirection.Input;
-            paramProductCd.Value = saveEmpRateDTO.productCode;
-            sql.Parameters.Add(paramProductCd);
+            SqlParameter paramServiceNo = new SqlParameter(@"pServiceNo", SqlDbType.Int);
+            paramServiceNo.Direction = ParameterDirection.Input;
+            paramServiceNo.Value = saveEmpRateDTO.serviceNo;
+            sql.Parameters.Add(paramServiceNo);
+
+            SqlParameter paramStartDrink = new SqlParameter(@"pStartDrink", SqlDbType.Int);
+            paramStartDrink.Direction = ParameterDirection.Input;
+            paramStartDrink.Value = saveEmpRateDTO.startDrink;
+            sql.Parameters.Add(paramStartDrink);
+
+            SqlParameter paramFullDrink = new SqlParameter(@"pFullDrink", SqlDbType.Int);
+            paramFullDrink.Direction = ParameterDirection.Input;
+            paramFullDrink.Value = saveEmpRateDTO.fullDrink;
+            sql.Parameters.Add(paramFullDrink);
 
             SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Int);
             paramRateStaff.Direction = ParameterDirection.Input;
@@ -2641,19 +2709,25 @@ namespace TUFTManagement.Core
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_status " +
-                "@pEmpId, " +
-                "@pStatus, " +
+                "@pUserID, " +
+                "@pEmploymentStatusID, " +
+                "@pImageEmploymentCode, " +
                 "@pUpdateBy");
 
-            SqlParameter paramID = new SqlParameter(@"pEmpId", SqlDbType.Int);
-            paramID.Direction = ParameterDirection.Input;
-            paramID.Value = saveEmpStatusDTO.empID;
-            sql.Parameters.Add(paramID);
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = saveEmpStatusDTO.userID;
+            sql.Parameters.Add(paramUserID);
 
-            SqlParameter paramStatus = new SqlParameter(@"pStatus", SqlDbType.VarChar, 10);
-            paramStatus.Direction = ParameterDirection.Input;
-            paramStatus.Value = saveEmpStatusDTO.status;
-            sql.Parameters.Add(paramStatus);
+            SqlParameter paramEmploymentStatusID = new SqlParameter(@"pEmploymentStatusID", SqlDbType.Int);
+            paramEmploymentStatusID.Direction = ParameterDirection.Input;
+            paramEmploymentStatusID.Value = saveEmpStatusDTO.employmentStatusID;
+            sql.Parameters.Add(paramEmploymentStatusID);
+
+            SqlParameter paramImageEmploymentCode = new SqlParameter(@"pImageEmploymentCode", SqlDbType.VarChar, 200);
+            paramImageEmploymentCode.Direction = ParameterDirection.Input;
+            paramImageEmploymentCode.Value = saveEmpStatusDTO.imageEmploymentCode;
+            sql.Parameters.Add(paramImageEmploymentCode);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;
@@ -2826,11 +2900,17 @@ namespace TUFTManagement.Core
             return listData;
         }
 
-        public List<DropdownTitleName> GetDropdownPositionFilter(string lang)
+        public List<_DropdownAllData> GetDropdownPositionFilter(string lang, int departmentID)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_title " +
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_position_filter " +
+                "@pDepartmentID, " +
                 "@pLang ");
+
+            SqlParameter pDepartmentID = new SqlParameter(@"pDepartmentID", SqlDbType.Int);
+            pDepartmentID.Direction = ParameterDirection.Input;
+            pDepartmentID.Value = departmentID;
+            sql.Parameters.Add(pDepartmentID);
 
             SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
             paramLang.Direction = ParameterDirection.Input;
@@ -2840,13 +2920,13 @@ namespace TUFTManagement.Core
 
             table = sql.executeQueryWithReturnTable();
 
-            List<DropdownTitleName> listData = new List<DropdownTitleName>();
+            List<_DropdownAllData> listData = new List<_DropdownAllData>();
 
             if (table != null && table.Rows.Count > 0)
             {
                 foreach (DataRow row in table.Rows)
                 {
-                    DropdownTitleName data = new DropdownTitleName();
+                    _DropdownAllData data = new _DropdownAllData();
                     data.loadData(row);
                     listData.Add(data);
                 }
@@ -3393,29 +3473,35 @@ namespace TUFTManagement.Core
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_employee_total " +
                  "@pTextSearch, " +
-                "@pDepartmentID, " +
-                "@pEmpType, " +
-                "@pStatus " );
+                "@pDepartmentIDList, " +
+                "@pPositionIDList, " +
+                "@pEmpTypeList, " +
+                "@pEmpStatusList " );
 
             SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
             pTextSearch.Direction = ParameterDirection.Input;
             pTextSearch.Value = pageRequest.paramSearch;
             sql.Parameters.Add(pTextSearch);
 
-            SqlParameter pDepartmentID = new SqlParameter(@"pDepartmentID", SqlDbType.VarChar, 255);
-            pDepartmentID.Direction = ParameterDirection.Input;
-            pDepartmentID.Value = pageRequest.departmentSearch;
-            sql.Parameters.Add(pDepartmentID);
+            SqlParameter pDepartmentIDList = new SqlParameter(@"pDepartmentIDList", SqlDbType.VarChar, 100);
+            pDepartmentIDList.Direction = ParameterDirection.Input;
+            pDepartmentIDList.Value = pageRequest.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentIDList);
 
-            SqlParameter pEmpType = new SqlParameter(@"pEmpType", SqlDbType.VarChar, 255);
-            pEmpType.Direction = ParameterDirection.Input;
-            pEmpType.Value = pageRequest.empTypeSearch;
-            sql.Parameters.Add(pEmpType);
+            SqlParameter pPositionIDList = new SqlParameter(@"pPositionIDList", SqlDbType.VarChar, 100);
+            pPositionIDList.Direction = ParameterDirection.Input;
+            pPositionIDList.Value = pageRequest.prepairPositionSearch;
+            sql.Parameters.Add(pPositionIDList);
 
-            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.VarChar, 255);
-            pStatus.Direction = ParameterDirection.Input;
-            pStatus.Value = pageRequest.statusSearch;
-            sql.Parameters.Add(pStatus);
+            SqlParameter pEmpTypeList = new SqlParameter(@"pEmpTypeList", SqlDbType.VarChar, 100);
+            pEmpTypeList.Direction = ParameterDirection.Input;
+            pEmpTypeList.Value = pageRequest.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmpTypeList);
+
+            SqlParameter pEmpStatusList = new SqlParameter(@"pEmpStatusList", SqlDbType.VarChar, 100);
+            pEmpStatusList.Direction = ParameterDirection.Input;
+            pEmpStatusList.Value = pageRequest.prepairEmpStatusSearch;
+            sql.Parameters.Add(pEmpStatusList);
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
@@ -5776,9 +5862,10 @@ namespace TUFTManagement.Core
 
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_employee " +
                 "@pTextSearch, " +
-                "@pDepartmentID, " +
-                "@pEmpType, " +
-                "@pStatus, " +
+                "@pDepartmentIDList, " +
+                "@pPositionIDList, " +
+                "@pEmpTypeList, " +
+                "@pEmpStatusList, " +
                 "@pLang, " +
                 "@pPage, " +
                 "@pPerPage, " +
@@ -5790,20 +5877,25 @@ namespace TUFTManagement.Core
             pTextSearch.Value = pageRequest.paramSearch;
             sql.Parameters.Add(pTextSearch);
 
-            SqlParameter pDepartmentID = new SqlParameter(@"pDepartmentID", SqlDbType.VarChar, 255);
-            pDepartmentID.Direction = ParameterDirection.Input;
-            pDepartmentID.Value = pageRequest.departmentSearch;
-            sql.Parameters.Add(pDepartmentID);
+            SqlParameter pDepartmentIDList = new SqlParameter(@"pDepartmentIDList", SqlDbType.VarChar, 100);
+            pDepartmentIDList.Direction = ParameterDirection.Input;
+            pDepartmentIDList.Value = pageRequest.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentIDList);
 
-            SqlParameter pEmpType = new SqlParameter(@"pEmpType", SqlDbType.VarChar, 255);
-            pEmpType.Direction = ParameterDirection.Input;
-            pEmpType.Value = pageRequest.empTypeSearch;
-            sql.Parameters.Add(pEmpType);
+            SqlParameter pPositionIDList = new SqlParameter(@"pPositionIDList", SqlDbType.VarChar, 100);
+            pPositionIDList.Direction = ParameterDirection.Input;
+            pPositionIDList.Value = pageRequest.prepairPositionSearch;
+            sql.Parameters.Add(pPositionIDList);
 
-            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.VarChar, 255);
-            pStatus.Direction = ParameterDirection.Input;
-            pStatus.Value = pageRequest.statusSearch;
-            sql.Parameters.Add(pStatus);
+            SqlParameter pEmpTypeList = new SqlParameter(@"pEmpTypeList", SqlDbType.VarChar, 100);
+            pEmpTypeList.Direction = ParameterDirection.Input;
+            pEmpTypeList.Value = pageRequest.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmpTypeList);
+
+            SqlParameter pEmpStatusList = new SqlParameter(@"pEmpStatusList", SqlDbType.VarChar, 100);
+            pEmpStatusList.Direction = ParameterDirection.Input;
+            pEmpStatusList.Value = pageRequest.prepairEmpStatusSearch;
+            sql.Parameters.Add(pEmpStatusList);
 
             SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
             pLang.Direction = ParameterDirection.Input;
@@ -6078,7 +6170,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

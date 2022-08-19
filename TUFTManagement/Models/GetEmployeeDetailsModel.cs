@@ -15,7 +15,7 @@ namespace TUFTManagement.Models
 
     public class EmployeeDetails
     {
-        public int userId { set; get; } = 0;
+        public int userID { set; get; } = 0;
         public string empCode { set; get; } = "";
 
         public string userName { set; get; } = "";
@@ -112,7 +112,7 @@ namespace TUFTManagement.Models
 
         public void loadData(DataRow dr)
         {
-            userId = Convert.ToInt32(dr["user_id"]);
+            userID = Convert.ToInt32(dr["user_id"]);
             empCode = dr["emp_code"].ToString();
             userName = dr["username"].ToString();
             joinDate = dr["join_date"].ToString();
@@ -161,10 +161,10 @@ namespace TUFTManagement.Models
             bankAccountName = dr["account_name"].ToString();
             bankAccountNumber = dr["account_no"].ToString();
 
-            bodySetID = Convert.ToInt32(dr["body_set_id"]);
-            chest = Convert.ToInt32(dr["chest"]);
-            waist = Convert.ToInt32(dr["waist"]);
-            hip = Convert.ToInt32(dr["hip"]);
+            //bodySetID = Convert.ToInt32(dr["body_set_id"]);
+            //chest = Convert.ToInt32(dr["chest"]);
+            //waist = Convert.ToInt32(dr["waist"]);
+            //hip = Convert.ToInt32(dr["hip"]);
 
             empRateID = Convert.ToInt32(dr["emp_rate_id"]);
             productCode = dr["product_code"].ToString();

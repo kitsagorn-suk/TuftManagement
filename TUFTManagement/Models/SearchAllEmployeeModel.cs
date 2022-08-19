@@ -22,6 +22,8 @@ namespace TUFTManagement.Models
         public string positionName { set; get; } = "";
         public string empType { set; get; } = "";
         public string phoneNum { set; get; } = "";
+        public int employmentStatusID { set; get; } = 0;
+        public string employmentStatusName { set; get; } = "";
         public string status { set; get; } = "";
 
         public void loadData(DataRow dr)
@@ -43,6 +45,8 @@ namespace TUFTManagement.Models
             departmentName = dr["department_name"].ToString();
             empType = dr["emp_type"].ToString();
             phoneNum = dr["phone_number"].ToString();
+            employmentStatusID = int.Parse(dr["employment_status_id"].ToString());
+            employmentStatusName = dr["employment_status_name"].ToString();
             status = dr["status"].ToString();
         }
     }

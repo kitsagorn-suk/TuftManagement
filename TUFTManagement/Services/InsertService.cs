@@ -38,18 +38,6 @@ namespace TUFTManagement.Services
                     
                     if (saveEmpProfileDTO.newUserID != 0)
                     {
-                        if (saveEmpProfileDTO.positionID == 14) // ถ้าเป็นพริตตี้ เพิ่ม ข้อ 6/7/8
-                        {
-                            SaveBodySetRequestDTO saveBodySetRequestDTO = new SaveBodySetRequestDTO();
-                            saveBodySetRequestDTO.height = saveEmpProfileDTO.height;
-                            saveBodySetRequestDTO.weight = saveEmpProfileDTO.weight;
-                            saveBodySetRequestDTO.chest = saveEmpProfileDTO.chest;
-                            saveBodySetRequestDTO.waist = saveEmpProfileDTO.waist;
-                            saveBodySetRequestDTO.hip = saveEmpProfileDTO.hip;
-
-                            _ReturnIdModel saveBodySet = _sql.InsertBodySet(shareCode, saveBodySetRequestDTO, userID);
-                            saveEmpProfileDTO.bodySetID = saveBodySet.id;
-                        }
 
                         value.data = _sql.InsertEmpProfile(shareCode, saveEmpProfileDTO, userID);
                                     _sql.InsertEmpAddress(shareCode, saveEmpProfileDTO, userID);
@@ -69,7 +57,9 @@ namespace TUFTManagement.Services
                         {
                             SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
                             saveEmpRateRequestDTO.empID = saveEmpProfileDTO.newUserID;
-                            saveEmpRateRequestDTO.productCode = saveEmpProfileDTO.productCode;
+                            saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
+                            saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
+                            saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
                             saveEmpRateRequestDTO.rateStaff = saveEmpProfileDTO.rateStaff;
                             saveEmpRateRequestDTO.rateManager = saveEmpProfileDTO.rateManager;
                             saveEmpRateRequestDTO.rateOwner = saveEmpProfileDTO.rateOwner;
@@ -122,7 +112,7 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmpRate(lang, saveEmpRateDTO);
                 if (validation.Success == true)
                 {
-                        //value.data = _sql.InsertEmpRate(saveEmpRateDTO, userID);
+                    //value.data = _sql.InsertEmpRate(saveEmpRateDTO, userID);
                 }
                 else
                 {

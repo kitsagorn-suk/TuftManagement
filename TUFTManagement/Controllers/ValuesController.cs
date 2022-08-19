@@ -206,9 +206,16 @@ namespace TUFTManagement.Controllers
                 {
                     obj = srv.GetTitleNameDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                 }
-                if (getDropdownRequestDTO.moduleName.ToLower() == "position".ToLower() && getDropdownRequestDTO.departmentID !=0 )
+                if (getDropdownRequestDTO.moduleName.ToLower() == "positionFilter".ToLower())
                 {
-                    obj = srv.GetPositionByDepartmentDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    if(getDropdownRequestDTO.departmentID != 0)
+                    {
+                        obj = srv.GetPositionByDepartmentDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    }
+                    else
+                    {
+                        throw new Exception("Missing Parameter : departmentID");
+                    }
                 }
                 else
                 {
@@ -728,6 +735,23 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
+                
+                string strDepartmentSearch = JsonConvert.SerializeObject(pageRequestDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", pageRequestDTO.departmentSearch);
+                pageRequestDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(pageRequestDTO.positionSearch);
+                strPositionSearch = string.Join(",", pageRequestDTO.positionSearch);
+                pageRequestDTO.prepairPositionSearch = strPositionSearch;
+
+                string strEmpTypeSearch = JsonConvert.SerializeObject(pageRequestDTO.empTypeSearch);
+                strEmpTypeSearch = string.Join(",", pageRequestDTO.empTypeSearch);
+                pageRequestDTO.prepairEmpTypeSearch = strEmpTypeSearch;
+
+                string strEmpStatusSearch = JsonConvert.SerializeObject(pageRequestDTO.empStatusSearch);
+                strEmpStatusSearch = string.Join(",", pageRequestDTO.empStatusSearch);
+                pageRequestDTO.prepairEmpStatusSearch = strEmpStatusSearch;
+
 
                 if (pageRequestDTO.pageInt.Equals(null) || pageRequestDTO.pageInt.Equals(0))
                 {
@@ -861,9 +885,9 @@ namespace TUFTManagement.Controllers
                 {
                     checkMissingOptional += "empID ";
                 }
-                if (string.IsNullOrEmpty(saveEmpRateDTO.productCode))
+                if (saveEmpRateDTO.serviceNo.Equals(0) || saveEmpRateDTO.serviceNo.Equals(null))
                 {
-                    checkMissingOptional += "productCode ";
+                    checkMissingOptional += "serviceNo ";
                 }
 
                 if (checkMissingOptional != "")
@@ -986,6 +1010,26 @@ namespace TUFTManagement.Controllers
                 string json = JsonConvert.SerializeObject(saveEmpStatusDTO);
                 int logID = _sql.InsertLogReceiveData("UpdateEmployeeStatus", json, timestampNow.ToString(), authHeader,
                     data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpStatusDTO.userID.Equals(0) || saveEmpStatusDTO.userID.Equals(null))
+                {
+                    checkMissingOptional += "userID ";
+                }
+                if (saveEmpStatusDTO.employmentStatusID.Equals(0) || saveEmpStatusDTO.employmentStatusID.Equals(null))
+                {
+                    checkMissingOptional += "employmentStatusID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpStatusDTO.imageEmploymentCode))
+                {
+                    checkMissingOptional += "imageEmploymentCode ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
 
                 UpdateService srv = new UpdateService();
                 var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO, data.roleIDList, data.userID);
