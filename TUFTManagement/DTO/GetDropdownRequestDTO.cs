@@ -10,5 +10,6 @@ namespace TUFTManagement.DTO
         public string moduleName { set; get; } = "";
         public int provinceID { set; get; } = 0;
         public int districtID { set; get; } = 0;
+        public int departmentID { set; get; } = 0;
     }
 }

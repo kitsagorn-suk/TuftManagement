@@ -9,6 +9,7 @@ namespace TUFTManagement.DTO
     {
         public int id { set; get; } = 0;
         public int userID { set; get; } = 0;
+        public string fileCode { set; get; } = "";
 
     }
 }

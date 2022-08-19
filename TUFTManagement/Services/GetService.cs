@@ -140,6 +140,48 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+        public GetDropdownTitleNameModel GetPositionByDepartmentDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetDropdownTitleNameModel value = new GetDropdownTitleNameModel();
+            try
+            {
+                value.data = new List<DropdownTitleName>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.GetDropdownPositionFilter(lang);
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetPositionByDepartmentDropdownService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
         public GetEmpProfileModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, int userID)
         {
             if (_sql == null)
@@ -238,7 +280,48 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public GetfileByCodeModel GetFileByCodeService(string shareCode, string authorization, string lang, string platform, int logID, int userID, string fileCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
 
+            GetfileByCodeModel value = new GetfileByCodeModel();
+            try
+            {
+                List<_GetfileByCode> data = new List<_GetfileByCode>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetEmpFileByCode(shareCode, userID, lang, fileCode);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetFileByCodeService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
 
         public GetEmpRateModel GetEmpRateService(string authorization, string lang, string platform, int logID, int userID)
         {
