@@ -170,14 +170,19 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "employmentTypeID ";
                 }
-                if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็นพริตตี้ รายวัน จะไม่เช็ค
+
+                if (!shareCode.ToLower().Equals("lls"))
                 {
-                    checkMissingOptional += "monthlySalary ";
+                    if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็นพริตตี้ รายวัน จะไม่เช็ค
+                    {
+                        checkMissingOptional += "monthlySalary ";
+                    }
+                    if (saveEmpProfileDTO.dailySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 1) // ถ้าเป็นพริตตี้ รายเดือน จะไม่เช็ค
+                    {
+                        checkMissingOptional += "dailySalary ";
+                    }
                 }
-                if (saveEmpProfileDTO.dailySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 1) // ถ้าเป็นพริตตี้ รายเดือน จะไม่เช็ค
-                {
-                    checkMissingOptional += "dailySalary ";
-                }
+                
                 if (saveEmpProfileDTO.departmentID.Equals(0))
                 {
                     checkMissingOptional += "departmentID ";
@@ -350,17 +355,25 @@ namespace TUFTManagement.Services
                         {
                         foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                         {
-                            if (string.IsNullOrEmpty(item.emerFullName))
+                            int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emergencyContactID);
+                            if (isDupName > 0)
                             {
-                                checkMissingOptional += "emerFullName ";
+                                throw new Exception("emergency fullname : "+ item.emerFullName +" is already");
                             }
-                            if (item.emerRelationShipID.Equals(0))
+                            else
                             {
-                                checkMissingOptional += "emerRelationShipID ";
-                            }
-                            if (string.IsNullOrEmpty(item.emerContact))
-                            {
-                                checkMissingOptional += "emerContact ";
+                                if (string.IsNullOrEmpty(item.emerFullName))
+                                {
+                                    checkMissingOptional += "emerFullName ";
+                                }
+                                if (item.emerRelationShipID.Equals(0))
+                                {
+                                    checkMissingOptional += "emerRelationShipID ";
+                                }
+                                if (string.IsNullOrEmpty(item.emerContact))
+                                {
+                                    checkMissingOptional += "emerContact ";
+                                }
                             }
                         }
                     }

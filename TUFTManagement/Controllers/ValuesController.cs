@@ -612,6 +612,7 @@ namespace TUFTManagement.Controllers
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+            string agentID = (request.Headers["AgentID"] == null ? "" : request.Headers["AgentID"]);
 
             HeadersDTO headersDTO = new HeadersDTO();
             headersDTO.authHeader = authHeader;
@@ -629,8 +630,22 @@ namespace TUFTManagement.Controllers
                     data.userID, fromProject.ToLower());
 
                 ValidateService validateService = new ValidateService();
+
+                
+
+                if (!string.IsNullOrEmpty(agentID))
+                {
+                    saveEmpProfileDTO.agentID = int.Parse(agentID.ToString());
+                }
                 saveEmpProfileDTO.shareCode = shareCode;
-                ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
+                saveEmpProfileDTO.shareID = _sql.getShareIdByShareCode(shareCode);
+
+
+
+
+
+
+                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
 
                 // prepair username 
                 saveEmpProfileDTO.userName = shareCode.ToUpper() + "-" + saveEmpProfileDTO.userName;

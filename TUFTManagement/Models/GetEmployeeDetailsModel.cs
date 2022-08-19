@@ -16,6 +16,7 @@ namespace TUFTManagement.Models
     public class EmployeeDetails
     {
         public int userID { set; get; } = 0;
+        public int empProfileID { set; get; } = 0;
         public string empCode { set; get; } = "";
 
         public string userName { set; get; } = "";
@@ -66,8 +67,7 @@ namespace TUFTManagement.Models
         public int bankID { set; get; } = 0;
 
         public List<EmergencyContact> emergencyContact { set; get; }
-
-        public int bodySetID { set; get; } = 0;
+        
         public int chest { set; get; } = 0;
         public int waist { set; get; } = 0;
         public int hip { set; get; } = 0;
@@ -79,7 +79,9 @@ namespace TUFTManagement.Models
         public int rateOwner { set; get; } = 0;
         public int rateConfirm { set; get; } = 0;
 
-        public string profileUrl { set; get; } = "";
+        public string imageProfileUrl { set; get; } = "";
+        public string imageIdentityUrl { set; get; } = "";
+        
 
         public List<ImageGallary> imageGallary { set; get; }
 
@@ -113,6 +115,7 @@ namespace TUFTManagement.Models
         public void loadData(DataRow dr)
         {
             userID = Convert.ToInt32(dr["user_id"]);
+            empProfileID = Convert.ToInt32(dr["emp_profile_id"]);
             empCode = dr["emp_code"].ToString();
             userName = dr["username"].ToString();
             joinDate = dr["join_date"].ToString();
@@ -160,11 +163,10 @@ namespace TUFTManagement.Models
             bankID = Convert.ToInt32(dr["bank_id"]);
             bankAccountName = dr["account_name"].ToString();
             bankAccountNumber = dr["account_no"].ToString();
-
-            //bodySetID = Convert.ToInt32(dr["body_set_id"]);
-            //chest = Convert.ToInt32(dr["chest"]);
-            //waist = Convert.ToInt32(dr["waist"]);
-            //hip = Convert.ToInt32(dr["hip"]);
+            
+            chest = Convert.ToInt32(dr["chest"]);
+            waist = Convert.ToInt32(dr["waist"]);
+            hip = Convert.ToInt32(dr["hip"]);
 
             empRateID = Convert.ToInt32(dr["emp_rate_id"]);
             productCode = dr["product_code"].ToString();
@@ -173,7 +175,8 @@ namespace TUFTManagement.Models
             rateOwner = Convert.ToInt32(dr["rate_owner"]);
             rateConfirm = Convert.ToInt32(dr["rate_confirm"]);
 
-            profileUrl = productCode = dr["url"].ToString();
+            imageProfileUrl = dr["image_profile_url"].ToString();
+            imageIdentityUrl = dr["image_iden_url"].ToString();
 
         }
 

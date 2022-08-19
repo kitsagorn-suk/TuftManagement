@@ -13,8 +13,8 @@ namespace TUFTManagement.DTO
         public string shareCode { set; get; } = "";
 
         #region param เจาะรูไว้ ตอนนี้ defaut 
-        public int agentID { set; get; } = 1;
-        public int shareID { set; get; } = 1;
+        public int agentID { set; get; } = 0;
+        public int shareID { set; get; } = 0;
         public int roleID { set; get; } = 7;
         #endregion
 
@@ -85,7 +85,7 @@ namespace TUFTManagement.DTO
 
         public string imageProfileCode { set; get; } = "";
         public string imageGalleryCode { set; get; } = "";
-
+        public string imageIdentityCode { set; get; } = "";
     }
     
     public class SaveEmergencyContact

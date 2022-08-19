@@ -98,10 +98,17 @@ namespace TUFTManagement.Services
                     {
                         foreach(SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                         {
-                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_full_name", item.emerFullName.ToString(), userID);
-                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_relationship_id", item.emerRelationShipID.ToString(), userID);
-                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_contact", item.emerContact.ToString(), userID);
-                            _sql.UpdateEmpEmergencyContact(shareCode, item, userID);
+                            if (item.emergencyContactID != 0)
+                            {
+                                //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_full_name", item.emerFullName.ToString(), userID);
+                                //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_relationship_id", item.emerRelationShipID.ToString(), userID);
+                                //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_contact", item.emerContact.ToString(), userID);
+                                _sql.UpdateEmpEmergencyContact(shareCode, item, userID);
+                            }
+                            else
+                            {
+                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.newUserID, userID);
+                            }
                         }
                     }
 

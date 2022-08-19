@@ -814,6 +814,62 @@ namespace TUFTManagement.Core
             }
             return total;
         }
+        public int getShareIdByShareCode(string shareCode)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_share_id_by_share_code " +
+                "@pShareCode");
+
+            SqlParameter pShareCode = new SqlParameter(@"pShareCode", SqlDbType.VarChar, 50);
+            pShareCode.Direction = ParameterDirection.Input;
+            pShareCode.Value = shareCode;
+            sql.Parameters.Add(pShareCode);
+            
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                total = int.Parse(dr["id"].ToString());
+            }
+            return total;
+        }
+
+        public int CheckDupEmergencyName(string shareCode, string fullName, int emergenctContactID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_user_emergency_contact " +
+                "@pFullName, " +
+                "@pEmergenctContactID");
+
+            SqlParameter paramFullName = new SqlParameter(@"pFullName", SqlDbType.VarChar, 200);
+            paramFullName.Direction = ParameterDirection.Input;
+            paramFullName.Value = fullName;
+            sql.Parameters.Add(paramFullName);
+
+            SqlParameter paramEmergenctContactID = new SqlParameter(@"pEmergenctContactID", SqlDbType.Int);
+            paramEmergenctContactID.Direction = ParameterDirection.Input;
+            paramEmergenctContactID.Value = emergenctContactID;
+            sql.Parameters.Add(paramEmergenctContactID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            int isDupName = 0;
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    isDupName = int.Parse(dr["is_dup_name"].ToString());
+                }
+            }
+
+            return isDupName;
+        }
+
         public int getUserIdByEmpProfileID(string shareCode, int empProfileID)
         {
             int userID = 0;
@@ -875,7 +931,8 @@ namespace TUFTManagement.Core
 
                 "@pImageProfileCode, " +
                 "@pImageGalleryCode, " +
-
+                "@pImageIdentityCode, " +
+                
                 "@pCreateBy ");
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
@@ -1033,6 +1090,11 @@ namespace TUFTManagement.Core
             pImageGalleryCode.Value = saveEmpProfileDTO.imageGalleryCode;
             sql.Parameters.Add(pImageGalleryCode);
 
+            SqlParameter pImageIdentityCode = new SqlParameter(@"pImageIdentityCode", SqlDbType.VarChar, 250);
+            pImageIdentityCode.Direction = ParameterDirection.Input;
+            pImageIdentityCode.Value = saveEmpProfileDTO.imageIdentityCode;
+            sql.Parameters.Add(pImageIdentityCode);
+            
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
             pCreateBy.Value = userID;
@@ -2280,7 +2342,8 @@ namespace TUFTManagement.Core
 
                 "@pImageProfileCode, " +
                 "@pImageGalleryCode, " +
-
+                "@pImageIdentityCode, " +
+                
                 "@pUpdateBy");
 
             SqlParameter pEmpProfileID = new SqlParameter(@"pEmpProfileID", SqlDbType.Int);
@@ -2432,6 +2495,11 @@ namespace TUFTManagement.Core
             pImageGalleryCode.Direction = ParameterDirection.Input;
             pImageGalleryCode.Value = saveEmpProfileDTO.imageGalleryCode;
             sql.Parameters.Add(pImageGalleryCode);
+
+            SqlParameter pImageIdentityCode = new SqlParameter(@"pImageIdentityCode", SqlDbType.VarChar, 250);
+            pImageIdentityCode.Direction = ParameterDirection.Input;
+            pImageIdentityCode.Value = saveEmpProfileDTO.imageIdentityCode;
+            sql.Parameters.Add(pImageIdentityCode);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;

@@ -15,7 +15,8 @@ namespace TUFTManagement.Models
 
     public class SearchAllEmployee
     {
-        public int id { set; get; } = 0;
+        public int userID { set; get; } = 0;
+        public int empProfileID { set; get; } = 0;
         public string empCode { set; get; } = "";
         public string empName { set; get; } = "";
         public string departmentName { set; get; } = "";
@@ -28,7 +29,8 @@ namespace TUFTManagement.Models
 
         public void loadData(DataRow dr)
         {
-            id = int.Parse(dr["id"].ToString());
+            userID = int.Parse(dr["user_id"].ToString());
+            empProfileID = int.Parse(dr["id"].ToString());
             empCode = dr["emp_code"].ToString();
 
             dr["emp_nick_name"].ToString();
