@@ -19,7 +19,7 @@ namespace TUFTManagement.Models
             E501, E502, E503, E504, E505, E506,
             S200001, S201001, S200002, S200003, S200004,
             E300001, E300002, E300003, E300004, E300005, E300006, E300007, E300008,
-            E301001, E301002, E301003, E301004, E301005, E301006, E301007, E301008, E301009,
+            E301001, E301002, E301003, E301004, E301005, E301006, E301007, E301008, E301009, E301010,
             E302001, E302002, E302003,
             E303001, E303002
 
@@ -63,6 +63,8 @@ namespace TUFTManagement.Models
                     return 301008;
                 case InvalidState.E301009:
                     return 301009;
+                case InvalidState.E301010:
+                    return 301010;
                 default:
                     return 0;
             }
@@ -134,6 +136,10 @@ namespace TUFTManagement.Models
                     return message;
                 case InvalidState.E301009:
                     messagecode = 301009;
+                    message = _sql.GetMessageLang(lang.ToLower(), messagecode);
+                    return message;
+                case InvalidState.E301010:
+                    messagecode = 301010;
                     message = _sql.GetMessageLang(lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E302001:
@@ -212,6 +218,10 @@ namespace TUFTManagement.Models
                     return message;
                 case InvalidState.E301009:
                     messagecode = 301009;
+                    message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
+                    return message;
+                case InvalidState.E301010:
+                    messagecode = 301010;
                     message = _sql.GetMessageLangWithShareCode(shareCode, lang.ToLower(), messagecode);
                     return message;
                 case InvalidState.E302001:

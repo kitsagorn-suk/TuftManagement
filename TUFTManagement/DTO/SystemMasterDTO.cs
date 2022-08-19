@@ -5,14 +5,15 @@ using System.Web;
 
 namespace TUFTManagement.DTO
 {
-    public class MasterDataDTO
+    public class SystemMasterDTO
     {
-        public int masterID { set; get; } = 0;
         public string mode { set; get; } = "";
+        public int masterID { set; get; } = 0;
+        public int keyID { set; get; } = 0;
+        public int value { set; get; } = 0;
         public string nameEN { set; get; } = "";
         public string nameTH { set; get; } = "";
-        public int deptID { set; get; } = 0;
+        public int order { set; get; } = 0;
         public string IsActive { set; get; } = "";
-        public string keyName { set; get; } = "";
     }
 }

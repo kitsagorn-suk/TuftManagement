@@ -13,8 +13,7 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID,
-            MasterDataDTO masterDataDTO, string TableName, int userID, string shareCode)
+        public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, string TableName, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -212,6 +211,464 @@ namespace TUFTManagement.Services
             catch (Exception ex)
             {
                 LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterBodySetService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel UpdateActiveMasterService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, string TableName, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                _ReturnIdModel data = new _ReturnIdModel();
+
+                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, TableName, masterDataDTO);
+                if (validation.Success == true)
+                {
+                    //ValidationModel validation = new ValidationModel();
+                    //List<string> listobjectID = new List<string>();
+                    //listobjectID.Add("100401002");
+                    //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+                    validation = ValidationManager.CheckValidation(1, lang, platform);
+                    if (validation.Success == true)
+                    {
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "is_active", masterDataDTO.IsActive, userID);
+                       // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+                        value.data = _sql.UpdateActiveMaster(shareCode, masterDataDTO,TableName, userID); ;
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    }
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateActiveMasterService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public SearchMasterDataDepartmentModel SearchMasterDepartmentService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchMasterDataDepartmentModel value = new SearchMasterDataDepartmentModel();
+            try
+            {
+                Pagination<SearchMasterDataDepartment> data = new Pagination<SearchMasterDataDepartment>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchMasterDepartment(searchMasterDataDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterDepartmentService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public GetMasterPositionModel GetPositionService(string authorization, string lang, string platform, int logID, int masterID,string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetMasterPositionModel value = new GetMasterPositionModel();
+            try
+            {
+                MasterPosition data = new MasterPosition();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetMasterPosition(masterID);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterPositionService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel SaveMasterKeyService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, string TableName, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                _ReturnIdModel data = new _ReturnIdModel();
+
+                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterKey(shareCode, lang, TableName, masterDataDTO);
+                if (validation.Success == true)
+                {
+                    if (masterDataDTO.mode.ToLower() == "insert")
+                    {
+                        //List<string> listobjectID = new List<string>();
+                        //listobjectID.Add("100401001");
+                        //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                        value.data = _sql.InsertMasterKey(shareCode, masterDataDTO, TableName, userID);
+                    }
+                    else if (masterDataDTO.mode.ToLower() == "update")
+                    {
+                        //ValidationModel validation = new ValidationModel();
+                        //List<string> listobjectID = new List<string>();
+                        //listobjectID.Add("100401002");
+                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                        if (validation.Success == true)
+                        {
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "key_name", masterDataDTO.keyName, userID);
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+                            value.data = _sql.UpdateMasterKey(shareCode, masterDataDTO, TableName, userID);
+                        }
+                        else
+                        {
+                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SaveMasterKeyService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public SearchMasterKeyModel SearchMasterKeyService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchMasterKeyModel value = new SearchMasterKeyModel();
+            try
+            {
+                Pagination<SearchMasterKey> data = new Pagination<SearchMasterKey>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchMasterKey(searchMasterDataDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterKeyService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public GetMasterKeyModel GetMasterKeyService(string authorization, string lang, string platform, int logID, int masterID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetMasterKeyModel value = new GetMasterKeyModel();
+            try
+            {
+                MasterKey data = new MasterKey();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetMasterKey(masterID);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel SaveSystemMasterService(string authorization, string lang, string platform, int logID, SystemMasterDTO systemMasterDTO, string TableName, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                _ReturnIdModel data = new _ReturnIdModel();
+
+                MasterDataDTO masterDataDTO = new MasterDataDTO();
+                masterDataDTO.masterID = systemMasterDTO.masterID;
+                masterDataDTO.nameEN = systemMasterDTO.nameEN;
+                masterDataDTO.nameTH = systemMasterDTO.nameTH;
+
+
+                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, TableName, masterDataDTO);
+                if (validation.Success == true)
+                {
+                    if (systemMasterDTO.mode.ToLower() == "insert")
+                    {
+                        //List<string> listobjectID = new List<string>();
+                        //listobjectID.Add("100401001");
+                        //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                        value.data = _sql.InsertSystemMaster(shareCode, systemMasterDTO, TableName, userID);
+                    }
+                    else if (systemMasterDTO.mode.ToLower() == "update")
+                    {
+                        //ValidationModel validation = new ValidationModel();
+                        //List<string> listobjectID = new List<string>();
+                        //listobjectID.Add("100401002");
+                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                        if (validation.Success == true)
+                        {
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "key_id", systemMasterDTO.keyID.ToString(), userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "value", systemMasterDTO.value.ToString(), userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "name_en", systemMasterDTO.nameEN, userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "name_th", systemMasterDTO.nameTH, userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "order", systemMasterDTO.order.ToString(), userID);
+
+
+                            value.data = _sql.UpdateSystemMaster(shareCode, systemMasterDTO, TableName, userID);
+                        }
+                        else
+                        {
+                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                        }
+                    }
+
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SaveMasterKeyService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public SearchSystemMasterModel SearchSystemMasterService(string authorization, string lang, string platform, int logID, SearchSystemMasterDTO searchSystemMasterDTO, string TableName, string roleIDList, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchSystemMasterModel value = new SearchSystemMasterModel();
+            try
+            {
+                Pagination<SearchSystemMaster> data = new Pagination<SearchSystemMaster>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchSystemMaster(searchSystemMasterDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterKeyService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public GetSystemMasterModel GetSystemMasterService(string authorization, string lang, string platform, int logID, int masterID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetSystemMasterModel value = new GetSystemMasterModel();
+            try
+            {
+                SystemMaster data = new SystemMaster();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetSystemMaster(masterID);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetMasterService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
@@ -2384,6 +2841,50 @@ namespace TUFTManagement.Services
                 if (validation.Success == true)
                 {
                     data = _sql.GetBodySet(shareCode, masterID);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetBodySetService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public GetDepartmentModel GetMasterDepartmentService(string authorization, string lang, string platform, int logID, int masterID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetDepartmentModel value = new GetDepartmentModel();
+            try
+            {
+                Department data = new Department();
+
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetDepartment(masterID);
                     value.data = data;
                     value.success = validation.Success;
                 }
