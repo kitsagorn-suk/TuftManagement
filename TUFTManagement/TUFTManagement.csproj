@@ -211,7 +211,7 @@
     <Compile Include="DTO\SearchLeaveDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
     <Compile Include="DTO\SearchSystemMasterDTO.cs" />
-    <Compile Include="DTO\SearchWorkShiftDTO.cs" />
+    <Compile Include="DTO\SearchWorkTimeDTO.cs" />
     <Compile Include="DTO\SystemMasterDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -269,6 +269,7 @@
     <Compile Include="Models\ReturnMessageModel.cs" />
     <Compile Include="Models\SearchMasterKeyModel.cs" />
     <Compile Include="Models\SearchSystemMasterModel.cs" />
+    <Compile Include="Models\SearchWorkTimeModel.cs" />
     <Compile Include="Models\UploadModel.cs" />
     <Compile Include="Models\ValidationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

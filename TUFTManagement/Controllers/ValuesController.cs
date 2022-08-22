@@ -15,7 +15,7 @@ using TUFTManagement.Core;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
 using TUFTManagement.Services;
-//
+
 namespace TUFTManagement.Controllers
 {
     [RoutePrefix("api")]
@@ -3226,11 +3226,11 @@ namespace TUFTManagement.Controllers
 
         #endregion
 
-        #region pleng work shift
+        #region pleng work time
 
-        [Route("1.0/search/workshift")]
+        [Route("1.0/search/worktime")]
         [HttpPost]
-        public IHttpActionResult SearchWorkShift(SearchWorkShiftDTO searchWorkShiftDTO)
+        public IHttpActionResult SearchWorkTime(SearchWorkTimeDTO searchWorkTimeDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -3249,32 +3249,39 @@ namespace TUFTManagement.Controllers
 
             try
             {
-                string json = JsonConvert.SerializeObject(searchWorkShiftDTO);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchWorkShift", json, timestampNow.ToString(), headersDTO,
+                string json = JsonConvert.SerializeObject(searchWorkTimeDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchWorkTime", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
-                MasterDataService srv = new MasterDataService();
-
+                GetService srv = new GetService();
                 var obj = new object();
 
-                if (searchWorkShiftDTO.pageInt.Equals(null) || searchWorkShiftDTO.pageInt.Equals(0))
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchWorkTimeDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchWorkTimeDTO.departmentSearch);
+                searchWorkTimeDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchWorkTimeDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchWorkTimeDTO.positionSearch);
+                searchWorkTimeDTO.prepairPositionSearch = strPositionSearch;
+
+                if (searchWorkTimeDTO.pageInt.Equals(null) || searchWorkTimeDTO.pageInt.Equals(0))
                 {
                     throw new Exception("invalid : pageInt ");
                 }
-                if (searchWorkShiftDTO.perPage.Equals(null) || searchWorkShiftDTO.perPage.Equals(0))
+                if (searchWorkTimeDTO.perPage.Equals(null) || searchWorkTimeDTO.perPage.Equals(0))
                 {
                     throw new Exception("invalid : perPage ");
                 }
-                if (searchWorkShiftDTO.sortField > 2)
+                if (searchWorkTimeDTO.sortField > 2)
                 {
-                    throw new Exception("invalid : sortField " + searchWorkShiftDTO.sortField);
+                    throw new Exception("invalid : sortField " + searchWorkTimeDTO.sortField);
                 }
-                if (!(searchWorkShiftDTO.sortType == "a" || searchWorkShiftDTO.sortType == "d" || searchWorkShiftDTO.sortType == "A" || searchWorkShiftDTO.sortType == "D" || searchWorkShiftDTO.sortType == ""))
+                if (!(searchWorkTimeDTO.sortType == "a" || searchWorkTimeDTO.sortType == "d" || searchWorkTimeDTO.sortType == "A" || searchWorkTimeDTO.sortType == "D" || searchWorkTimeDTO.sortType == ""))
                 {
                     throw new Exception("invalid sortType");
                 }
 
-               // obj = srv.SearchSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, searchWorkShiftDTO, "system_master", data.roleIDList, shareCode);
+               obj = srv.SearchWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, searchWorkTimeDTO, shareCode);
 
                 return Ok(obj);
             }
