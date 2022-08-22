@@ -211,6 +211,7 @@
     <Compile Include="DTO\SearchLeaveDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
     <Compile Include="DTO\SearchSystemMasterDTO.cs" />
+    <Compile Include="DTO\SearchWorkShiftDTO.cs" />
     <Compile Include="DTO\SystemMasterDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
