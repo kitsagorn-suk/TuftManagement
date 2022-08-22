@@ -15,18 +15,22 @@ namespace TUFTManagement.Models
 
     public class SearchAllEmployee
     {
-        public int id { set; get; } = 0;
+        public int userID { set; get; } = 0;
+        public int empProfileID { set; get; } = 0;
         public string empCode { set; get; } = "";
         public string empName { set; get; } = "";
         public string departmentName { set; get; } = "";
         public string positionName { set; get; } = "";
         public string empType { set; get; } = "";
         public string phoneNum { set; get; } = "";
+        public int employmentStatusID { set; get; } = 0;
+        public string employmentStatusName { set; get; } = "";
         public string status { set; get; } = "";
 
         public void loadData(DataRow dr)
         {
-            id = int.Parse(dr["id"].ToString());
+            userID = int.Parse(dr["user_id"].ToString());
+            empProfileID = int.Parse(dr["id"].ToString());
             empCode = dr["emp_code"].ToString();
 
             dr["emp_nick_name"].ToString();
@@ -43,6 +47,8 @@ namespace TUFTManagement.Models
             departmentName = dr["department_name"].ToString();
             empType = dr["emp_type"].ToString();
             phoneNum = dr["phone_number"].ToString();
+            employmentStatusID = int.Parse(dr["employment_status_id"].ToString());
+            employmentStatusName = dr["employment_status_name"].ToString();
             status = dr["status"].ToString();
         }
     }

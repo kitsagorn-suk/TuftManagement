@@ -13,8 +13,8 @@ namespace TUFTManagement.DTO
         public string shareCode { set; get; } = "";
 
         #region param เจาะรูไว้ ตอนนี้ defaut 
-        public int agentID { set; get; } = 1;
-        public int shareID { set; get; } = 1;
+        public int agentID { set; get; } = 0;
+        public int shareID { set; get; } = 0;
         public int roleID { set; get; } = 7;
         #endregion
 
@@ -40,8 +40,8 @@ namespace TUFTManagement.DTO
         public string dateOfBirth { set; get; } = "";
         public string identityCard { set; get; } = "";
         public string identityCardExpiry { set; get; } = "";
-        public float height { set; get; } = 0;
-        public float weight { set; get; } = 0;
+        public decimal height { set; get; } = 0;
+        public decimal weight { set; get; } = 0;
         public int shirtSizeID { set; get; } = 0;
         public int bloodTypeID { set; get; } = 0;
         public string phoneNumber { set; get; } = "";
@@ -69,14 +69,15 @@ namespace TUFTManagement.DTO
         public int bankID { set; get; } = 0;
 
         public List<SaveEmergencyContact> emergencyContact { set; get; }
-
-        public int bodySetID { set; get; } = 0;
-        public int chest { set; get; } = 0;
-        public int waist { set; get; } = 0;
-        public int hip { set; get; } = 0;
+        
+        public decimal chest { set; get; } = 0;
+        public decimal waist { set; get; } = 0;
+        public decimal hip { set; get; } = 0;
 
         public int empRateID { set; get; } = 0;
-        public string productCode { set; get; } = "";
+        public int serviceNo { set; get; } = 0;
+        public int startDrink { set; get; } = 0;
+        public int fullDrink { set; get; } = 0;
         public int rateStaff { set; get; } = 0;
         public int rateManager { set; get; } = 0;
         public int rateOwner { set; get; } = 0;
@@ -84,7 +85,7 @@ namespace TUFTManagement.DTO
 
         public string imageProfileCode { set; get; } = "";
         public string imageGalleryCode { set; get; } = "";
-
+        public string imageIdentityCode { set; get; } = "";
     }
     
     public class SaveEmergencyContact

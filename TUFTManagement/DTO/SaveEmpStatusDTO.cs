@@ -7,7 +7,8 @@ namespace TUFTManagement.DTO
 {
     public class SaveEmpStatusDTO
     {
-        public int empID { set; get; } = 0;
-        public int status { set; get; } = 0;
+        public int userID { set; get; } = 0;
+        public int employmentStatusID { set; get; } = 0;
+        public string imageEmploymentCode { set; get; } = "";
     }
 }

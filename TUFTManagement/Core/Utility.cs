@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using TUFTManagement.Models;
 
 namespace TUFTManagement.Core
 {
@@ -68,6 +72,19 @@ namespace TUFTManagement.Core
             {
                 return result.ToString(WS_DATE_FORMAT2);
             }
+        }
+
+        public static HttpResponseMessage GetMessageReturnError(string message)
+        {
+            var response = new BasicResponse
+            {
+                success = false,
+                msg = new MsgModel() { code = 404, text = message, topic = "CheckData" }
+            };
+            var error = new HttpResponseMessage(HttpStatusCode.NotFound);
+            error.Content = new ObjectContent<BasicResponse>(response, new JsonMediaTypeFormatter(), "application/json");
+
+            return error;
         }
     }
 }

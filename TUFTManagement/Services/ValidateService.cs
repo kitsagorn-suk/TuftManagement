@@ -170,14 +170,19 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "employmentTypeID ";
                 }
-                if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็นพริตตี้ รายวัน จะไม่เช็ค
+
+                if (!shareCode.ToLower().Equals("lls"))
                 {
-                    checkMissingOptional += "monthlySalary ";
+                    if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็นพริตตี้ รายวัน จะไม่เช็ค
+                    {
+                        checkMissingOptional += "monthlySalary ";
+                    }
+                    if (saveEmpProfileDTO.dailySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 1) // ถ้าเป็นพริตตี้ รายเดือน จะไม่เช็ค
+                    {
+                        checkMissingOptional += "dailySalary ";
+                    }
                 }
-                if (saveEmpProfileDTO.dailySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 1) // ถ้าเป็นพริตตี้ รายเดือน จะไม่เช็ค
-                {
-                    checkMissingOptional += "dailySalary ";
-                }
+                
                 if (saveEmpProfileDTO.departmentID.Equals(0))
                 {
                     checkMissingOptional += "departmentID ";
@@ -263,101 +268,121 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "phoneNumber ";
                 }
-                
-                if (saveEmpProfileDTO.pCountryID.Equals(0) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
-                {
-                    checkMissingOptional += "pCountryID ";
-                }
-                if (saveEmpProfileDTO.pCountryID == 20) //Thailand
-                {
-                    if (saveEmpProfileDTO.pSubDistrictID.Equals(0))
-                    {
-                        checkMissingOptional += "pSubDistrictID ";
-                    }
-                    if (saveEmpProfileDTO.pDistrictID.Equals(0))
-                    {
-                        checkMissingOptional += "pDistrictID ";
-                    }
-                    if (saveEmpProfileDTO.pProvinceID.Equals(0))
-                    {
-                        checkMissingOptional += "pProvinceID ";
-                    }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pZipcode))
-                    {
-                        checkMissingOptional += "pZipcode ";
-                    }
-                }
-                
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
-                {
-                    checkMissingOptional += "pPhoneContact ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
-                {
-                    checkMissingOptional += "pAddress ";
-                }
 
-                if (saveEmpProfileDTO.isSamePermanentAddress.Equals(0))
+                if (saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็น 2 คือพนักงานพาร์ททาม ไม่ต้องเช็คข้อ 2 3 4 นี้
                 {
-                    if (saveEmpProfileDTO.citizenshipID == 20) //Thai
+                    if (saveEmpProfileDTO.pCountryID.Equals(0) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
                     {
-                        if (saveEmpProfileDTO.cSubDistrictID.Equals(0))
+                        checkMissingOptional += "pCountryID ";
+                    }
+                    if (saveEmpProfileDTO.pCountryID == 20) //Thailand
+                    {
+                        if (saveEmpProfileDTO.pSubDistrictID.Equals(0))
                         {
-                            checkMissingOptional += "cSubDistrictID ";
+                            checkMissingOptional += "pSubDistrictID ";
                         }
-                        if (saveEmpProfileDTO.cDistrictID.Equals(0))
+                        if (saveEmpProfileDTO.pDistrictID.Equals(0))
                         {
-                            checkMissingOptional += "cDistrictID ";
+                            checkMissingOptional += "pDistrictID ";
                         }
-                        if (saveEmpProfileDTO.cProvinceID.Equals(0))
+                        if (saveEmpProfileDTO.pProvinceID.Equals(0))
                         {
-                            checkMissingOptional += "cProvinceID ";
+                            checkMissingOptional += "pProvinceID ";
                         }
-                        if (string.IsNullOrEmpty(saveEmpProfileDTO.cZipcode))
+                        if (string.IsNullOrEmpty(saveEmpProfileDTO.pZipcode))
                         {
-                            checkMissingOptional += "cZipcode ";
+                            checkMissingOptional += "pZipcode ";
                         }
                     }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.cPhoneContact))
-                    {
-                        checkMissingOptional += "cPhoneContact ";
-                    }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
-                    {
-                        checkMissingOptional += "cAddress ";
-                    }
-                }
 
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.bankAccountName))
-                {
-                    checkMissingOptional += "bankAccountName ";
-                }
-                if (string.IsNullOrEmpty(saveEmpProfileDTO.bankAccountNumber))
-                {
-                    checkMissingOptional += "bankAccountNumber ";
-                }
-                if (saveEmpProfileDTO.bankID.Equals(0))
-                {
-                    checkMissingOptional += "bankID ";
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    {
+                        checkMissingOptional += "pPhoneContact ";
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    {
+                        checkMissingOptional += "pAddress ";
+                    }
+
+                    if (saveEmpProfileDTO.isSamePermanentAddress.Equals(0))
+                    {
+                        if (saveEmpProfileDTO.citizenshipID == 20) //Thai
+                        {
+                            if (saveEmpProfileDTO.cSubDistrictID.Equals(0))
+                            {
+                                checkMissingOptional += "cSubDistrictID ";
+                            }
+                            if (saveEmpProfileDTO.cDistrictID.Equals(0))
+                            {
+                                checkMissingOptional += "cDistrictID ";
+                            }
+                            if (saveEmpProfileDTO.cProvinceID.Equals(0))
+                            {
+                                checkMissingOptional += "cProvinceID ";
+                            }
+                            if (string.IsNullOrEmpty(saveEmpProfileDTO.cZipcode))
+                            {
+                                checkMissingOptional += "cZipcode ";
+                            }
+                        }
+                        if (string.IsNullOrEmpty(saveEmpProfileDTO.cPhoneContact))
+                        {
+                            checkMissingOptional += "cPhoneContact ";
+                        }
+                        if (string.IsNullOrEmpty(saveEmpProfileDTO.cAddress))
+                        {
+                            checkMissingOptional += "cAddress ";
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.bankAccountName))
+                    {
+                        checkMissingOptional += "bankAccountName ";
+                    }
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.bankAccountNumber))
+                    {
+                        checkMissingOptional += "bankAccountNumber ";
+                    }
+                    if (saveEmpProfileDTO.bankID.Equals(0))
+                    {
+                        checkMissingOptional += "bankID ";
+                    }
                 }
                 
                 if (saveEmpProfileDTO.emergencyContact.Count > 0)
                 {
-                    foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
-                    {
-                        if (string.IsNullOrEmpty(item.emerFullName))
+                    if (saveEmpProfileDTO.emergencyContact.Count <= 5)
                         {
-                            checkMissingOptional += "emerFullName ";
-                        }
-                        if (item.emerRelationShipID.Equals(0))
+                        foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                         {
-                            checkMissingOptional += "emerRelationShipID ";
-                        }
-                        if (string.IsNullOrEmpty(item.emerContact))
-                        {
-                            checkMissingOptional += "emerContact ";
+                            int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emergencyContactID);
+                            if (isDupName > 0)
+                            {
+                                throw new Exception("emergency fullname : "+ item.emerFullName +" is already");
+                            }
+                            else
+                            {
+                                if (string.IsNullOrEmpty(item.emerFullName))
+                                {
+                                    checkMissingOptional += "emerFullName ";
+                                }
+                                if (item.emerRelationShipID.Equals(0))
+                                {
+                                    checkMissingOptional += "emerRelationShipID ";
+                                }
+                                if (string.IsNullOrEmpty(item.emerContact))
+                                {
+                                    checkMissingOptional += "emerContact ";
+                                }
+                            }
                         }
                     }
+                    else
+                    {
+                        throw new Exception("emergency contact limit 5 record");
+                    }
+
+                    
                 }
 
                 if (saveEmpProfileDTO.positionID == 14) //ถ้าเป็นพริตตี้ ต้องกรอก
@@ -366,17 +391,17 @@ namespace TUFTManagement.Services
                     {
                         checkMissingOptional += "chest ";
                     }
-                    if (saveEmpProfileDTO.chest.Equals(0))
+                    if (saveEmpProfileDTO.waist.Equals(0))
                     {
                         checkMissingOptional += "waist ";
                     }
-                    if (saveEmpProfileDTO.chest.Equals(0))
+                    if (saveEmpProfileDTO.hip.Equals(0))
                     {
                         checkMissingOptional += "hip ";
                     }
-                    if (saveEmpProfileDTO.productCode.Equals(0))
+                    if (saveEmpProfileDTO.serviceNo.Equals(0))
                     {
-                        checkMissingOptional += "productCode ";
+                        checkMissingOptional += "serviceNo ";
                     }
                     if (saveEmpProfileDTO.rateStaff.Equals(0))
                     {

@@ -8,9 +8,19 @@ namespace TUFTManagement.DTO
     public class PageRequestDTO
     {
         public string paramSearch { set; get; } = "";
-        public int departmentSearch { set; get; } = 0;
-        public int empTypeSearch { set; get; } = 0;
-        public string statusSearch { set; get; } = "";
+
+        public string[] departmentSearch { set; get; } = { "" };
+        public string prepairDepartmentSearch { set; get; } = "";
+
+        public string[] positionSearch { set; get; } = { "" };
+        public string prepairPositionSearch { set; get; } = "";
+
+        public string[] empTypeSearch { set; get; } = { "" };
+        public string prepairEmpTypeSearch { set; get; } = "";
+
+        public string[] empStatusSearch { set; get; } = { "" };
+        public string prepairEmpStatusSearch { set; get; } = "";
+        
         public string lang { set; get; } = "";
         public int perPage { set; get; } = 0;
         public int pageInt { set; get; } = 0;

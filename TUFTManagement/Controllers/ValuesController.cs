@@ -205,9 +205,16 @@ namespace TUFTManagement.Controllers
                 {
                     obj = srv.GetTitleNameDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                 }
-                if (getDropdownRequestDTO.moduleName.ToLower() == "position".ToLower() && getDropdownRequestDTO.departmentID !=0 )
+                if (getDropdownRequestDTO.moduleName.ToLower() == "positionFilter".ToLower())
                 {
-                    obj = srv.GetPositionByDepartmentDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    if(getDropdownRequestDTO.departmentID != 0)
+                    {
+                        obj = srv.GetPositionByDepartmentDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    }
+                    else
+                    {
+                        throw new Exception("Missing Parameter : departmentID");
+                    }
                 }
                 else
                 {
@@ -604,6 +611,7 @@ namespace TUFTManagement.Controllers
             string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
             string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
             string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+            string agentID = (request.Headers["AgentID"] == null ? "" : request.Headers["AgentID"]);
 
             HeadersDTO headersDTO = new HeadersDTO();
             headersDTO.authHeader = authHeader;
@@ -621,8 +629,22 @@ namespace TUFTManagement.Controllers
                     data.userID, fromProject.ToLower());
 
                 ValidateService validateService = new ValidateService();
+
+                
+
+                if (!string.IsNullOrEmpty(agentID))
+                {
+                    saveEmpProfileDTO.agentID = int.Parse(agentID.ToString());
+                }
                 saveEmpProfileDTO.shareCode = shareCode;
-                ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
+                saveEmpProfileDTO.shareID = _sql.getShareIdByShareCode(shareCode);
+
+
+
+
+
+
+                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
 
                 // prepair username 
                 saveEmpProfileDTO.userName = shareCode.ToUpper() + "-" + saveEmpProfileDTO.userName;
@@ -727,6 +749,23 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
+                
+                string strDepartmentSearch = JsonConvert.SerializeObject(pageRequestDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", pageRequestDTO.departmentSearch);
+                pageRequestDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(pageRequestDTO.positionSearch);
+                strPositionSearch = string.Join(",", pageRequestDTO.positionSearch);
+                pageRequestDTO.prepairPositionSearch = strPositionSearch;
+
+                string strEmpTypeSearch = JsonConvert.SerializeObject(pageRequestDTO.empTypeSearch);
+                strEmpTypeSearch = string.Join(",", pageRequestDTO.empTypeSearch);
+                pageRequestDTO.prepairEmpTypeSearch = strEmpTypeSearch;
+
+                string strEmpStatusSearch = JsonConvert.SerializeObject(pageRequestDTO.empStatusSearch);
+                strEmpStatusSearch = string.Join(",", pageRequestDTO.empStatusSearch);
+                pageRequestDTO.prepairEmpStatusSearch = strEmpStatusSearch;
+
 
                 if (pageRequestDTO.pageInt.Equals(null) || pageRequestDTO.pageInt.Equals(0))
                 {
@@ -860,9 +899,9 @@ namespace TUFTManagement.Controllers
                 {
                     checkMissingOptional += "empID ";
                 }
-                if (string.IsNullOrEmpty(saveEmpRateDTO.productCode))
+                if (saveEmpRateDTO.serviceNo.Equals(0) || saveEmpRateDTO.serviceNo.Equals(null))
                 {
-                    checkMissingOptional += "productCode ";
+                    checkMissingOptional += "serviceNo ";
                 }
 
                 if (checkMissingOptional != "")
@@ -985,6 +1024,26 @@ namespace TUFTManagement.Controllers
                 string json = JsonConvert.SerializeObject(saveEmpStatusDTO);
                 int logID = _sql.InsertLogReceiveData("UpdateEmployeeStatus", json, timestampNow.ToString(), authHeader,
                     data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpStatusDTO.userID.Equals(0) || saveEmpStatusDTO.userID.Equals(null))
+                {
+                    checkMissingOptional += "userID ";
+                }
+                if (saveEmpStatusDTO.employmentStatusID.Equals(0) || saveEmpStatusDTO.employmentStatusID.Equals(null))
+                {
+                    checkMissingOptional += "employmentStatusID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpStatusDTO.imageEmploymentCode))
+                {
+                    checkMissingOptional += "imageEmploymentCode ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
 
                 UpdateService srv = new UpdateService();
                 var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO, data.roleIDList, data.userID);
@@ -1279,6 +1338,67 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.0/save/empWorkShift")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpWorkShift(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTime", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkShiftID ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+                    int param = saveEmpWorkTimeRequestDTO.empWorkShiftID;
+                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
+                    prepairRequest.empWorkTimeID = empWorkTimeID;
+                    prepairRequest.empWorkShiftID = param;
+
+                    UpdateService srv = new UpdateService();
+
+                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    {
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
 
         [Route("1.0/save/empWorkTime")]
         [HttpPost]
@@ -1661,7 +1781,7 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
-
+        
         #endregion
 
         #region Master

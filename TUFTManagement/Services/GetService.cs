@@ -140,22 +140,22 @@ namespace TUFTManagement.Services
             }
             return value;
         }
-        public GetDropdownTitleNameModel GetPositionByDepartmentDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        public GetAllDropdownModel GetPositionByDepartmentDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
         {
             if (_sql == null)
             {
                 _sql = SQLManager.Instance;
             }
 
-            GetDropdownTitleNameModel value = new GetDropdownTitleNameModel();
+            GetAllDropdownModel value = new GetAllDropdownModel();
             try
             {
-                value.data = new List<DropdownTitleName>();
+                value.data = new List<_DropdownAllData>();
 
                 ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.GetDropdownPositionFilter(lang);
+                    value.data = _sql.GetDropdownPositionFilter(lang, request.departmentID);
                     value.success = validation.Success;
                 }
                 else
