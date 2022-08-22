@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ using TUFTManagement.Core;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
 using TUFTManagement.Services;
-
+//
 namespace TUFTManagement.Controllers
 {
     [RoutePrefix("api")]
@@ -1832,6 +1831,10 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "nameTH ";
                     }
+                    if (masterDataDTO.deptID == 0)
+                    {
+                        checkMissingOptional += "deptID ";
+                    }
                 }
                 else if (masterDataDTO.mode.ToLower().Equals("update"))
                 {
@@ -1846,6 +1849,10 @@ namespace TUFTManagement.Controllers
                     if (string.IsNullOrEmpty(masterDataDTO.nameTH))
                     {
                         checkMissingOptional += "nameTH ";
+                    }
+                    if (masterDataDTO.deptID == 0)
+                    {
+                        checkMissingOptional += "deptID ";
                     }
                 }
                 else if (masterDataDTO.mode.ToLower().Equals("delete"))
@@ -1867,7 +1874,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "master_position", data.userID, shareCode);
+                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_position", data.userID, shareCode);
 
                 return Ok(obj);
             }
@@ -1908,7 +1915,7 @@ namespace TUFTManagement.Controllers
 
                 if (masterDataDTO.masterID != 0)
                 {
-                    obj = srv.GetMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, "master_position", shareCode);
+                    obj = srv.GetPositionService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, shareCode);
                 }
                 else
                 {
@@ -1970,7 +1977,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "master_position", data.roleIDList, shareCode);
+                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_position", data.roleIDList, shareCode);
 
                 return Ok(obj);
             }
@@ -2140,7 +2147,699 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/save/master/department")]
+        [HttpPost]
+        public IHttpActionResult SaveMasterDepartment(MasterDataDTO masterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(masterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveMasterDepartment", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(masterDataDTO.mode))
+                {
+                    throw new Exception("Missing Parameter : mode ");
+                }
+
+                if (masterDataDTO.mode.ToLower().Equals("insert"))
+                {
+                    if (masterDataDTO.masterID != 0)
+                    {
+                        checkMissingOptional += "masterID Must 0 ";
+                    }
+                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    {
+                        checkMissingOptional += "nameEN ";
+                    }
+                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
+                    {
+                        checkMissingOptional += "nameTH ";
+                    }
+                }
+                else if (masterDataDTO.mode.ToLower().Equals("update"))
+                {
+                    if (masterDataDTO.masterID == 0)
+                    {
+                        checkMissingOptional += "masterID ";
+                    }
+                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    {
+                        checkMissingOptional += "nameEN ";
+                    }
+                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
+                    {
+                        checkMissingOptional += "nameTH ";
+                    }
+                }
+                //else if (masterDataDTO.mode.ToLower().Equals("delete"))
+                //{
+                //    if (masterDataDTO.masterID == 0)
+                //    {
+                //        checkMissingOptional += "masterID ";
+                //    }
+                //}
+                else
+                {
+                    throw new Exception("Choose Mode Insert or Update");
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_department", data.userID, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/master/department")]
+        [HttpPost]
+        public IHttpActionResult GetDepartment(MasterDataDTO masterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(masterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetDepartment", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (masterDataDTO.masterID != 0)
+                {
+                    obj = srv.GetMasterDepartmentService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, shareCode);
+                }
+                else
+                {
+                    throw new Exception("Missing Parameter : ID ");
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/search/master/department")]
+        [HttpPost]
+        public IHttpActionResult SearchMasterDataDepartment(SearchMasterDataDTO searchMasterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchMasterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchMasterDataDepartment", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchMasterDataDTO.sortField > 2)
+                {
+                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
+                }
+                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchMasterDepartmentService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_department", data.roleIDList, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/master/key")]
+        [HttpPost]
+        public IHttpActionResult SaveMasterKey(MasterDataDTO masterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(masterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveMasterKey", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(masterDataDTO.mode))
+                {
+                    throw new Exception("Missing Parameter : mode ");
+                }
+
+                if (masterDataDTO.mode.ToLower().Equals("insert"))
+                {
+                    if (masterDataDTO.masterID != 0)
+                    {
+                        checkMissingOptional += "masterID Must 0 ";
+                    }
+                    if (string.IsNullOrEmpty(masterDataDTO.keyName))
+                    {
+                        checkMissingOptional += "keyName ";
+                    }
+                    
+                }
+                else if (masterDataDTO.mode.ToLower().Equals("update"))
+                {
+                    if (masterDataDTO.masterID == 0)
+                    {
+                        checkMissingOptional += "masterID ";
+                    }
+                    if (string.IsNullOrEmpty(masterDataDTO.keyName))
+                    {
+                        checkMissingOptional += "keyName ";
+                    }
+                    
+                }
+                //else if (masterDataDTO.mode.ToLower().Equals("delete"))
+                //{
+                //    if (masterDataDTO.masterID == 0)
+                //    {
+                //        checkMissingOptional += "masterID ";
+                //    }
+                //}
+                else
+                {
+                    throw new Exception("Choose Mode Insert or Update");
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+                obj = srv.SaveMasterKeyService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_master_key", data.userID, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/master/key")]
+        [HttpPost]
+        public IHttpActionResult GetKey(MasterDataDTO masterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(masterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetKey", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (masterDataDTO.masterID != 0)
+                {
+                    obj = srv.GetMasterKeyService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO.masterID, shareCode);
+                }
+                else
+                {
+                    throw new Exception("Missing Parameter : ID ");
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/search/master/key")]
+        [HttpPost]
+        public IHttpActionResult SearchMasterkey(SearchMasterDataDTO searchMasterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchMasterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchMasterKey", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchMasterDataDTO.sortField > 2)
+                {
+                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
+                }
+                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchMasterKeyService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_master_key", data.roleIDList, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/master/systemmaster")]
+        [HttpPost]
+        public IHttpActionResult SaveSystemMaster(SystemMasterDTO systemMasterDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(systemMasterDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveSystemMaster", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(systemMasterDTO.mode))
+                {
+                    throw new Exception("Missing Parameter : mode ");
+                }
+
+                if (systemMasterDTO.mode.ToLower().Equals("insert"))
+                {
+                    if (systemMasterDTO.masterID != 0)
+                    {
+                        checkMissingOptional += "masterID Must 0 ";
+                    }
+                    if (systemMasterDTO.keyID == 0)
+                    {
+                        checkMissingOptional += "keyID ";
+                    }
+                    if (systemMasterDTO.value == 0)
+                    {
+                        checkMissingOptional += "value ";
+                    }
+                    if (string.IsNullOrEmpty(systemMasterDTO.nameEN))
+                    {
+                        checkMissingOptional += "nameEN ";
+                    }
+                    if (string.IsNullOrEmpty(systemMasterDTO.nameTH))
+                    {
+                        checkMissingOptional += "nameTH ";
+                    }
+                    if (systemMasterDTO.order == 0)
+                    {
+                        checkMissingOptional += "order ";
+                    }
+
+                }
+                else if (systemMasterDTO.mode.ToLower().Equals("update"))
+                {
+                    if (systemMasterDTO.masterID == 0)
+                    {
+                        checkMissingOptional += "masterID ";
+                    }
+                    if (systemMasterDTO.keyID == 0)
+                    {
+                        checkMissingOptional += "keyID ";
+                    }
+                    if (systemMasterDTO.value == 0)
+                    {
+                        checkMissingOptional += "value ";
+                    }
+                    if (string.IsNullOrEmpty(systemMasterDTO.nameEN))
+                    {
+                        checkMissingOptional += "nameEN ";
+                    }
+                    if (string.IsNullOrEmpty(systemMasterDTO.nameTH))
+                    {
+                        checkMissingOptional += "nameTH ";
+                    }
+                    if (systemMasterDTO.order == 0)
+                    {
+                        checkMissingOptional += "order ";
+                    }
+
+                }
+                //else if (masterDataDTO.mode.ToLower().Equals("delete"))
+                //{
+                //    if (masterDataDTO.masterID == 0)
+                //    {
+                //        checkMissingOptional += "masterID ";
+                //    }
+                //}
+                else
+                {
+                    throw new Exception("Choose Mode Insert or Update");
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+                obj = srv.SaveSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, systemMasterDTO, "system_master", data.userID, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/master/systemmaster")]
+        [HttpPost]
+        public IHttpActionResult GetSystemMaster(SystemMasterDTO systemMasterDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(systemMasterDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetSystemMaster", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (systemMasterDTO.masterID != 0)
+                {
+                    obj = srv.GetSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, systemMasterDTO.masterID, shareCode);
+                }
+                else
+                {
+                    throw new Exception("Missing Parameter : ID ");
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
         
+        [Route("1.0/search/master/systemmaster")]
+        [HttpPost]
+        public IHttpActionResult SearchSystemMaster(SearchSystemMasterDTO searchSystemMasterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchSystemMasterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchSystemMaster", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                var obj = new object();
+
+                if (searchSystemMasterDataDTO.pageInt.Equals(null) || searchSystemMasterDataDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchSystemMasterDataDTO.perPage.Equals(null) || searchSystemMasterDataDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchSystemMasterDataDTO.sortField > 2)
+                {
+                    throw new Exception("invalid : sortField " + searchSystemMasterDataDTO.sortField);
+                }
+                if (!(searchSystemMasterDataDTO.sortType == "a" || searchSystemMasterDataDTO.sortType == "d" || searchSystemMasterDataDTO.sortType == "A" || searchSystemMasterDataDTO.sortType == "D" || searchSystemMasterDataDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, searchSystemMasterDataDTO, "system_master", data.roleIDList, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+
+
+        #region Update Active Master
+        [Route("1.0/update/master/active")]
+        [HttpPost]
+        public IHttpActionResult UpdateActiveMaster(MasterDataDTO masterDataDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            try
+            {
+                string tableName = "";
+
+                
+                if (masterDataDTO.mode == "department")
+                {
+                    tableName = "system_department";
+                }
+                else if (masterDataDTO.mode == "position")
+                {
+                    tableName = "system_position";
+                }
+                else if (masterDataDTO.mode == "masterkey")
+                {
+                    tableName = "system_master_key";
+                }
+                else if (masterDataDTO.mode == "systemmaster")
+                {
+                    tableName = "system_master";
+                }
+
+                string json = JsonConvert.SerializeObject(masterDataDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "UpdateActiveMaster", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (masterDataDTO.masterID == 0)
+                {
+                     checkMissingOptional += "masterID";
+                }
+               
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+                
+                if((tableName == "system_department" || tableName == "system_master_key") && masterDataDTO.IsActive == "0")
+                {
+                    var checkUse = _sql.CheckIsActiveService(tableName, masterDataDTO.masterID);
+                    if (checkUse == 0)
+                    {
+                        obj = srv.UpdateActiveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, tableName, data.userID, shareCode);
+                    }
+                    else
+                    {
+                        throw new Exception("Master is still active");
+                    }
+                }
+                else
+                {
+                    obj = srv.UpdateActiveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, tableName, data.userID, shareCode);
+
+                }
+
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+        #endregion
+
+
         #endregion
 
         #region Feedback

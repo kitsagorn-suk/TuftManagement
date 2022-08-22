@@ -511,5 +511,43 @@ namespace TUFTManagement.Core
             }
             return value;
         }
+
+        public static ValidationModel CheckValidationDupicateMasterKey(string shareCode, string lang, string TableName, MasterDataDTO masterDataDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                DataTable dt = _sql.CheckDuplicateMasterKey(shareCode, TableName, masterDataDTO);
+
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0]["counttotal"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301010;
+                        getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                }
+
+                getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, 0, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(0);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+
     }
 }

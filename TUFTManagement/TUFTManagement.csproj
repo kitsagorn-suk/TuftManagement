@@ -210,6 +210,8 @@
     <Compile Include="DTO\SaveEmpProfileDTO.cs" />
     <Compile Include="DTO\SearchLeaveDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
+    <Compile Include="DTO\SearchSystemMasterDTO.cs" />
+    <Compile Include="DTO\SystemMasterDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -236,6 +238,7 @@
     </Compile>
     <Compile Include="Models\GetAllDropdownModel.cs" />
     <Compile Include="Models\GetBodySetModel.cs" />
+    <Compile Include="Models\GetDepartmentModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
     <Compile Include="Models\GetfileByCodeModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
@@ -246,10 +249,13 @@
     <Compile Include="Models\GetLeaveDetailModel.cs" />
     <Compile Include="Models\GetMasterDataModel.cs" />
     <Compile Include="Models\GetDropdownTitleNameModel.cs" />
+    <Compile Include="Models\GetMasterKeyModel.cs" />
     <Compile Include="Models\GetSubDistrictDropdownModel.cs" />
+    <Compile Include="Models\GetSystemMasterModel.cs" />
     <Compile Include="Models\InsertLoginModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\LogModel.cs" />
+    <Compile Include="Models\GetMasterPositionModel.cs" />
     <Compile Include="Models\MsgModel.cs" />
     <Compile Include="Models\Pagination.cs" />
     <Compile Include="Models\ReturnIdModel.cs" />
@@ -257,8 +263,11 @@
     <Compile Include="Models\SearchAllEmployeeModel.cs" />
     <Compile Include="Models\SearchAllLeaveModel.cs" />
     <Compile Include="Models\SearchMasterDataBodySetModel.cs" />
+    <Compile Include="Models\SearchMasterDataDepartmentModel.cs" />
     <Compile Include="Models\SearchMasterDataModel.cs" />
     <Compile Include="Models\ReturnMessageModel.cs" />
+    <Compile Include="Models\SearchMasterKeyModel.cs" />
+    <Compile Include="Models\SearchSystemMasterModel.cs" />
     <Compile Include="Models\UploadModel.cs" />
     <Compile Include="Models\ValidationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
