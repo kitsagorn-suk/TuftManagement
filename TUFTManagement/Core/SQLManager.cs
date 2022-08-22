@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Configuration;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
+using static TUFTManagement.DTO.SaveEmpWorkTimeRequestDTO_V1_1;
 
 namespace TUFTManagement.Core
 {
@@ -869,6 +870,56 @@ namespace TUFTManagement.Core
             return isDupName;
         }
 
+        public _ReturnIdModel insertWorkTime(string shareCode, EmpWorkTimeRequestDTO empWorkTimeRequestDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_time " +
+                "@pUserID, " +
+                "@pWorkShiftID, " +
+                "@pWorkDate, " +
+                "@pIsFix, " +
+                "@pCreateBy");
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = empWorkTimeRequestDTO.userID;
+            sql.Parameters.Add(paramUserID);
+
+            SqlParameter paramWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            paramWorkShiftID.Direction = ParameterDirection.Input;
+            paramWorkShiftID.Value = empWorkTimeRequestDTO.workShiftID;
+            sql.Parameters.Add(paramWorkShiftID);
+
+            SqlParameter paramWorkDate = new SqlParameter(@"pWorkDate", SqlDbType.VarChar,200);
+            paramWorkDate.Direction = ParameterDirection.Input;
+            paramWorkDate.Value = empWorkTimeRequestDTO.workDate;
+            sql.Parameters.Add(paramWorkDate);
+
+            SqlParameter paramIsFix = new SqlParameter(@"pIsFix", SqlDbType.Bit);
+            paramIsFix.Direction = ParameterDirection.Input;
+            paramIsFix.Value = empWorkTimeRequestDTO.isFix;
+            sql.Parameters.Add(paramIsFix);
+
+            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Bit);
+            paramCreateBy.Direction = ParameterDirection.Input;
+            paramCreateBy.Value = userID;
+            sql.Parameters.Add(paramCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public int getUserIdByEmpProfileID(string shareCode, int empProfileID)
         {
             int userID = 0;
@@ -936,7 +987,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = saveEmpProfileDTO.newUserID;
+            pUserID.Value = saveEmpProfileDTO.userID;
             sql.Parameters.Add(pUserID);
 
             SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 10);
@@ -1114,7 +1165,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public InsertLogin InsertEmpAddress(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        public InsertLogin InsertEmpAddress(string shareCode, SaveEmpProfileDTO saveEmpProfileDTO, int tokenUserID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_address " +
@@ -1138,7 +1189,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = saveEmpProfileDTO.newUserID;
+            pUserID.Value = saveEmpProfileDTO.userID;
             sql.Parameters.Add(pUserID);
 
             SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);
@@ -1218,7 +1269,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
-            pCreateBy.Value = userID;
+            pCreateBy.Value = tokenUserID;
             sql.Parameters.Add(pCreateBy);
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
@@ -1247,7 +1298,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = saveEmpProfileDTO.newUserID;
+            pUserID.Value = saveEmpProfileDTO.userID;
             sql.Parameters.Add(pUserID);
 
             SqlParameter pBankID = new SqlParameter(@"pBankID", SqlDbType.Int);
@@ -1297,7 +1348,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = saveEmpProfileDTO.newUserID;
+            pUserID.Value = saveEmpProfileDTO.userID;
             sql.Parameters.Add(pUserID);
 
             SqlParameter pBankID = new SqlParameter(@"pBankID", SqlDbType.Int);
@@ -2544,7 +2595,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             pUserID.Direction = ParameterDirection.Input;
-            pUserID.Value = saveEmpProfileDTO.newUserID;
+            pUserID.Value = saveEmpProfileDTO.userID;
             sql.Parameters.Add(pUserID);
 
             SqlParameter pCAddress = new SqlParameter(@"pCAddress", SqlDbType.VarChar, 200);

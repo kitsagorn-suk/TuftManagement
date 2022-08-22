@@ -15,6 +15,7 @@ using TUFTManagement.Core;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
 using TUFTManagement.Services;
+using static TUFTManagement.DTO.SaveEmpWorkTimeRequestDTO_V1_1;
 //
 namespace TUFTManagement.Controllers
 {
@@ -1339,9 +1340,11 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.0/save/empWorkShift")]
+        #region 1.1 Time Attendance
+
+        [Route("1.1/save/empWorkShift")]
         [HttpPost]
-        public IHttpActionResult SaveEmpWorkShift(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        public IHttpActionResult SaveEmpWorkShift_V1_1(SaveEmpWorkTimeRequestDTO_V1_1 saveEmpWorkTimeRequestDTO_V1_1)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -1355,20 +1358,41 @@ namespace TUFTManagement.Controllers
             try
             {
                 var obj = new object();
-                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
-                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTime", json, timestampNow.ToString(), authHeader,
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO_V1_1);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkShift_V1_1", json, timestampNow.ToString(), authHeader,
                     data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
-                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                if (saveEmpWorkTimeRequestDTO_V1_1.empWorkTimeRequestDTO.Count > 0)
                 {
-                    checkMissingOptional += "empWorkTimeID ";
+                    foreach (EmpWorkTimeRequestDTO item in saveEmpWorkTimeRequestDTO_V1_1.empWorkTimeRequestDTO)
+                    {
+                        int countRecord = 1;
+                        if (item.userID.Equals(0) || item.userID.Equals(null))
+                        {
+                            checkMissingOptional += "userID [" + countRecord + "] ";
+                        }
+                        if (string.IsNullOrEmpty(item.workDate))
+                        {
+                            checkMissingOptional += "workDate [" + countRecord + "] ";
+                        }
+                        if (item.workShiftID.Equals(0) || item.workShiftID.Equals(null))
+                        {
+                            checkMissingOptional += "workshiftID [" + countRecord + "] ";
+                        }
+                        if (string.IsNullOrEmpty(item.workDate))
+                        {
+                            checkMissingOptional += "workDate [" + countRecord + "] ";
+                        }
+                        countRecord++;
+                    }
                 }
-                if (saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(null))
+                else
                 {
-                    checkMissingOptional += "empWorkShiftID ";
+                    checkMissingOptional += "empWorkTimeRequestDTO[]";
                 }
+                
 
                 if (checkMissingOptional != "")
                 {
@@ -1376,17 +1400,12 @@ namespace TUFTManagement.Controllers
                 }
                 else
                 {
-                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
-                    int param = saveEmpWorkTimeRequestDTO.empWorkShiftID;
-                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
-                    prepairRequest.empWorkTimeID = empWorkTimeID;
-                    prepairRequest.empWorkShiftID = param;
 
-                    UpdateService srv = new UpdateService();
+                    InsertService srv = new InsertService();
 
-                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    if (checkMissingOptional == "" && saveEmpWorkTimeRequestDTO_V1_1.empWorkTimeRequestDTO.Count > 0)
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.InsertEmpWorkTimeV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO_V1_1, data.roleIDList, data.userID);
                     }
                 }
 
@@ -1397,6 +1416,9 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+
+        #endregion
 
 
 

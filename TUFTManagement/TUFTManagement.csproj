@@ -201,6 +201,7 @@
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\RequestDTO.cs" />
     <Compile Include="DTO\SaveEmpStatusDTO.cs" />
+    <Compile Include="DTO\SaveEmpWorkTimeRequestDTO_V1_1.cs" />
     <Compile Include="DTO\SaveLeaveDetailDTO.cs" />
     <Compile Include="DTO\SaveWorkTimeTransChangeRequestDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeTransChangeRequestDTO.cs" />

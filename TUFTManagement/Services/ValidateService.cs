@@ -334,6 +334,17 @@ namespace TUFTManagement.Services
                             checkMissingOptional += "cAddress ";
                         }
                     }
+                    else
+                    {
+                        // ถ้าติ๊ก ที่อยู่ตรงกับทะเบียนบ้าน
+                        saveEmpProfileDTO.cCountryID = saveEmpProfileDTO.pCountryID;
+                        saveEmpProfileDTO.cAddress = saveEmpProfileDTO.pAddress;
+                        saveEmpProfileDTO.cProvinceID = saveEmpProfileDTO.pProvinceID;
+                        saveEmpProfileDTO.cDistrictID = saveEmpProfileDTO.pDistrictID;
+                        saveEmpProfileDTO.cSubDistrictID = saveEmpProfileDTO.pSubDistrictID;
+                        saveEmpProfileDTO.cZipcode = saveEmpProfileDTO.pZipcode;
+                        saveEmpProfileDTO.cPhoneContact = saveEmpProfileDTO.pPhoneContact;
+                    }
 
                     if (string.IsNullOrEmpty(saveEmpProfileDTO.bankAccountName))
                     {

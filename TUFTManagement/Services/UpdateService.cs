@@ -34,10 +34,10 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    saveEmpProfileDTO.newUserID = _sql.getUserIdByEmpProfileID(shareCode, saveEmpProfileDTO.empProfileID);
+                    saveEmpProfileDTO.userID = _sql.getUserIdByEmpProfileID(shareCode, saveEmpProfileDTO.empProfileID);
 
                     string TableName = "emp_profile";
-                    saveEmpProfileDTO.empProfileID = _sql.GetIdUpdateByUserID(shareCode, TableName, saveEmpProfileDTO.newUserID.ToString());
+                    saveEmpProfileDTO.empProfileID = _sql.GetIdUpdateByUserID(shareCode, TableName, saveEmpProfileDTO.userID.ToString());
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "join_date", saveEmpProfileDTO.joinDate, userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "daily_salary", saveEmpProfileDTO.dailySalary.ToString(), userID);
@@ -67,7 +67,7 @@ namespace TUFTManagement.Services
                     value.data = _sql.UpdateEmpProfile(shareCode, saveEmpProfileDTO, userID);
 
                     string TableName2 = "emp_profile_address";
-                    int empAdressID = _sql.GetIdUpdateByUserID(shareCode, TableName2, saveEmpProfileDTO.newUserID.ToString());
+                    int empAdressID = _sql.GetIdUpdateByUserID(shareCode, TableName2, saveEmpProfileDTO.userID.ToString());
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_country_id", saveEmpProfileDTO.cCountryID.ToString(), userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_address", saveEmpProfileDTO.cAddress.ToString(), userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_sub_district_id", saveEmpProfileDTO.cSubDistrictID.ToString(), userID);
@@ -86,7 +86,7 @@ namespace TUFTManagement.Services
                     _sql.UpdateEmpAddress(shareCode, saveEmpProfileDTO, userID);
 
                     string TableName3 = "emp_bank_account";
-                    int empBankAccountID = _sql.GetIdUpdateByUserID(shareCode, TableName3, saveEmpProfileDTO.newUserID.ToString());
+                    int empBankAccountID = _sql.GetIdUpdateByUserID(shareCode, TableName3, saveEmpProfileDTO.userID.ToString());
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "bank_id", saveEmpProfileDTO.bankID.ToString(), userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "account_no", saveEmpProfileDTO.bankAccountNumber.ToString(), userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "account_name", saveEmpProfileDTO.bankAccountName.ToString(), userID);
@@ -107,7 +107,7 @@ namespace TUFTManagement.Services
                             }
                             else
                             {
-                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.newUserID, userID);
+                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.userID, userID);
                             }
                         }
                     }
@@ -115,7 +115,7 @@ namespace TUFTManagement.Services
                     if (saveEmpProfileDTO.positionID == 14) //ถ้าเป็นพริตตีถึงอัพเดตได้
                     {
                         string TableName6 = "emp_rate";
-                        int empRateID = _sql.GetIdUpdateByUserID(shareCode, TableName6, saveEmpProfileDTO.newUserID.ToString());
+                        int empRateID = _sql.GetIdUpdateByUserID(shareCode, TableName6, saveEmpProfileDTO.userID.ToString());
                         //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "product_code", saveEmpProfileDTO.productCode.ToString(), userID);
                         //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_staff", saveEmpProfileDTO.rateStaff.ToString(), userID);
                         //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_manager", saveEmpProfileDTO.rateManager.ToString(), userID);
