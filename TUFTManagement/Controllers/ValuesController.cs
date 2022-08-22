@@ -1340,6 +1340,67 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/save/empWorkShift")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpWorkShift(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpWorkTime", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkShiftID ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    int empWorkTimeID = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+                    int param = saveEmpWorkTimeRequestDTO.empWorkShiftID;
+                    SaveEmpWorkTimeRequestDTO prepairRequest = new SaveEmpWorkTimeRequestDTO();
+                    prepairRequest.empWorkTimeID = empWorkTimeID;
+                    prepairRequest.empWorkShiftID = param;
+
+                    UpdateService srv = new UpdateService();
+
+                    if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
+                    {
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+
         [Route("1.0/save/empWorkTime")]
         [HttpPost]
         public IHttpActionResult SaveEmpWorkTime(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
@@ -1721,7 +1782,7 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
-
+        
         #endregion
 
         #region Master
