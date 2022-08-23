@@ -16,7 +16,7 @@ using TUFTManagement.DTO;
 using TUFTManagement.Models;
 using TUFTManagement.Services;
 using static TUFTManagement.DTO.SaveEmpWorkTimeRequestDTO_V1_1;
-//
+
 namespace TUFTManagement.Controllers
 {
     [RoutePrefix("api")]
@@ -3247,5 +3247,74 @@ namespace TUFTManagement.Controllers
         }
 
         #endregion
+
+        #region pleng work time
+
+        [Route("1.0/search/worktime")]
+        [HttpPost]
+        public IHttpActionResult SearchWorkTime(SearchWorkTimeDTO searchWorkTimeDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchWorkTimeDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchWorkTime", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+                var obj = new object();
+
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchWorkTimeDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchWorkTimeDTO.departmentSearch);
+                searchWorkTimeDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchWorkTimeDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchWorkTimeDTO.positionSearch);
+                searchWorkTimeDTO.prepairPositionSearch = strPositionSearch;
+
+                if (searchWorkTimeDTO.pageInt.Equals(null) || searchWorkTimeDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchWorkTimeDTO.perPage.Equals(null) || searchWorkTimeDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchWorkTimeDTO.sortField > 2)
+                {
+                    throw new Exception("invalid : sortField " + searchWorkTimeDTO.sortField);
+                }
+                if (!(searchWorkTimeDTO.sortType == "a" || searchWorkTimeDTO.sortType == "d" || searchWorkTimeDTO.sortType == "A" || searchWorkTimeDTO.sortType == "D" || searchWorkTimeDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+               obj = srv.SearchWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, searchWorkTimeDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+        #endregion
+
     }
 }

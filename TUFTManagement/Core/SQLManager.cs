@@ -6097,6 +6097,132 @@ namespace TUFTManagement.Core
             return pagination;
         }
 
+        public Pagination<SearchWorkTime> SearchWorkTime(string shareCode, SearchWorkTimeDTO searchWorkTimeDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_page " +
+                "@pTextSearch, " +
+                "@pDepartmentIDList, " +
+                "@pPositionIDList, " +
+                "@pDateSearch, " +
+                "@pLang, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchWorkTimeDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pPositionIDList = new SqlParameter(@"pPositionIDList", SqlDbType.VarChar, 100);
+            pPositionIDList.Direction = ParameterDirection.Input;
+            pPositionIDList.Value = searchWorkTimeDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionIDList);
+
+            SqlParameter pDepartmentIDList = new SqlParameter(@"pDepartmentIDList", SqlDbType.VarChar, 100);
+            pDepartmentIDList.Direction = ParameterDirection.Input;
+            pDepartmentIDList.Value = searchWorkTimeDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentIDList);
+
+            SqlParameter pDateSearch = new SqlParameter(@"pDateSearch", SqlDbType.VarChar, 100);
+            pDateSearch.Direction = ParameterDirection.Input;
+            pDateSearch.Value = searchWorkTimeDTO.dateSearch;
+            sql.Parameters.Add(pDateSearch);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = searchWorkTimeDTO.lang;
+            sql.Parameters.Add(pLang);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchWorkTimeDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchWorkTimeDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchWorkTimeDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchWorkTimeDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchWorkTime> pagination = new Pagination<SearchWorkTime>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchWorkTime data = new SearchWorkTime();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchWorkTime(shareCode, searchWorkTimeDTO);
+
+            pagination.SetPagination(total, searchWorkTimeDTO.perPage, searchWorkTimeDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchWorkTime(string shareCode, SearchWorkTimeDTO searchWorkTimeDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_total " +
+                "@pTextSearch, " +
+                "@pDepartmentIDList, " +
+                "@pPositionIDList, " +
+                "@pDateSearch ");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchWorkTimeDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pPositionIDList = new SqlParameter(@"pPositionIDList", SqlDbType.VarChar, 100);
+            pPositionIDList.Direction = ParameterDirection.Input;
+            pPositionIDList.Value = searchWorkTimeDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionIDList);
+
+            SqlParameter pDepartmentIDList = new SqlParameter(@"pDepartmentIDList", SqlDbType.VarChar, 100);
+            pDepartmentIDList.Direction = ParameterDirection.Input;
+            pDepartmentIDList.Value = searchWorkTimeDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentIDList);
+
+            SqlParameter pDateSearch = new SqlParameter(@"pDateSearch", SqlDbType.VarChar, 100);
+            pDateSearch.Direction = ParameterDirection.Input;
+            pDateSearch.Value = searchWorkTimeDTO.dateSearch;
+            sql.Parameters.Add(pDateSearch);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
 
         public string getConnectionEncoded(string shareCode)
         {

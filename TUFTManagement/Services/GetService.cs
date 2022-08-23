@@ -537,5 +537,52 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        #region search service
+        public SearchWorkTimeModel SearchWorkTimeService(string authorization, string lang, string platform, int logID, SearchWorkTimeDTO searchWorkTimeDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchWorkTimeModel value = new SearchWorkTimeModel();
+            try
+            {
+                Pagination<SearchWorkTime> data = new Pagination<SearchWorkTime>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchWorkTime(shareCode, searchWorkTimeDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchWorkTime:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
+        #endregion
+
     }
 }
