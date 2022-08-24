@@ -6074,10 +6074,16 @@ namespace TUFTManagement.Core
             return connectionEncoded;
         }
 
-        public DataTable GetAllEmpCode()
+        public DataTable GetAllEmpCode(string pLang)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_emp_code ");
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_emp_code " +
+                "@pLang");
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 10);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = pLang;
+            sql.Parameters.Add(paramLang);
 
             table = sql.executeQueryWithReturnTable();
 

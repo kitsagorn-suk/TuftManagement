@@ -1197,18 +1197,18 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.0/upload/excel")]
+        [Route("1.0/upload/workshift")]
         [HttpPost]
-        public async Task<HttpResponseMessage> UploadFileExcel()
+        public async Task<HttpResponseMessage> UploadWorkShift()
         {
             var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] ?? "");
-            string lang = (request.Headers["lang"] ?? WebConfigurationManager.AppSettings["default_language"]);
-            string platform = request.Headers["platform"];
-            string version = request.Headers["version"];
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
-            UploadModel value = new UploadModel();
-            value.data = new _ServiceUploadData();
+            GetEmpWorkTimeUploadModel value = new GetEmpWorkTimeUploadModel();
+            value.data = new EmpWorkTimeUpload();
 
 
             try
@@ -1220,10 +1220,14 @@ namespace TUFTManagement.Controllers
                 IExcelDataReader reader = null;
                 HttpPostedFile Inputfile = null;
                 Stream FileStream = null;
-                SQLManager _sqlmanage = SQLManager.Instance;
+                SQLManager _sql = SQLManager.Instance;
+
+                value.data.employeeUpload = new List<EmployeeUpload>();
+
+                int userID = 0, workShiftID = 0, year = 0, month = 0, day = 0;
                 #endregion
 
-                #region Save Student Detail From Excel
+                #region Save Detail From Excel
                 using (Inventory_ComplexEntities1 objEntity = new Inventory_ComplexEntities1())
                 {
                     if (httpRequest.Files.Count > 0)
@@ -1254,17 +1258,20 @@ namespace TUFTManagement.Controllers
                             dsexcelRecords = reader.AsDataSet();
                             reader.Close();
 
-                            DataTable dtEmpCode = _sqlmanage.GetAllEmpCode();
-                            DataTable dtWorkShift = _sqlmanage.GetAllWorkShift();
+                            DataTable dtEmpCode = _sql.GetAllEmpCode(lang);
+                            DataTable dtWorkShift = _sql.GetAllWorkShift();
 
                             if (dsexcelRecords != null && dsexcelRecords.Tables.Count > 0)
                             {
                                 DataTable dtExcel = dsexcelRecords.Tables[0];
                                 for (int i = 3; i < dtExcel.Rows.Count; i++)
                                 {
-                                    int year = 0, month = 0;
+                                    EmployeeUpload employeeUpload = new EmployeeUpload();
+                                    employeeUpload.workShiftUpload = new List<WorkShiftUpload>();
+
                                     int.TryParse(dtExcel.Rows[0][1].ToString(), out year);
                                     int.TryParse(dtExcel.Rows[1][1].ToString(), out month);
+
                                     if (year == 0)
                                     {
                                         throw new Exception("กรุณาระบุปี");
@@ -1273,30 +1280,60 @@ namespace TUFTManagement.Controllers
                                     {
                                         throw new Exception("กรุณาระบุเดือน");
                                     }
-                                    int countDate = DateTime.DaysInMonth(year, month);
-                                    string emp_code = Convert.ToString(dtExcel.Rows[i][0]);
-                                    int user_id = 0, workshift = 0;
-                                    DataRow[] dremp = dtEmpCode.Select("emp_code='" + emp_code + "'");
+
+                                    int countDate = DateTime.DaysInMonth(year, month);                                    
+                                    string isFix = Convert.ToString(dtExcel.Rows[i][1]);
+
+                                    string empCode = Convert.ToString(dtExcel.Rows[i][0]);
+                                    DataRow[] dremp = dtEmpCode.Select("emp_code='" + empCode + "'");
                                     if (dremp.Length > 0)
                                     {
-                                        int.TryParse(dremp[0]["user_id"].ToString(), out user_id);
-                                    }
+                                        int.TryParse(dremp[0]["user_id"].ToString(), out userID);
 
-                                    for (int j = 1; j <= countDate; j++)
+                                        employeeUpload.userID = int.Parse(dremp[0]["user_id"].ToString());
+                                        employeeUpload.empCode = dremp[0]["emp_code"].ToString();
+                                        employeeUpload.empFullName = dremp[0]["fullname"].ToString();
+                                        employeeUpload.departmentPositionName = dremp[0]["dept_position_name"].ToString();
+                                        employeeUpload.isFix = int.Parse(isFix);
+                                    }
+                                    
+                                    for (int j = 2; j < 31; j++)
                                     {
-                                        string work_shift = Convert.ToString(dtExcel.Rows[i][j].ToString());
-                                        DataRow[] drwork = dtWorkShift.Select("ws_code='" + work_shift + "'");
+                                        WorkShiftUpload workShiftUpload = new WorkShiftUpload();
+                                        int.TryParse(dtExcel.Rows[i][j - 1].ToString(), out day);
+
+                                        string wsCode = Convert.ToString(dtExcel.Rows[i][j]);                                        
+                                        string workDate = year.ToString() + "-" + month.ToString() + "-" + day.ToString();
+
+                                        DataRow[] drwork = dtWorkShift.Select("ws_code='" + wsCode + "'");
                                         if (drwork.Length > 0)
                                         {
-                                            int.TryParse(drwork[0]["id"].ToString(), out workshift);
+                                            int.TryParse(drwork[0]["id"].ToString(), out workShiftID);
+
+                                            workShiftUpload.empWorkShiftID = int.Parse(drwork[0]["id"].ToString());
+                                            workShiftUpload.wsCode = drwork[0]["ws_code"].ToString();
+                                            workShiftUpload.timeStart = drwork[0]["time_start"].ToString();
+                                            workShiftUpload.timeEnd = drwork[0]["time_end"].ToString();
+                                            workShiftUpload.workDate = workDate;
                                         }
-                                        emp_work_time objWork = new emp_work_time();
-                                        objWork.user_id = user_id;
-                                        objWork.work_shift_id = workshift;
-                                        objWork.work_date = Convert.ToDateTime(year.ToString() + '-' + month.ToString().PadLeft(2, '0') + '-' + j.ToString().PadLeft(2, '0'));
-                                        objWork.is_fix = true;
-                                        objEntity.emp_work_time.Add(objWork);
+                                        employeeUpload.workShiftUpload.Add(workShiftUpload);
                                     }
+                                    value.data.employeeUpload.Add(employeeUpload);
+                                    //for (int j = 1; j <= countDate; j++)
+                                    //{
+                                    //    string work_shift = Convert.ToString(dtExcel.Rows[i][j].ToString());
+                                    //    DataRow[] drwork = dtWorkShift.Select("ws_code='" + work_shift + "'");
+                                    //    if (drwork.Length > 0)
+                                    //    {
+                                    //        int.TryParse(drwork[0]["id"].ToString(), out workShiftID);
+                                    //    }
+                                    //    emp_work_time objWork = new emp_work_time();
+                                    //    objWork.user_id = userID;
+                                    //    objWork.work_shift_id = workShiftID;
+                                    //    objWork.work_date = Convert.ToDateTime(year.ToString() + '-' + month.ToString().PadLeft(2, '0') + '-' + j.ToString().PadLeft(2, '0'));
+                                    //    objWork.is_fix = true;
+                                    //    objEntity.emp_work_time.Add(objWork);
+                                    //}
                                 }
 
                                 int output = objEntity.SaveChanges();

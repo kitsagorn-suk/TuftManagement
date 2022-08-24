@@ -240,6 +240,7 @@
     <Compile Include="Models\GetBodySetModel.cs" />
     <Compile Include="Models\GetDepartmentModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
+    <Compile Include="Models\GetEmpWorkTimeUploadModel.cs" />
     <Compile Include="Models\GetfileByCodeModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeModel.cs" />
