@@ -6,6 +6,7 @@ using System.Web;
 using TUFTManagement.Core;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
+using static TUFTManagement.DTO.SaveEmpWorkTimeRequestDTO_V1_1;
 
 namespace TUFTManagement.Services
 {
@@ -34,9 +35,9 @@ namespace TUFTManagement.Services
                     //listobjectID.Add("100301001");
                     //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
 
-                    saveEmpProfileDTO.newUserID = _sql.insertUserLogin(saveEmpProfileDTO, userID);
+                    saveEmpProfileDTO.userID = _sql.insertUserLogin(saveEmpProfileDTO, userID);
                     
-                    if (saveEmpProfileDTO.newUserID != 0)
+                    if (saveEmpProfileDTO.userID != 0)
                     {
 
                         value.data = _sql.InsertEmpProfile(shareCode, saveEmpProfileDTO, userID);
@@ -49,14 +50,14 @@ namespace TUFTManagement.Services
                         {
                             foreach(SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                             {
-                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.newUserID, userID);
+                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.userID, userID);
                             }
                         }
 
                         if (saveEmpProfileDTO.positionID == 14) // ถ้าเป็นพริตตี้ เพิ่ม ข้อ 6/7/8
                         {
                             SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
-                            saveEmpRateRequestDTO.empID = saveEmpProfileDTO.newUserID;
+                            saveEmpRateRequestDTO.empID = saveEmpProfileDTO.userID;
                             saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
                             saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
                             saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
@@ -262,6 +263,63 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+        #endregion
+
+        #region Insert Time Attendance
+
+        public ReturnIdModel InsertEmpWorkTimeV1_1Service(string shareCode, string authorization, string lang, string platform, int logID,
+            SaveEmpWorkTimeRequestDTO_V1_1 saveEmpWorkTimeRequestDTO_V1_1, string roleIDList, int tokenUserID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, platform);
+                if (validation.Success == true)
+                {
+                    if (saveEmpWorkTimeRequestDTO_V1_1.empWorkTimeRequestDTO.Count > 0)
+                    {
+                        foreach (EmpWorkTimeRequestDTO item in saveEmpWorkTimeRequestDTO_V1_1.empWorkTimeRequestDTO)
+                        {
+                            if (item.empWorkTimeID == 0)
+                            {
+                                value.data = _sql.insertWorkTime(shareCode, item, tokenUserID);
+                            }
+                            else
+                            {
+                                _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpWorkTimeV1_1Service:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
         #endregion
 
     }
