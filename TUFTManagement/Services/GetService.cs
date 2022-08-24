@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -581,6 +583,65 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public SearchWorkTimePendingModel SearchWorkTimePendingService(string authorization, string lang, string platform, int logID, SearchWorkTimePendingDTO searchWorkTimePendingDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchWorkTimePendingModel value = new SearchWorkTimePendingModel();
+            try
+            {
+                Pagination<SearchWorkTimePendingPage> data = new Pagination<SearchWorkTimePendingPage>();
+                SearchWorktimePendingTotalDTO header = new SearchWorktimePendingTotalDTO();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchWorkTimePending(shareCode, searchWorkTimePendingDTO);
+
+                    List<SearchWorkTimePendingPage> total = data.data;
+
+                    List<int> termsList = new List<int>();
+                    foreach (SearchWorkTimePendingPage item in total)
+                    {
+                        termsList.Add(item.userID);
+                    }
+                    int[] terms = termsList.ToArray();
+                    string theString = string.Join(",", terms);
+
+                    header = _sql.GetTotalSearchWorkTimePendingList(shareCode, theString);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                SearchWorkTimePending dataValue = new SearchWorkTimePending();
+                dataValue.header = header;
+                dataValue.body = data;
+
+                value.success = validation.Success;
+                value.data = dataValue;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchWorkTimePendingService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
 
         #endregion
 
