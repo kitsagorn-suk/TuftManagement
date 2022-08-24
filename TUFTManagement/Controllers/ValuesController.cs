@@ -202,11 +202,11 @@ namespace TUFTManagement.Controllers
                 {
                     obj = srv.GetSubDistrictDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                 }
-                if (getDropdownRequestDTO.moduleName.ToLower() == "titlename".ToLower())
+                else if (getDropdownRequestDTO.moduleName.ToLower() == "titlename".ToLower())
                 {
                     obj = srv.GetTitleNameDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                 }
-                if (getDropdownRequestDTO.moduleName.ToLower() == "positionFilter".ToLower())
+                else if (getDropdownRequestDTO.moduleName.ToLower() == "positionFilter".ToLower())
                 {
                     if(getDropdownRequestDTO.departmentID != 0)
                     {
@@ -1417,6 +1417,67 @@ namespace TUFTManagement.Controllers
             }
         }
 
+
+        #endregion
+
+
+        #region wait approve zone
+
+        [Route("1.0/search/worktime/pending")]
+        [HttpPost]
+        public IHttpActionResult SearchWorkTimePending(SearchWorkTimePendingDTO searchWorkTimePendingDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchWorkTimePendingDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchWorkTimePending", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+                var obj = new object();
+
+                
+                if (searchWorkTimePendingDTO.pageInt.Equals(null) || searchWorkTimePendingDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchWorkTimePendingDTO.perPage.Equals(null) || searchWorkTimePendingDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchWorkTimePendingDTO.sortField > 2)
+                {
+                    throw new Exception("invalid : sortField " + searchWorkTimePendingDTO.sortField);
+                }
+                if (!(searchWorkTimePendingDTO.sortType == "a" || searchWorkTimePendingDTO.sortType == "d" || searchWorkTimePendingDTO.sortType == "A" || searchWorkTimePendingDTO.sortType == "D" || searchWorkTimePendingDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchWorkTimePendingService(authHeader, lang, fromProject.ToLower(), logID, searchWorkTimePendingDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         #endregion
 

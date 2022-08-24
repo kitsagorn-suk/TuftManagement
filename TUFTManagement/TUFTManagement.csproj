@@ -200,6 +200,7 @@
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\RequestDTO.cs" />
+    <Compile Include="DTO\SearchWorktimePendingTotalDTO.cs" />
     <Compile Include="DTO\SaveEmpStatusDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeRequestDTO_V1_1.cs" />
     <Compile Include="DTO\SaveLeaveDetailDTO.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="DTO\SearchLeaveDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
     <Compile Include="DTO\SearchSystemMasterDTO.cs" />
+    <Compile Include="DTO\SearchWorkTimePendingDTO.cs" />
     <Compile Include="DTO\SearchWorkTimeDTO.cs" />
     <Compile Include="DTO\SystemMasterDTO.cs" />
     <Compile Include="Global.asax.cs">
@@ -270,6 +272,7 @@
     <Compile Include="Models\ReturnMessageModel.cs" />
     <Compile Include="Models\SearchMasterKeyModel.cs" />
     <Compile Include="Models\SearchSystemMasterModel.cs" />
+    <Compile Include="Models\SearchWorkTimePendingModel.cs" />
     <Compile Include="Models\SearchWorkTimeModel.cs" />
     <Compile Include="Models\UploadModel.cs" />
     <Compile Include="Models\ValidationModel.cs" />
