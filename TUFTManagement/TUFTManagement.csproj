@@ -188,6 +188,7 @@
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="DTO\ActionLeaveFormDTO.cs" />
     <Compile Include="DTO\FeedbackDTO.cs" />
+    <Compile Include="DTO\GetHistoryWorkShiftTimeDTO.cs" />
     <Compile Include="DTO\GetLeaveDetailRequestDTO.cs" />
     <Compile Include="DTO\HeadersDTO.cs" />
     <Compile Include="DTO\GetEmpRateRequestDTO.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Models\GetBodySetModel.cs" />
     <Compile Include="Models\GetDepartmentModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
+    <Compile Include="Models\GetEmpWorkShiftTimeModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeUploadModel.cs" />
     <Compile Include="Models\GetfileByCodeModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
@@ -257,6 +259,7 @@
     <Compile Include="Models\GetMasterKeyModel.cs" />
     <Compile Include="Models\GetSubDistrictDropdownModel.cs" />
     <Compile Include="Models\GetSystemMasterModel.cs" />
+    <Compile Include="Models\GetWorkShiftTimeHeaderModel.cs" />
     <Compile Include="Models\InsertLoginModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\LogModel.cs" />
