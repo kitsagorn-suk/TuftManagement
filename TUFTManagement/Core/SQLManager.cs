@@ -6292,6 +6292,122 @@ namespace TUFTManagement.Core
             return pagination;
         }
 
+        public Pagination<SearchWorkTimePendingPage> SearchWorkTimePending(string shareCode, SearchWorkTimePendingDTO searchWorkTimePendingDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_pending_page " +
+                "@pTextSearch, " +
+                "@pLang, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchWorkTimePendingDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+            
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = searchWorkTimePendingDTO.lang;
+            sql.Parameters.Add(pLang);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchWorkTimePendingDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchWorkTimePendingDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchWorkTimePendingDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchWorkTimePendingDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchWorkTimePendingPage> pagination = new Pagination<SearchWorkTimePendingPage>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchWorkTimePendingPage data = new SearchWorkTimePendingPage();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchWorkTimePending(shareCode, searchWorkTimePendingDTO);
+            
+            pagination.SetPagination(total, searchWorkTimePendingDTO.perPage, searchWorkTimePendingDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchWorkTimePending(string shareCode, SearchWorkTimePendingDTO searchWorkTimePendingDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_pending_total " +
+                "@pTextSearch ");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchWorkTimePendingDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+        public SearchWorktimePendingTotalDTO GetTotalSearchWorkTimePendingList(string shareCode, string userIDList)
+        {
+            SearchWorktimePendingTotalDTO data = new SearchWorktimePendingTotalDTO();
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_pending_list " +
+                "@pUserIDList ");
+
+            SqlParameter pUserIDList = new SqlParameter(@"pUserIDList", SqlDbType.VarChar, 255);
+            pUserIDList.Direction = ParameterDirection.Input;
+            pUserIDList.Value = userIDList;
+            sql.Parameters.Add(pUserIDList);
+            
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
         public int GetTotalSearchWorkTime(string shareCode, SearchWorkTimeDTO searchWorkTimeDTO)
         {
             int total = 0;
@@ -6364,10 +6480,16 @@ namespace TUFTManagement.Core
             return connectionEncoded;
         }
 
-        public DataTable GetAllEmpCode()
+        public DataTable GetAllEmpCode(string pLang)
         {
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_emp_code ");
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_emp_code " +
+                "@pLang");
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 10);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = pLang;
+            sql.Parameters.Add(paramLang);
 
             table = sql.executeQueryWithReturnTable();
 

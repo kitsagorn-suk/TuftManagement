@@ -188,7 +188,6 @@
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="DTO\ActionLeaveFormDTO.cs" />
     <Compile Include="DTO\FeedbackDTO.cs" />
-    <Compile Include="DTO\GetHistoryWorkShiftTimeDTO.cs" />
     <Compile Include="DTO\GetLeaveDetailRequestDTO.cs" />
     <Compile Include="DTO\HeadersDTO.cs" />
     <Compile Include="DTO\GetEmpRateRequestDTO.cs" />
@@ -201,6 +200,7 @@
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\RequestDTO.cs" />
+    <Compile Include="DTO\SearchWorktimePendingTotalDTO.cs" />
     <Compile Include="DTO\SaveEmpStatusDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeRequestDTO_V1_1.cs" />
     <Compile Include="DTO\SaveLeaveDetailDTO.cs" />
@@ -213,6 +213,7 @@
     <Compile Include="DTO\SearchLeaveDTO.cs" />
     <Compile Include="DTO\SearchMasterDataDTO.cs" />
     <Compile Include="DTO\SearchSystemMasterDTO.cs" />
+    <Compile Include="DTO\SearchWorkTimePendingDTO.cs" />
     <Compile Include="DTO\SearchWorkTimeDTO.cs" />
     <Compile Include="DTO\SystemMasterDTO.cs" />
     <Compile Include="Global.asax.cs">
@@ -243,7 +244,7 @@
     <Compile Include="Models\GetBodySetModel.cs" />
     <Compile Include="Models\GetDepartmentModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
-    <Compile Include="Models\GetEmpWorkShiftTimeModel.cs" />
+    <Compile Include="Models\GetEmpWorkTimeUploadModel.cs" />
     <Compile Include="Models\GetfileByCodeModel.cs" />
     <Compile Include="Models\GetEmpProfileModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeModel.cs" />
@@ -256,7 +257,6 @@
     <Compile Include="Models\GetMasterKeyModel.cs" />
     <Compile Include="Models\GetSubDistrictDropdownModel.cs" />
     <Compile Include="Models\GetSystemMasterModel.cs" />
-    <Compile Include="Models\GetWorkShiftTimeHeaderModel.cs" />
     <Compile Include="Models\InsertLoginModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\LogModel.cs" />
@@ -273,6 +273,7 @@
     <Compile Include="Models\ReturnMessageModel.cs" />
     <Compile Include="Models\SearchMasterKeyModel.cs" />
     <Compile Include="Models\SearchSystemMasterModel.cs" />
+    <Compile Include="Models\SearchWorkTimePendingModel.cs" />
     <Compile Include="Models\SearchWorkTimeModel.cs" />
     <Compile Include="Models\UploadModel.cs" />
     <Compile Include="Models\ValidationModel.cs" />
