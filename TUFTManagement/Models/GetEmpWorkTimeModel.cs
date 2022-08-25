@@ -27,12 +27,12 @@ namespace TUFTManagement.Models
         public int isFix { set; get; } = 0;
         public int status { set; get; } = 0;
 
-        public int oldWorkShiftID { set; get; } = 0;
-        public int newWorkShiftID { set; get; } = 0;
-        public int statusApprove { set; get; } = 0;
-        public int approveBy { set; get; } = 0;
-        public string approveDate { set; get; } = "";
-        public string remark { set; get; } = "";
+        //public int oldWorkShiftID { set; get; } = 0;
+        //public int newWorkShiftID { set; get; } = 0;
+        //public int statusApprove { set; get; } = 0;
+        //public int approveBy { set; get; } = 0;
+        //public string approveDate { set; get; } = "";
+        //public string remark { set; get; } = "";
 
         public void loadData(DataRow dr)
         {
@@ -46,14 +46,14 @@ namespace TUFTManagement.Models
             floorOut = dr["floor_out"].ToString();
             isChange = int.Parse(dr["is_change"].ToString().ToLower().Equals("true") ? "1" : "0");
             isFix = int.Parse(dr["is_fix"].ToString().ToLower().Equals("true") ? "1" : "0");
-            status = int.Parse(dr["status"].ToString().ToLower().Equals("true") ? "1" : "0");
+            status = int.Parse(dr["worktime_status"].ToString().ToLower().Equals("true") ? "1" : "0");
 
-            oldWorkShiftID = int.Parse(dr["work_shift_id_old"].ToString());
-            newWorkShiftID = int.Parse(dr["work_shift_id_new"].ToString());
-            statusApprove = int.Parse(dr["status_approve"].ToString());
-            approveBy = int.Parse(dr["approve_by"].ToString());
-            approveDate = dr["approve_date"].ToString();
-            remark = dr["remark"].ToString();
+            //oldWorkShiftID = int.Parse(dr["work_shift_id_old"].ToString());
+            //newWorkShiftID = int.Parse(dr["work_shift_id_new"].ToString());
+            //statusApprove = int.Parse(dr["status_approve"].ToString());
+            //approveBy = int.Parse(dr["approve_by"].ToString());
+            //approveDate = dr["approve_date"].ToString();
+            //remark = dr["remark"].ToString();
         }
     }
 }

@@ -1036,10 +1036,10 @@ namespace TUFTManagement.Controllers
                 {
                     checkMissingOptional += "employmentStatusID ";
                 }
-                if (string.IsNullOrEmpty(saveEmpStatusDTO.imageEmploymentCode))
-                {
-                    checkMissingOptional += "imageEmploymentCode ";
-                }
+                //if (string.IsNullOrEmpty(saveEmpStatusDTO.imageEmploymentCode))
+                //{
+                //    checkMissingOptional += "imageEmploymentCode ";
+                //}
 
                 if (checkMissingOptional != "")
                 {
@@ -1340,6 +1340,43 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/get/empWorkShiftHeader")]
+        [HttpPost]
+        public IHttpActionResult GetEmpWorkShiftHeader(SaveEmpWorkShiftRequestDTO requestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(requestDTO);
+                int logID = _sql.InsertLogReceiveData("GetEmpWorkShiftTimeHeader", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                if (requestDTO.empWorkTimeID.Equals(0) || requestDTO.empWorkTimeID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : empWorkTimeID");
+                }
+
+                var obj = srv.GetEmpWorkShiftHeaderService(authHeader, lang, fromProject.ToLower(), 1, requestDTO.empWorkTimeID, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
         #region 1.1 Time Attendance
 
         [Route("1.1/save/empWorkShift")]
@@ -1416,6 +1453,125 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.1/update/empWorkShift")]
+        [HttpPost]
+        public IHttpActionResult UpdateEmpWorkShift_V1_1(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveEmpWorkTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("UpdateEmpWorkShift_V1_1", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpWorkTimeRequestDTO.empWorkTimeID > 0)
+                {
+                    
+                        if (saveEmpWorkTimeRequestDTO.empID.Equals(0) || saveEmpWorkTimeRequestDTO.empID.Equals(null))
+                        {
+                            checkMissingOptional += "empID ";
+                        }
+                        if (string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.workDate))
+                        {
+                            checkMissingOptional += "workDate ";
+                        }
+                        if (saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkShiftID.Equals(null))
+                        {
+                            checkMissingOptional += "empWorkShiftID ";
+                        }
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+
+                    UpdateService srv = new UpdateService();
+
+                    if (checkMissingOptional == "" && saveEmpWorkTimeRequestDTO.empWorkTimeID > 0)
+                    {
+                        obj = srv.UpdateEmpWorkTimeNewVerService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.userID, shareCode);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/emphistoryworkshift")]
+        [HttpPost]
+        public IHttpActionResult GetHistoryWorkShiftTime(GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(getHistoryWorkShiftTimeDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetHistoryWorkShiftTime", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = new object();
+
+                if (getHistoryWorkShiftTimeDTO.pageInt.Equals(null) || getHistoryWorkShiftTimeDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (getHistoryWorkShiftTimeDTO.perPage.Equals(null) || getHistoryWorkShiftTimeDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (getHistoryWorkShiftTimeDTO.sortField > 2)
+                {
+                    throw new Exception("invalid : sortField " + getHistoryWorkShiftTimeDTO.sortField);
+                }
+                if (!(getHistoryWorkShiftTimeDTO.sortType == "a" || getHistoryWorkShiftTimeDTO.sortType == "d" || getHistoryWorkShiftTimeDTO.sortType == "A" || getHistoryWorkShiftTimeDTO.sortType == "D" || getHistoryWorkShiftTimeDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.GetEmpWorkShiftTimeService(authHeader, lang, fromProject.ToLower(), logID, getHistoryWorkShiftTimeDTO, data.roleIDList, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
 
 
         #endregion

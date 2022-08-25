@@ -84,7 +84,7 @@ namespace TUFTManagement.Core
             }
             return value;
         }
-        public static ValidationModel CheckValidationWorktime(int chkID, string lang, string platform, int workTimeID)
+        public static ValidationModel CheckValidationWorktime(int chkID, string lang, string platform, int workTimeID, string shareCode)
         {
             ValidationModel value = new ValidationModel();
             try
@@ -94,24 +94,15 @@ namespace TUFTManagement.Core
 
                 #region E301007
                 
-                GetEmpWorkTime dataCheck = _sql.GetEmpWorkTime(workTimeID);
-                if (dataCheck.isFix == 0)
+                GetEmpWorkTime dataCheck = _sql.GetEmpWorkTimeNewVer(workTimeID,shareCode);
+                if (dataCheck.isFix == 1)
                 {
                     state = ValidationModel.InvalidState.E301007; //check is fix
                     getMessage = ValidationModel.GetInvalidMessage(state, lang);
                     return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
                 }
                 #endregion
-                
-                #region E300001
-                
-                if (platform != "web" || platform == null || platform == "")
-                {
-                    state = ValidationModel.InvalidState.E300001; //Error Platform
-                    getMessage = ValidationModel.GetInvalidMessage(state, lang);
-                    return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
-                }
-                #endregion
+               
 
                 #region E302001
                 

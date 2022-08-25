@@ -1959,6 +1959,118 @@ namespace TUFTManagement.Core
 
             return total;
         }
+        public _ReturnIdModel UpdateEmpWorkTimeNewVer(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int userID, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_work_time " +
+                "@pId, " +
+                "@pWorkShiftID, " +
+                "@pCreateBy");
+
+            SqlParameter paramId = new SqlParameter(@"pId", SqlDbType.Int);
+            paramId.Direction = ParameterDirection.Input;
+            paramId.Value = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+            sql.Parameters.Add(paramId);
+
+            SqlParameter paramWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            paramWorkShiftID.Direction = ParameterDirection.Input;
+            paramWorkShiftID.Value = saveEmpWorkTimeRequestDTO.empWorkShiftID;
+            sql.Parameters.Add(paramWorkShiftID);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+        public GetEmpWorkTime GetEmpWorkTimeNewVer(int empWorkTimeID, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_emp_work_time " +
+                "@pID");
+
+            SqlParameter paramID = new SqlParameter(@"pID", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = empWorkTimeID;
+            sql.Parameters.Add(paramID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            GetEmpWorkTime data = new GetEmpWorkTime();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertEmpWorkTimeTran(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int userID, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_tran_change_work_shift " +
+                "@pUserID, " +
+                "@pWorkTimeID, " +
+                "@pWorkShiftNew, " +
+                "@pReMark, " +
+                "@pCreateBy");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = saveEmpWorkTimeRequestDTO.empID;
+            sql.Parameters.Add(pUserID);
+
+            SqlParameter pWorkTimeID = new SqlParameter(@"pWorkTimeID", SqlDbType.Int);
+            pWorkTimeID.Direction = ParameterDirection.Input;
+            pWorkTimeID.Value = saveEmpWorkTimeRequestDTO.empWorkTimeID;
+            sql.Parameters.Add(pWorkTimeID);
+
+            SqlParameter pWorkShiftNew = new SqlParameter(@"pWorkShiftNew", SqlDbType.Int);
+            pWorkShiftNew.Direction = ParameterDirection.Input;
+            pWorkShiftNew.Value = saveEmpWorkTimeRequestDTO.empWorkShiftID;
+            sql.Parameters.Add(pWorkShiftNew);
+
+            SqlParameter pReMark = new SqlParameter(@"pReMark", SqlDbType.VarChar,255);
+            pReMark.Direction = ParameterDirection.Input;
+            pReMark.Value = saveEmpWorkTimeRequestDTO.reason;
+            sql.Parameters.Add(pReMark);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
 
         #endregion
 
@@ -5475,7 +5587,8 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -6915,6 +7028,174 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public Pagination<EmpWorkShiftTimeSearch> GetWorkShiftTime(GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string Lang, string shareCode)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_history_change_work_shift_time_page " +
+                "@pEmpID, " +
+                "@pDate, " +
+                "@pLang, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pEmpID = new SqlParameter(@"pEmpID", SqlDbType.Int);
+            pEmpID.Direction = ParameterDirection.Input;
+            pEmpID.Value = getHistoryWorkShiftTimeDTO.empId;
+            sql.Parameters.Add(pEmpID);
+
+            SqlParameter pDate = new SqlParameter(@"pDate", SqlDbType.Date);
+            pDate.Direction = ParameterDirection.Input;
+            pDate.Value = getHistoryWorkShiftTimeDTO.date;
+            sql.Parameters.Add(pDate);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 2);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = Lang;
+            sql.Parameters.Add(pLang);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = getHistoryWorkShiftTimeDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = getHistoryWorkShiftTimeDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = getHistoryWorkShiftTimeDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = getHistoryWorkShiftTimeDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<EmpWorkShiftTimeSearch> pagination = new Pagination<EmpWorkShiftTimeSearch>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmpWorkShiftTimeSearch data = new EmpWorkShiftTimeSearch();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalWorkShiftTime(getHistoryWorkShiftTimeDTO,shareCode);
+
+            pagination.SetPagination(total, getHistoryWorkShiftTimeDTO.perPage, getHistoryWorkShiftTimeDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalWorkShiftTime(GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string shareCode)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_history_change_work_shift_time_total " +
+                "@pEmpID, " +
+                "@pDate");
+
+            SqlParameter pEmpID = new SqlParameter(@"pEmpID", SqlDbType.Int);
+            pEmpID.Direction = ParameterDirection.Input;
+            pEmpID.Value = getHistoryWorkShiftTimeDTO.empId;
+            sql.Parameters.Add(pEmpID);
+
+            SqlParameter pDate = new SqlParameter(@"pDate", SqlDbType.Date);
+            pDate.Direction = ParameterDirection.Input;
+            pDate.Value = getHistoryWorkShiftTimeDTO.date;
+            sql.Parameters.Add(pDate);
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public EmpWorkShiftTimeHeader GetWorkShiftTimeHeader(int empId, string shareCode, string Lang)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_detail_emp_work_shift " +
+                "@pEmpID, " +
+                "@pLang");
+
+            SqlParameter pEmpID = new SqlParameter(@"pEmpID", SqlDbType.Int);
+            pEmpID.Direction = ParameterDirection.Input;
+            pEmpID.Value = empId;
+            sql.Parameters.Add(pEmpID);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar,2);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = Lang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+
+            EmpWorkShiftTimeHeader data = new EmpWorkShiftTimeHeader();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public HeaderDetail GetWorkShiftTimeHeaderByWTId(int id, string lang, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_detail_work_shift_time " +
+                "@pId, " +
+                "@pLang");
+
+            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
+            pId.Direction = ParameterDirection.Input;
+            pId.Value = id;
+            sql.Parameters.Add(pId);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar,2);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = lang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            HeaderDetail data = new HeaderDetail();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
 
         #region update active master
         public _ReturnIdModel UpdateActiveMaster(string shareCode, MasterDataDTO masterDataDTO, string TableName, int userID)

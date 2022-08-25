@@ -537,6 +537,101 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public GetEmpWorkShiftTimeModel GetEmpWorkShiftTimeService(string authorization, string lang, string platform, int logID, GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string roleIDList, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetEmpWorkShiftTimeModel value = new GetEmpWorkShiftTimeModel();
+            value.data = new EmpWorkShiftTimeDetail();
+            value.data.dataHeader = new EmpWorkShiftTimeHeader();
+            value.data.dataSearch = new Pagination<EmpWorkShiftTimeSearch>();
+            try
+            {
+                Pagination<EmpWorkShiftTimeSearch> data = new Pagination<EmpWorkShiftTimeSearch>();
+                EmpWorkShiftTimeHeader dataHeader = new EmpWorkShiftTimeHeader();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetWorkShiftTime(getHistoryWorkShiftTimeDTO,lang,shareCode);
+                    dataHeader = _sql.GetWorkShiftTimeHeader(getHistoryWorkShiftTimeDTO.empId, lang, shareCode);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data.dataHeader = dataHeader;
+                value.data.dataSearch = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterKeyService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public GetWorkShiftTimeHeaderModel GetEmpWorkShiftHeaderService(string authorization, string lang, string platform, int logID, int empWorkShiftID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetWorkShiftTimeHeaderModel value = new GetWorkShiftTimeHeaderModel();
+            try
+            {
+                HeaderDetail data = new HeaderDetail();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetWorkShiftTimeHeaderByWTId(empWorkShiftID, lang, shareCode);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpWorkShiftService:");
+
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
         #region search service
         public SearchWorkTimeModel SearchWorkTimeService(string authorization, string lang, string platform, int logID, SearchWorkTimeDTO searchWorkTimeDTO, string shareCode)
         {

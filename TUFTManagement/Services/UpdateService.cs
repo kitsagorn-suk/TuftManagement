@@ -265,10 +265,10 @@ namespace TUFTManagement.Services
             {
                 value.data = new _ReturnIdModel();
                 ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
-                
+
                 if (validation.Success == true)
                 {
-                    validation = ValidationManager.CheckValidationWorktime(1, lang, platform, saveEmpWorkTimeRequestDTO.empWorkTimeID);
+                    //validation = ValidationManager.CheckValidationWorktime(1, lang, platform, saveEmpWorkTimeRequestDTO.empWorkTimeID);
 
                     if (validation.Success == true)
                     {
@@ -619,6 +619,64 @@ namespace TUFTManagement.Services
             catch (Exception ex)
             {
                 LogManager.ServiceLog.WriteExceptionLog(ex, "ApproveLeaveFormService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel UpdateEmpWorkTimeNewVerService(string authorization, string lang, string platform, int logID, SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    validation = ValidationManager.CheckValidationWorktime(1, lang, platform, saveEmpWorkTimeRequestDTO.empWorkTimeID,shareCode);
+
+                    if (validation.Success == true)
+                    {
+                        if (saveEmpWorkTimeRequestDTO.empWorkShiftID > 0)
+                        {
+                            string TableName = "emp_work_time";
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_shift_id", saveEmpWorkTimeRequestDTO.empWorkShiftID.ToString(), userID);
+                            value.data = _sql.InsertEmpWorkTimeTran(saveEmpWorkTimeRequestDTO, userID, shareCode);
+                            value.data = _sql.UpdateEmpWorkTimeNewVer(saveEmpWorkTimeRequestDTO, userID, shareCode);
+                        }
+                        
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    }
+
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateEmpWorkTimeService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());

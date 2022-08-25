@@ -16,5 +16,6 @@ namespace TUFTManagement.DTO
         public string floorIn { set; get; } = "";
         public string floorOut { set; get; } = "";
         public int isFix { set; get; } = 0;
+        public string reason { set; get; } = "";
     }
 }
