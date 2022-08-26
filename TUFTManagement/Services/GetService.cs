@@ -102,7 +102,7 @@ namespace TUFTManagement.Services
             }
             return value;
         }
-        public GetEmpTradeWorkShiftDropdownModel GetEmpTradeWorkShiftDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        public GetEmpTradeWorkShiftDropdownModel GetEmpTradeWorkShiftDropdownService(string shareCode, string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
         {
             if (_sql == null)
             {
@@ -117,7 +117,7 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.GetDropdownEmpTradeWorkShift(lang, request.workDate);
+                    value.data = _sql.GetDropdownEmpTradeWorkShift(shareCode, lang, request.workDate);
                     value.success = validation.Success;
                 }
                 else
@@ -129,7 +129,7 @@ namespace TUFTManagement.Services
             }
             catch (Exception ex)
             {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "GetSubDistrictDropdownService:");
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpTradeWorkShiftDropdownService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());

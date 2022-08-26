@@ -221,11 +221,11 @@ namespace TUFTManagement.Controllers
                 {
                     if (string.IsNullOrEmpty(getDropdownRequestDTO.workDate))
                     {
-                        obj = srv.GetEmpTradeWorkShiftDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                        throw new Exception("Missing Parameter : workDate");
                     }
                     else
                     {
-                        throw new Exception("Missing Parameter : workDate");
+                        obj = srv.GetEmpTradeWorkShiftDropdownService(shareCode, authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                     }
                 }
                 else
