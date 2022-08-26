@@ -24,9 +24,9 @@ namespace TUFTManagement.Models
         public void loadData(DataRow dr)
         {
             // name mapping table DB
-            empWorkTimeID = int.Parse(dr["id"].ToString());
-            userID = int.Parse(dr["id"].ToString());
-            workShiftID = int.Parse(dr["id"].ToString());
+            empWorkTimeID = int.Parse(dr["emp_work_time_id"].ToString());
+            userID = int.Parse(dr["user_id"].ToString());
+            workShiftID = int.Parse(dr["work_shift_id"].ToString());
             name = dr["emp_code"].ToString() + "" + dr["emp_name"].ToString() + "" + dr["ws_code"].ToString();
         }
 

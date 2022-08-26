@@ -6459,7 +6459,7 @@ namespace TUFTManagement.Core
 
             return listData;
         }
-        public List<EmpTradeWorkShift> GetDropdownEmpTradeWorkShift(string lang, string workDate)
+        public List<EmpTradeWorkShift> GetDropdownEmpTradeWorkShift(string shareCode, string lang, string workDate)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_emp_work_shift_trans_change " +
@@ -6476,7 +6476,7 @@ namespace TUFTManagement.Core
             paramLang.Value = lang;
             sql.Parameters.Add(paramLang);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             List<EmpTradeWorkShift> listData = new List<EmpTradeWorkShift>();
 

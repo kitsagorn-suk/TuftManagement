@@ -26,6 +26,7 @@ namespace TUFTManagement.Models
         public int employmentStatusID { set; get; } = 0;
         public string employmentStatusName { set; get; } = "";
         public string status { set; get; } = "";
+        public string imageProfileUrl { set; get; } = "";
 
         public void loadData(DataRow dr)
         {
@@ -50,6 +51,7 @@ namespace TUFTManagement.Models
             employmentStatusID = int.Parse(dr["employment_status_id"].ToString());
             employmentStatusName = dr["employment_status_name"].ToString();
             status = dr["status"].ToString();
+            imageProfileUrl = dr["image_profile_url"].ToString();
         }
     }
 }
