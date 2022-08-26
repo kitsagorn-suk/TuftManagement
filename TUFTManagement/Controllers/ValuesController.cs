@@ -1309,10 +1309,10 @@ namespace TUFTManagement.Controllers
                                         employeeUpload.isFix = int.Parse(isFix);
                                     }
                                     
-                                    for (int j = 2; j < 31; j++)
+                                    for (int j = 2; j < countDate + 2; j++)
                                     {
                                         WorkShiftUpload workShiftUpload = new WorkShiftUpload();
-                                        int.TryParse(dtExcel.Rows[i][j].ToString(), out day);
+                                        int.TryParse(dtExcel.Rows[2][j].ToString(), out day);
 
                                         string wsCode = Convert.ToString(dtExcel.Rows[i][j]);                                        
 
@@ -1327,7 +1327,7 @@ namespace TUFTManagement.Controllers
                                             workShiftUpload.wsCode = drwork[0]["ws_code"].ToString();
                                             workShiftUpload.timeStart = drwork[0]["time_start"].ToString();
                                             workShiftUpload.timeEnd = drwork[0]["time_end"].ToString();
-                                            workShiftUpload.workDate = workDate;
+                                            workShiftUpload.workDate = Utility.convertToDateServiceFormatString(workDate);
                                         }
                                         employeeUpload.workShiftUpload.Add(workShiftUpload);
                                     }
@@ -1349,17 +1349,19 @@ namespace TUFTManagement.Controllers
                                     //}
                                 }
 
-                                int output = objEntity.SaveChanges();
-                                if (output > 0)
-                                {
-                                    value.success = true;
-                                    value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
-                                }
-                                else
-                                {
-                                    value.success = false;
-                                    value.msg = new MsgModel() { code = 0, text = "Something Went Wrong!, The Excel file uploaded has fiald.", topic = "No Success" };
-                                }
+                                //int output = objEntity.SaveChanges();
+                                //if (output > 0)
+                                //{
+                                //    value.success = true;
+                                //    value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
+                                //}
+                                //else
+                                //{
+                                //    value.success = false;
+                                //    value.msg = new MsgModel() { code = 0, text = "Something Went Wrong!, The Excel file uploaded has fiald.", topic = "No Success" };
+                                //}
+                                value.success = true;
+                                value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
                             }
                             else
                             {

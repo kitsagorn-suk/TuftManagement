@@ -58,7 +58,7 @@ namespace TUFTManagement.Core
             return (dateTime - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
         }
 
-        public static string convertToDateTimeServiceFormatString2(string input)
+        public static string convertToDateServiceFormatString(string input)
         {
             DateTime result;
 

@@ -31,7 +31,7 @@ namespace TUFTManagement.Models
             rate = float.Parse(dr["rate"].ToString());
             comment = dr["comment"].ToString();
             tranID = int.Parse(dr["tran_id"].ToString());
-            feedbackDate = Utility.convertToDateTimeServiceFormatString2(dr["feedback_date"].ToString());
+            feedbackDate = Utility.convertToDateServiceFormatString(dr["feedback_date"].ToString());
             status = int.Parse(dr["status"].ToString().ToLower().Equals("true") ? "1" : "0");
 
         }
