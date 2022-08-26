@@ -6572,7 +6572,7 @@ namespace TUFTManagement.Core
 
             return listData;
         }
-        public List<EmpTradeWorkShift> GetDropdownEmpTradeWorkShift(string lang, string workDate)
+        public List<EmpTradeWorkShift> GetDropdownEmpTradeWorkShift(string shareCode, string lang, string workDate)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_emp_work_shift_trans_change " +
@@ -6589,7 +6589,7 @@ namespace TUFTManagement.Core
             paramLang.Value = lang;
             sql.Parameters.Add(paramLang);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             List<EmpTradeWorkShift> listData = new List<EmpTradeWorkShift>();
 
@@ -7351,6 +7351,69 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public List<GetWorkShift> GetAllWorkShift(string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_work_shift ");
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<GetWorkShift> listData = new List<GetWorkShift>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    GetWorkShift data = new GetWorkShift();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+
+        public SearchWorkShiftTimeAllTotalDTO GetWorkShiftTotalHeader(string shareCode, string userList, int workShiftID, string workDate)
+        {
+            int total = 0;
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_header " +
+                "@pUserIDList, " +
+                "@pWorkShiftID, " +
+                "@pWorkDate");
+
+            SqlParameter pUserIDList = new SqlParameter(@"pUserIDList", SqlDbType.VarChar, 200);
+            pUserIDList.Direction = ParameterDirection.Input;
+            pUserIDList.Value = userList;
+            sql.Parameters.Add(pUserIDList);
+
+            SqlParameter pWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            pWorkShiftID.Direction = ParameterDirection.Input;
+            pWorkShiftID.Value = workShiftID;
+            sql.Parameters.Add(pWorkShiftID);
+
+            SqlParameter pWorkDate = new SqlParameter(@"pWorkDate", SqlDbType.VarChar,25);
+            pWorkDate.Direction = ParameterDirection.Input;
+            pWorkDate.Value = workDate;
+            sql.Parameters.Add(pWorkDate);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            SearchWorkShiftTimeAllTotalDTO data = new SearchWorkShiftTimeAllTotalDTO();
+
+            if (table != null)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
 
 
         #region update active master

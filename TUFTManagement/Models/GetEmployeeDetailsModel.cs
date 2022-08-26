@@ -73,7 +73,7 @@ namespace TUFTManagement.Models
         public int hip { set; get; } = 0;
 
         public int empRateID { set; get; } = 0;
-        public string productCode { set; get; } = "";
+        public int productCode { set; get; } = 0;
         public int rateStaff { set; get; } = 0;
         public int rateManager { set; get; } = 0;
         public int rateOwner { set; get; } = 0;
@@ -169,7 +169,7 @@ namespace TUFTManagement.Models
             hip = Convert.ToInt32(dr["hip"]);
 
             empRateID = Convert.ToInt32(dr["emp_rate_id"]);
-            productCode = dr["product_code"].ToString();
+            productCode = Convert.ToInt32(dr["product_code"]);
             rateStaff = Convert.ToInt32(dr["rate_staff"]);
             rateManager = Convert.ToInt32(dr["rate_manager"]);
             rateOwner = Convert.ToInt32(dr["rate_owner"]);

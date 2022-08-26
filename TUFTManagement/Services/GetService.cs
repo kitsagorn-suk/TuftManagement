@@ -102,7 +102,7 @@ namespace TUFTManagement.Services
             }
             return value;
         }
-        public GetEmpTradeWorkShiftDropdownModel GetEmpTradeWorkShiftDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        public GetEmpTradeWorkShiftDropdownModel GetEmpTradeWorkShiftDropdownService(string shareCode, string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
         {
             if (_sql == null)
             {
@@ -117,7 +117,7 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.GetDropdownEmpTradeWorkShift(lang, request.workDate);
+                    value.data = _sql.GetDropdownEmpTradeWorkShift(shareCode, lang, request.workDate);
                     value.success = validation.Success;
                 }
                 else
@@ -129,7 +129,7 @@ namespace TUFTManagement.Services
             }
             catch (Exception ex)
             {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "GetSubDistrictDropdownService:");
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpTradeWorkShiftDropdownService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());
@@ -683,15 +683,45 @@ namespace TUFTManagement.Services
             }
 
             SearchWorkTimeModel value = new SearchWorkTimeModel();
+            value.data = new SearchWorkTimeAll();
+            value.data.header = new List<SearchWorkShiftTimeAllTotalDTO>();
+            value.data.body = new Pagination<SearchWorkTime>();
             try
             {
-                Pagination<SearchWorkTime> data = new Pagination<SearchWorkTime>();
+                SearchWorkTimeAll data = new SearchWorkTimeAll();
+                List<SearchWorkShiftTimeAllTotalDTO> dataheader = new List<SearchWorkShiftTimeAllTotalDTO>();
+                Pagination<SearchWorkTime> databody = new Pagination<SearchWorkTime>();
 
                 ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.SearchWorkTime(shareCode, searchWorkTimeDTO);
+                    databody = _sql.SearchWorkTime(shareCode, searchWorkTimeDTO);
+
+                    List<SearchWorkTime> total = databody.data;
+
+                    List<int> termsList = new List<int>();
+                    foreach (SearchWorkTime item in total)
+                    {
+                        termsList.Add(item.empProfileID);
+                    }
+                    int[] terms = termsList.ToArray();
+                    string theString = string.Join(",", terms);
+
+                    List<GetWorkShift> allWS = new List<GetWorkShift>();
+                    allWS = _sql.GetAllWorkShift(shareCode);
+
+                    foreach (GetWorkShift item in allWS)
+                    {
+                        SearchWorkShiftTimeAllTotalDTO sss = new SearchWorkShiftTimeAllTotalDTO();
+                        sss = _sql.GetWorkShiftTotalHeader(shareCode, theString, item.workShiftID, searchWorkTimeDTO.dateSearch);
+                       
+                        dataheader.Add(sss);
+                    }
+
+                    
+                    
+                    
                 }
                 else
                 {
@@ -699,7 +729,8 @@ namespace TUFTManagement.Services
                 }
 
                 value.success = validation.Success;
-                value.data = data;
+                value.data.header = dataheader;
+                value.data.body = databody;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }
             catch (Exception ex)
