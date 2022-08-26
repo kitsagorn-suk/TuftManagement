@@ -102,6 +102,46 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+        public GetEmpTradeWorkShiftDropdownModel GetEmpTradeWorkShiftDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetEmpTradeWorkShiftDropdownModel value = new GetEmpTradeWorkShiftDropdownModel();
+            try
+            {
+                value.data = new List<EmpTradeWorkShift>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.GetDropdownEmpTradeWorkShift(lang, request.workDate);
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetSubDistrictDropdownService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
         public GetDropdownTitleNameModel GetTitleNameDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
         {
             if (_sql == null)
