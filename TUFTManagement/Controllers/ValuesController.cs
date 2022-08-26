@@ -1209,185 +1209,162 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        //[Route("1.0/upload/workshift")]
-        //[HttpPost]
-        //public async Task<HttpResponseMessage> UploadWorkShift()
-        //{
-        //    var request = HttpContext.Current.Request;
-        //    string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-        //    string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-        //    string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
-        //    string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+        [Route("1.0/upload/workshift")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> UploadWorkShift()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
-        //    GetEmpWorkTimeUploadModel value = new GetEmpWorkTimeUploadModel();
-        //    value.data = new EmpWorkTimeUpload();
+            GetEmpWorkTimeUploadModel value = new GetEmpWorkTimeUploadModel();
+            value.data = new EmpWorkTimeUpload();
 
 
-        //    try
-        //    {
-        //        #region Variable Declaration
-        //        HttpResponseMessage ResponseMessage = null;
-        //        var httpRequest = HttpContext.Current.Request;
-        //        DataSet dsexcelRecords = new DataSet();
-        //        IExcelDataReader reader = null;
-        //        HttpPostedFile Inputfile = null;
-        //        Stream FileStream = null;
-        //        SQLManager _sql = SQLManager.Instance;
+            try
+            {
+                #region Variable Declaration
+                HttpResponseMessage ResponseMessage = null;
+                var httpRequest = HttpContext.Current.Request;
+                DataSet dsexcelRecords = new DataSet();
+                IExcelDataReader reader = null;
+                HttpPostedFile Inputfile = null;
+                Stream FileStream = null;
+                SQLManager _sql = SQLManager.Instance;
 
-        //        value.data.employeeUpload = new List<EmployeeUpload>();
+                value.data.employeeUpload = new List<EmployeeUpload>();
 
-        //        int userID = 0, workShiftID = 0, year = 0, month = 0, day = 0;
-        //        #endregion
+                int userID = 0, workShiftID = 0, year = 0, month = 0, day = 0;
+                #endregion
 
-        //        #region Save Detail From Excel
-        //        using (Inventory_ComplexEntities1 objEntity = new Inventory_ComplexEntities1())
-        //        {
-        //            if (httpRequest.Files.Count > 0)
-        //            {
-        //                Inputfile = httpRequest.Files[0];
-        //                FileStream = Inputfile.InputStream;
+                #region Save Detail From Excel
+                using (Inventory_ComplexEntities1 objEntity = new Inventory_ComplexEntities1())
+                {
+                    if (httpRequest.Files.Count > 0)
+                    {
+                        Inputfile = httpRequest.Files[0];
+                        FileStream = Inputfile.InputStream;
 
-        //                if (Inputfile != null && FileStream != null)
-        //                {
-        //                    if (string.IsNullOrEmpty(Inputfile.FileName))
-        //                    {
-        //                        throw new Exception("ไม่พบไฟล์");
-        //                    }
-        //                    if (Inputfile.FileName.EndsWith(".xls"))
-        //                    {
-        //                        reader = ExcelReaderFactory.CreateBinaryReader(FileStream);
-        //                    }
-        //                    else if (Inputfile.FileName.EndsWith(".xlsx"))
-        //                    {
-        //                        reader = ExcelReaderFactory.CreateOpenXmlReader(FileStream);
-        //                    }
-        //                    else
-        //                    {
-        //                        value.success = false;
-        //                        value.msg = new MsgModel() { code = 0, text = "The file format is not supported.", topic = "No Success" };
-        //                    }
+                        if (Inputfile != null && FileStream != null)
+                        {
+                            if (string.IsNullOrEmpty(Inputfile.FileName))
+                            {
+                                throw new Exception("ไม่พบไฟล์");
+                            }
+                            if (Inputfile.FileName.EndsWith(".xls"))
+                            {
+                                reader = ExcelReaderFactory.CreateBinaryReader(FileStream);
+                            }
+                            else if (Inputfile.FileName.EndsWith(".xlsx"))
+                            {
+                                reader = ExcelReaderFactory.CreateOpenXmlReader(FileStream);
+                            }
+                            else
+                            {
+                                value.success = false;
+                                value.msg = new MsgModel() { code = 0, text = "The file format is not supported.", topic = "No Success" };
+                            }
 
-        //                    dsexcelRecords = reader.AsDataSet();
-        //                    reader.Close();
+                            dsexcelRecords = reader.AsDataSet();
+                            reader.Close();
 
-        //                    DataTable dtEmpCode = _sql.GetAllEmpCode(shareCode, lang);
-        //                    DataTable dtWorkShift = _sql.GetAllWorkShift(shareCode);
+                            DataTable dtEmpCode = _sql.GetAllEmpCode(shareCode, lang);
+                            DataTable dtWorkShift = _sql.GetAllWorkShift(shareCode);
 
-        //                    if (dsexcelRecords != null && dsexcelRecords.Tables.Count > 0)
-        //                    {
-        //                        DataTable dtExcel = dsexcelRecords.Tables[0];
-        //                        for (int i = 3; i < dtExcel.Rows.Count; i++)
-        //                        {
-        //                            EmployeeUpload employeeUpload = new EmployeeUpload();
-        //                            employeeUpload.workShiftUpload = new List<WorkShiftUpload>();
+                            if (dsexcelRecords != null && dsexcelRecords.Tables.Count > 0)
+                            {
+                                DataTable dtExcel = dsexcelRecords.Tables[0];
+                                for (int i = 3; i < dtExcel.Rows.Count; i++)
+                                {
+                                    EmployeeUpload employeeUpload = new EmployeeUpload();
+                                    employeeUpload.workShiftUpload = new List<WorkShiftUpload>();
 
-        //                            int.TryParse(dtExcel.Rows[0][1].ToString(), out year);
-        //                            int.TryParse(dtExcel.Rows[1][1].ToString(), out month);
+                                    int.TryParse(dtExcel.Rows[0][1].ToString(), out year);
+                                    int.TryParse(dtExcel.Rows[1][1].ToString(), out month);
 
-        //                            if (year == 0)
-        //                            {
-        //                                throw new Exception("กรุณาระบุปี");
-        //                            }
-        //                            if (month == 0)
-        //                            {
-        //                                throw new Exception("กรุณาระบุเดือน");
-        //                            }
+                                    if (year == 0)
+                                    {
+                                        throw new Exception("กรุณาระบุปี");
+                                    }
+                                    if (month == 0)
+                                    {
+                                        throw new Exception("กรุณาระบุเดือน");
+                                    }
 
-        //                            int countDate = DateTime.DaysInMonth(year, month);                                    
-        //                            string isFix = Convert.ToString(dtExcel.Rows[i][1]);
+                                    int countDate = DateTime.DaysInMonth(year, month);
+                                    string isFix = Convert.ToString(dtExcel.Rows[i][1]);
 
-        //                            string empCode = Convert.ToString(dtExcel.Rows[i][0]);
-        //                            DataRow[] dremp = dtEmpCode.Select("emp_code='" + empCode + "'");
-        //                            if (dremp.Length > 0)
-        //                            {
-        //                                int.TryParse(dremp[0]["user_id"].ToString(), out userID);
+                                    string empCode = Convert.ToString(dtExcel.Rows[i][0]);
+                                    DataRow[] dremp = dtEmpCode.Select("emp_code='" + empCode + "'");
+                                    if (dremp.Length > 0)
+                                    {
+                                        int.TryParse(dremp[0]["user_id"].ToString(), out userID);
 
-        //                                employeeUpload.userID = int.Parse(dremp[0]["user_id"].ToString());
-        //                                employeeUpload.empCode = dremp[0]["emp_code"].ToString();
-        //                                employeeUpload.empFullName = dremp[0]["fullname"].ToString();
-        //                                employeeUpload.departmentPositionName = dremp[0]["dept_position_name"].ToString();
-        //                                employeeUpload.isFix = int.Parse(isFix);
-        //                            }
+                                        employeeUpload.userID = int.Parse(dremp[0]["user_id"].ToString());
+                                        employeeUpload.empCode = dremp[0]["emp_code"].ToString();
+                                        employeeUpload.empFullName = dremp[0]["fullname"].ToString();
+                                        employeeUpload.departmentPositionName = dremp[0]["dept_position_name"].ToString();
+                                        employeeUpload.isFix = int.Parse(isFix);
+                                    }
+
+                                    for (int j = 2; j < countDate + 2; j++)
+                                    {
+                                        WorkShiftUpload workShiftUpload = new WorkShiftUpload();
+                                        int.TryParse(dtExcel.Rows[2][j].ToString(), out day);
+
+                                        string wsCode = Convert.ToString(dtExcel.Rows[i][j]);
+
+                                        string workDate = year.ToString() + "-" + month.ToString() + "-" + day.ToString();
+
+                                        DataRow[] drwork = dtWorkShift.Select("ws_code='" + wsCode + "'");
+                                        if (drwork.Length > 0)
+                                        {
+                                            int.TryParse(drwork[0]["id"].ToString(), out workShiftID);
+
+                                            workShiftUpload.empWorkShiftID = int.Parse(drwork[0]["id"].ToString());
+                                            workShiftUpload.wsCode = drwork[0]["ws_code"].ToString();
+                                            workShiftUpload.timeStart = drwork[0]["time_start"].ToString();
+                                            workShiftUpload.timeEnd = drwork[0]["time_end"].ToString();
+                                            workShiftUpload.workDate = Utility.convertToDateServiceFormatString(workDate);
+                                        }
+                                        employeeUpload.workShiftUpload.Add(workShiftUpload);
+                                    }
+                                    value.data.employeeUpload.Add(employeeUpload);
                                     
-        //                            for (int j = 2; j < 31; j++)
-        //                            {
-        //                                WorkShiftUpload workShiftUpload = new WorkShiftUpload();
-        //                                int.TryParse(dtExcel.Rows[i][j].ToString(), out day);
+                                }
 
-        //                                string wsCode = Convert.ToString(dtExcel.Rows[i][j]);                                        
+                                value.success = true;
+                                value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
+                            }
+                            else
+                            {
+                                value.success = false;
+                                value.msg = new MsgModel() { code = 0, text = "Selected file is empty.", topic = "No Success" };
+                            }
 
-        //                                string workDate = year.ToString() + "-" + month.ToString() + "-" + day.ToString();
+                        }
+                        else
+                        {
+                            value.success = false;
+                            value.msg = new MsgModel() { code = 0, text = "Invalid File.", topic = "No Success" };
+                        }
 
-        //                                DataRow[] drwork = dtWorkShift.Select("ws_code='" + wsCode + "'");
-        //                                if (drwork.Length > 0)
-        //                                {
-        //                                    int.TryParse(drwork[0]["id"].ToString(), out workShiftID);
-
-        //                                    workShiftUpload.empWorkShiftID = int.Parse(drwork[0]["id"].ToString());
-        //                                    workShiftUpload.wsCode = drwork[0]["ws_code"].ToString();
-        //                                    workShiftUpload.timeStart = drwork[0]["time_start"].ToString();
-        //                                    workShiftUpload.timeEnd = drwork[0]["time_end"].ToString();
-        //                                    workShiftUpload.workDate = workDate;
-        //                                }
-        //                                employeeUpload.workShiftUpload.Add(workShiftUpload);
-        //                            }
-        //                            value.data.employeeUpload.Add(employeeUpload);
-        //                            //for (int j = 1; j <= countDate; j++)
-        //                            //{
-        //                            //    string work_shift = Convert.ToString(dtExcel.Rows[i][j].ToString());
-        //                            //    DataRow[] drwork = dtWorkShift.Select("ws_code='" + work_shift + "'");
-        //                            //    if (drwork.Length > 0)
-        //                            //    {
-        //                            //        int.TryParse(drwork[0]["id"].ToString(), out workShiftID);
-        //                            //    }
-        //                            //    emp_work_time objWork = new emp_work_time();
-        //                            //    objWork.user_id = userID;
-        //                            //    objWork.work_shift_id = workShiftID;
-        //                            //    objWork.work_date = Convert.ToDateTime(year.ToString() + '-' + month.ToString().PadLeft(2, '0') + '-' + j.ToString().PadLeft(2, '0'));
-        //                            //    objWork.is_fix = true;
-        //                            //    objEntity.emp_work_time.Add(objWork);
-        //                            //}
-        //                        }
-
-        //                        int output = objEntity.SaveChanges();
-        //                        if (output > 0)
-        //                        {
-        //                            value.success = true;
-        //                            value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
-        //                        }
-        //                        else
-        //                        {
-        //                            value.success = false;
-        //                            value.msg = new MsgModel() { code = 0, text = "Something Went Wrong!, The Excel file uploaded has fiald.", topic = "No Success" };
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        value.success = false;
-        //                        value.msg = new MsgModel() { code = 0, text = "Selected file is empty.", topic = "No Success" };
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    value.success = false;
-        //                    value.msg = new MsgModel() { code = 0, text = "Invalid File.", topic = "No Success" };
-        //                }
-
-        //            }
-        //            else
-        //            {
-        //                ResponseMessage = Request.CreateResponse(HttpStatusCode.BadRequest);
-        //            }
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, value, Configuration.Formatters.JsonFormatter);
-        //        #endregion
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-        //    }
-        //}
+                    }
+                    else
+                    {
+                        ResponseMessage = Request.CreateResponse(HttpStatusCode.BadRequest);
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, value, Configuration.Formatters.JsonFormatter);
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         [Route("1.0/get/empWorkShiftHeader")]
         [HttpPost]
