@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using TUFTManagement.DTO;
 
 namespace TUFTManagement.Models
 {
@@ -10,7 +11,13 @@ namespace TUFTManagement.Models
     {
         public bool success { get; set; }
         public MsgModel msg { get; set; }
-        public Pagination<SearchWorkTime> data { get; set; }
+        public SearchWorkTimeAll data { get; set; }
+    }
+
+    public class SearchWorkTimeAll
+    {
+        public List<SearchWorkShiftTimeAllTotalDTO> header { get; set; }
+        public Pagination<SearchWorkTime> body { get; set; }
     }
 
     public class SearchWorkTime
