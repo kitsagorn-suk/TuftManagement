@@ -201,6 +201,7 @@
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\RequestDTO.cs" />
+    <Compile Include="DTO\SearchWorkShiftTimeAllTotalDTO.cs" />
     <Compile Include="DTO\SearchWorktimePendingTotalDTO.cs" />
     <Compile Include="DTO\SaveEmpStatusDTO.cs" />
     <Compile Include="DTO\SaveEmpWorkTimeRequestDTO_V1_1.cs" />
@@ -259,6 +260,7 @@
     <Compile Include="Models\GetMasterKeyModel.cs" />
     <Compile Include="Models\GetSubDistrictDropdownModel.cs" />
     <Compile Include="Models\GetSystemMasterModel.cs" />
+    <Compile Include="Models\GetWorkShiftModel.cs" />
     <Compile Include="Models\GetWorkShiftTimeHeaderModel.cs" />
     <Compile Include="Models\InsertLoginModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
