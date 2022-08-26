@@ -257,6 +257,7 @@
     <Compile Include="Models\GetMasterDataModel.cs" />
     <Compile Include="Models\GetDropdownTitleNameModel.cs" />
     <Compile Include="Models\GetMasterKeyModel.cs" />
+    <Compile Include="Models\GetEmpTradeWorkShiftDropdownModel.cs" />
     <Compile Include="Models\GetSubDistrictDropdownModel.cs" />
     <Compile Include="Models\GetSystemMasterModel.cs" />
     <Compile Include="Models\GetWorkShiftTimeHeaderModel.cs" />

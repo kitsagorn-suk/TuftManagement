@@ -217,6 +217,17 @@ namespace TUFTManagement.Controllers
                         throw new Exception("Missing Parameter : departmentID");
                     }
                 }
+                else if (getDropdownRequestDTO.moduleName.ToLower() == "empTradeWorkShift".ToLower())
+                {
+                    if (string.IsNullOrEmpty(getDropdownRequestDTO.workDate))
+                    {
+                        obj = srv.GetEmpTradeWorkShiftDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
+                    }
+                    else
+                    {
+                        throw new Exception("Missing Parameter : workDate");
+                    }
+                }
                 else
                 {
                     obj = srv.GetAllDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
@@ -1259,8 +1270,8 @@ namespace TUFTManagement.Controllers
                             dsexcelRecords = reader.AsDataSet();
                             reader.Close();
 
-                            DataTable dtEmpCode = _sql.GetAllEmpCode(lang);
-                            DataTable dtWorkShift = _sql.GetAllWorkShift();
+                            DataTable dtEmpCode = _sql.GetAllEmpCode(shareCode, lang);
+                            DataTable dtWorkShift = _sql.GetAllWorkShift(shareCode);
 
                             if (dsexcelRecords != null && dsexcelRecords.Tables.Count > 0)
                             {
@@ -1301,9 +1312,10 @@ namespace TUFTManagement.Controllers
                                     for (int j = 2; j < 31; j++)
                                     {
                                         WorkShiftUpload workShiftUpload = new WorkShiftUpload();
-                                        int.TryParse(dtExcel.Rows[i][j - 1].ToString(), out day);
+                                        int.TryParse(dtExcel.Rows[i][j].ToString(), out day);
 
                                         string wsCode = Convert.ToString(dtExcel.Rows[i][j]);                                        
+
                                         string workDate = year.ToString() + "-" + month.ToString() + "-" + day.ToString();
 
                                         DataRow[] drwork = dtWorkShift.Select("ws_code='" + wsCode + "'");

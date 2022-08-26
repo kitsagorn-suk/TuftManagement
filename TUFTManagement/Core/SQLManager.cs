@@ -6480,7 +6480,7 @@ namespace TUFTManagement.Core
             return connectionEncoded;
         }
 
-        public DataTable GetAllEmpCode(string pLang)
+        public DataTable GetAllEmpCode(string shareCode, string pLang)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_all_emp_code " +
@@ -6491,17 +6491,17 @@ namespace TUFTManagement.Core
             paramLang.Value = pLang;
             sql.Parameters.Add(paramLang);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             return table;
         }
 
-        public DataTable GetAllWorkShift()
+        public DataTable GetAllWorkShift(string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_all_work_shift ");
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             return table;
         }
@@ -6572,6 +6572,40 @@ namespace TUFTManagement.Core
 
             return listData;
         }
+        public List<EmpTradeWorkShift> GetDropdownEmpTradeWorkShift(string lang, string workDate)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_emp_work_shift_trans_change " +
+                "@pWorkDate, " +
+                "@pLang");
+
+            SqlParameter pWorkDate = new SqlParameter(@"pWorkDate", SqlDbType.Date);
+            pWorkDate.Direction = ParameterDirection.Input;
+            pWorkDate.Value = workDate;
+            sql.Parameters.Add(pWorkDate);
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<EmpTradeWorkShift> listData = new List<EmpTradeWorkShift>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmpTradeWorkShift data = new EmpTradeWorkShift();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
         public List<DropdownSubDistrict> GetDropdownSubDistrict(string lang, int districtID)
         {
             DataTable table = new DataTable();
