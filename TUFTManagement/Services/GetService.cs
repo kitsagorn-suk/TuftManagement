@@ -709,7 +709,7 @@ namespace TUFTManagement.Services
                     string theString = string.Join(",", terms);
 
                     List<GetWorkShift> allWS = new List<GetWorkShift>();
-                    allWS = _sql.GetAllWorkShift(shareCode);
+                    allWS = _sql.GetAllWorkShiftList(shareCode);
 
                     foreach (GetWorkShift item in allWS)
                     {

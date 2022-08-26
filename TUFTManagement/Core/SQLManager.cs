@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Configuration;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
+using static TUFTManagement.DTO.SaveChangeWorkShiftTimeRequestDTO;
 using static TUFTManagement.DTO.SaveEmpWorkTimeRequestDTO_V1_1;
 
 namespace TUFTManagement.Core
@@ -900,7 +901,7 @@ namespace TUFTManagement.Core
             paramIsFix.Value = empWorkTimeRequestDTO.isFix;
             sql.Parameters.Add(paramIsFix);
 
-            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Bit);
+            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             paramCreateBy.Direction = ParameterDirection.Input;
             paramCreateBy.Value = userID;
             sql.Parameters.Add(paramCreateBy);
@@ -918,6 +919,183 @@ namespace TUFTManagement.Core
             }
 
             return data;
+        }
+
+        public int InsertFirstEmpWorkTimeTransChangeTrade(string shareCode, SaveChangeWorkShiftTimeRequestDTO saveTransChangeDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_time_trans_change_trade " +
+                "@pWorkTimeID, " +
+                "@pUserID, " +
+                "@pNewWorkShiftID, " +
+                "@pTradeID, " +
+                "@pRemark, " +
+                "@pCreateBy");
+
+            SqlParameter paramWorkTimeID = new SqlParameter(@"pWorkTimeID", SqlDbType.Int);
+            paramWorkTimeID.Direction = ParameterDirection.Input;
+            paramWorkTimeID.Value = saveTransChangeDTO.empWorkTimeID;
+            sql.Parameters.Add(paramWorkTimeID);
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = saveTransChangeDTO.userID;
+            sql.Parameters.Add(paramUserID);
+
+            SqlParameter paramNewWorkShiftID = new SqlParameter(@"pNewWorkShiftID", SqlDbType.Int);
+            paramNewWorkShiftID.Direction = ParameterDirection.Input;
+            paramNewWorkShiftID.Value = saveTransChangeDTO.newWorkShiftID;
+            sql.Parameters.Add(paramNewWorkShiftID);
+
+            SqlParameter paramTradeID = new SqlParameter(@"pTradeID", SqlDbType.Int);
+            paramTradeID.Direction = ParameterDirection.Input;
+            paramTradeID.Value = saveTransChangeDTO.newUserID;
+            sql.Parameters.Add(paramTradeID);
+
+            SqlParameter paramRemark = new SqlParameter(@"pRemark", SqlDbType.VarChar, 255);
+            paramRemark.Direction = ParameterDirection.Input;
+            paramRemark.Value = saveTransChangeDTO.remark;
+            sql.Parameters.Add(paramRemark);
+
+            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            paramCreateBy.Direction = ParameterDirection.Input;
+            paramCreateBy.Value = userID;
+            sql.Parameters.Add(paramCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+            int id = 0;
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+
+            return id;
+        }
+        public int InsertSecondEmpWorkTimeTransChangeTrade(string shareCode, SaveChangeWorkShiftTimeRequestDTO saveTransChangeDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_time_trans_change_trade " +
+                "@pWorkTimeID, " +
+                "@pUserID, " +
+                "@pNewWorkShiftID, " +
+                "@pTradeID, " +
+                "@pRemark, " +
+                "@pCreateBy");
+
+            SqlParameter paramWorkTimeID = new SqlParameter(@"pWorkTimeID", SqlDbType.Int);
+            paramWorkTimeID.Direction = ParameterDirection.Input;
+            paramWorkTimeID.Value = saveTransChangeDTO.newEmpWorkTimeID;
+            sql.Parameters.Add(paramWorkTimeID);
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = saveTransChangeDTO.newUserID;
+            sql.Parameters.Add(paramUserID);
+
+            SqlParameter paramNewWorkShiftID = new SqlParameter(@"pNewWorkShiftID", SqlDbType.Int);
+            paramNewWorkShiftID.Direction = ParameterDirection.Input;
+            paramNewWorkShiftID.Value = saveTransChangeDTO.workShiftID;
+            sql.Parameters.Add(paramNewWorkShiftID);
+
+            SqlParameter paramTradeID = new SqlParameter(@"pTradeID", SqlDbType.Int);
+            paramTradeID.Direction = ParameterDirection.Input;
+            paramTradeID.Value = saveTransChangeDTO.userID;
+            sql.Parameters.Add(paramTradeID);
+
+            SqlParameter paramRemark = new SqlParameter(@"pRemark", SqlDbType.VarChar, 255);
+            paramRemark.Direction = ParameterDirection.Input;
+            paramRemark.Value = saveTransChangeDTO.remark;
+            sql.Parameters.Add(paramRemark);
+
+            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            paramCreateBy.Direction = ParameterDirection.Input;
+            paramCreateBy.Value = userID;
+            sql.Parameters.Add(paramCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+            int id = 0;
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+
+            return id;
+        }
+        public int UpdateEmpWorkShif(string shareCode, SaveChangeWorkShiftTimeRequestDTO saveTransChangeDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_work_time " +
+                "@pId, " +
+                "@pWorkShiftID, " +
+                "@pUpdateBy");
+
+            SqlParameter paramId = new SqlParameter(@"pId", SqlDbType.Int);
+            paramId.Direction = ParameterDirection.Input;
+            paramId.Value = saveTransChangeDTO.empWorkTimeID;
+            sql.Parameters.Add(paramId);
+
+            SqlParameter paramWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            paramWorkShiftID.Direction = ParameterDirection.Input;
+            paramWorkShiftID.Value = saveTransChangeDTO.newWorkShiftID;
+            sql.Parameters.Add(paramWorkShiftID);
+            
+            SqlParameter paramUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            paramUpdateBy.Direction = ParameterDirection.Input;
+            paramUpdateBy.Value = userID;
+            sql.Parameters.Add(paramUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+            int id = 0;
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+
+            return id;
+        }
+        public int UpdateEmpWorkShiftByTrade(string shareCode, SaveChangeWorkShiftTimeRequestDTO saveTransChangeDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_work_shift_by_trade " +
+                "@pWorkTimeID, " +
+                "@pWorkShiftID, " +
+                "@pUpdateBy");
+
+            SqlParameter paramId = new SqlParameter(@"pId", SqlDbType.Int);
+            paramId.Direction = ParameterDirection.Input;
+            paramId.Value = saveTransChangeDTO.newWorkShiftID;
+            sql.Parameters.Add(paramId);
+
+            SqlParameter paramWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            paramWorkShiftID.Direction = ParameterDirection.Input;
+            paramWorkShiftID.Value = saveTransChangeDTO.workShiftID;
+            sql.Parameters.Add(paramWorkShiftID);
+
+            SqlParameter paramUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            paramUpdateBy.Direction = ParameterDirection.Input;
+            paramUpdateBy.Value = userID;
+            sql.Parameters.Add(paramUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+            int id = 0;
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+
+            return id;
         }
 
         public int getUserIdByEmpProfileID(string shareCode, int empProfileID)
@@ -7352,7 +7530,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public List<GetWorkShift> GetAllWorkShift(string shareCode)
+        public List<GetWorkShift> GetAllWorkShiftList(string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_all_work_shift ");
