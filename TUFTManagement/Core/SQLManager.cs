@@ -1070,7 +1070,7 @@ namespace TUFTManagement.Core
                 "@pWorkShiftID, " +
                 "@pUpdateBy");
 
-            SqlParameter paramId = new SqlParameter(@"pId", SqlDbType.Int);
+            SqlParameter paramId = new SqlParameter(@"pWorkTimeID", SqlDbType.Int);
             paramId.Direction = ParameterDirection.Input;
             paramId.Value = saveTransChangeDTO.newWorkShiftID;
             sql.Parameters.Add(paramId);

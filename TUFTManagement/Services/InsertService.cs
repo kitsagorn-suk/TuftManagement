@@ -333,13 +333,13 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWorktime(1, lang, platform, saveChangeWorkShiftTimeRequestDTO.empWorkTimeID, shareCode);
                 if (validation.Success == true)
                 {
                     int firstTransChange = _sql.InsertFirstEmpWorkTimeTransChangeTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
                     int secondTransChange = _sql.InsertSecondEmpWorkTimeTransChangeTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
-                    int updateNewWorkShift = _sql.UpdateEmpWorkShif(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
-                    int updateWorkShiftTrade = _sql.UpdateEmpWorkShiftByTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
+                    //int updateNewWorkShift = _sql.UpdateEmpWorkShif(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
+                    //int updateWorkShiftTrade = _sql.UpdateEmpWorkShiftByTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
                 }
                 else
                 {
