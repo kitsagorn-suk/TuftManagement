@@ -656,7 +656,7 @@ namespace TUFTManagement.Services
                             string TableName = "emp_work_time";
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_shift_id", saveEmpWorkTimeRequestDTO.empWorkShiftID.ToString(), userID);
                             value.data = _sql.InsertEmpWorkTimeTran(saveEmpWorkTimeRequestDTO, userID, shareCode);
-                            value.data = _sql.UpdateEmpWorkTimeNewVer(saveEmpWorkTimeRequestDTO, userID, shareCode);
+                            //value.data = _sql.UpdateEmpWorkTimeNewVer(saveEmpWorkTimeRequestDTO, userID, shareCode);
                         }
                         
                     }
