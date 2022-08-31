@@ -40,7 +40,7 @@ namespace TUFTManagement.Services
                     value.data.role = _sql.GetUserRole(value.data.id, lang);
 
                     value.data.shareHolder = new List<ShareHolderList>();
-                    value.data.shareHolder = _sql.GetUserShareHolder(value.data.id, lang);
+                    value.data.shareHolder = _sql.GetUserShareHolder(value.data.id, lang, fromProject);
 
                 }
                 else

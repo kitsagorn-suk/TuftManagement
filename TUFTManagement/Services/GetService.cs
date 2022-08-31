@@ -224,7 +224,8 @@ namespace TUFTManagement.Services
         }
 
 
-        public GetEmpProfileModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, int userID)
+        public GetEmpProfileModel GetEmpProfileV1_1Service(string shareCode, string authorization, string lang, string fromProject, 
+            int logID, int userID)
         {
             if (_sql == null)
             {
@@ -236,7 +237,7 @@ namespace TUFTManagement.Services
             {
                 EmpProfile data = new EmpProfile();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, fromProject);
 
                 if (validation.Success == true)
                 {
@@ -247,7 +248,7 @@ namespace TUFTManagement.Services
                     value.data.role = _sql.GetUserRole(userID, lang);
 
                     value.data.shareHolder = new List<ShareHolderList>();
-                    value.data.shareHolder = _sql.GetUserShareHolder(userID, lang);
+                    value.data.shareHolder = _sql.GetUserShareHolder(userID, lang, fromProject);
 
                     value.data.accessList = new List<AccessRole>();
 
@@ -276,7 +277,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetEmployeeDetailsModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, int userID, RequestDTO requestDTO)
+        public GetEmployeeDetailsModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, 
+            int logID, int userID, RequestDTO requestDTO)
         {
             if (_sql == null)
             {

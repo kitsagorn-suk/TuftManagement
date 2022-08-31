@@ -505,7 +505,7 @@ namespace TUFTManagement.Core
             return list;
         }
 
-        public List<ShareHolderList> GetUserShareHolder(int pUserID, string pLang)
+        public List<ShareHolderList> GetUserShareHolder(int pUserID, string pLang, string pFromProject)
         {
             List<ShareHolderList> list = new List<ShareHolderList>();
 
@@ -535,6 +535,9 @@ namespace TUFTManagement.Core
 
                     data.agentList = new List<AgentList>();
                     data.agentList = GetUserAgent(pUserID, data.shareID, pLang);
+
+                    data.accessList = new List<AccessRole>();
+                    data.accessList = GetAllAccessRoleByPosition(data.shareCode, pFromProject, pUserID);
 
                     list.Add(data);
                 }
@@ -7815,7 +7818,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

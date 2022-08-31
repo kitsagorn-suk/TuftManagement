@@ -858,12 +858,12 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(data.userID);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfileV1_1", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
+                var obj = srv.GetEmpProfileV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
                 
                 return Ok(obj);
             }
