@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Inventory_ComplexModel1StoreContainer" CdmEntityContainer="Inventory_ComplexEntities1">
+    <EntitySetMapping Name="emp_work_time">
+      <EntityTypeMapping TypeName="Inventory_ComplexModel1.emp_work_time">
+        <MappingFragment StoreEntitySet="emp_work_time">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="user_id" ColumnName="user_id" />
+          <ScalarProperty Name="work_shift_id" ColumnName="work_shift_id" />
+          <ScalarProperty Name="work_date" ColumnName="work_date" />
+          <ScalarProperty Name="is_fix" ColumnName="is_fix" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
