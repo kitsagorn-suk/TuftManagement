@@ -566,5 +566,58 @@ namespace TUFTManagement.Services
             }
         }
 
+        public ValidationModel RequireOptionalSaveSystemRole(string shareCode, string lang, string platform, int logID, SaveSystemRoleDTO saveSystemRoleDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ValidationModel validation = new ValidationModel();
+
+            try
+            {
+                string checkMissingOptional = "";
+
+                if (string.IsNullOrEmpty(saveSystemRoleDTO.objID))
+                {
+                    checkMissingOptional += "objID ";
+                }
+                if (string.IsNullOrEmpty(saveSystemRoleDTO.objName))
+                {
+                    checkMissingOptional += "objName ";
+                }
+                if (string.IsNullOrEmpty(saveSystemRoleDTO.parentID))
+                {
+                    checkMissingOptional += "parentID ";
+                }
+                if (saveSystemRoleDTO.listPosition.Count == 0)
+                {
+                    checkMissingOptional += "positionID ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, platform);
+                }
+
+                return validation;
+
+            }
+            catch (Exception ex)
+            {
+                //LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalAllDropdown:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+        }
+
     }
 }

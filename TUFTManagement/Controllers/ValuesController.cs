@@ -599,6 +599,80 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/save/systemrole")]
+        [HttpPost]
+        public IHttpActionResult SaveSystemRole(SaveSystemRoleDTO saveSystemRoleDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveSystemRoleDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveSystemRole", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRole(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleDTO);
+
+
+                InsertService srvInsert = new InsertService();
+                UpdateService srvUpdate = new UpdateService();
+                var obj = new object();
+
+                if (chkRequestBody.Success == true)
+                {
+                    int _chkDup = _sql.CheckDuplicateObjID(saveSystemRoleDTO.objID, shareCode);
+                    int _chkParent = _sql.CheckDuplicateObjID(saveSystemRoleDTO.parentID, shareCode);
+                   
+                    if (_chkDup == 0 && _chkParent > 0)
+                    {
+                        obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, data.roleIDList, data.userID, shareCode);
+
+                        foreach(SaveSystemRole item in saveSystemRoleDTO.listPosition)
+                        {
+                            obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, item, data.roleIDList, data.userID, shareCode);
+
+                        }
+
+                    }
+                    else if (_chkDup > 0 && _chkParent > 0)
+                    {
+                        obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, data.roleIDList, data.userID, shareCode);
+
+                        foreach (SaveSystemRole item in saveSystemRoleDTO.listPosition)
+                        {
+                            obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, item, data.roleIDList, data.userID, shareCode);
+
+                        }
+                    }
+                    
+
+
+                   
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
         #endregion
 
         #region Employees

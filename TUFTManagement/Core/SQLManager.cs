@@ -7462,6 +7462,230 @@ namespace TUFTManagement.Core
 
         #endregion
 
+        #region SystemRole
+        public int CheckDuplicateObjID(string objID, string shareCode)
+        {
+            int total = 0;
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec check_duplicate_object_id " +
+                "@pObjID");
+
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
+            pObjID.Direction = ParameterDirection.Input;
+            pObjID.Value = objID;
+            sql.Parameters.Add(pObjID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public _ReturnIdModel InsertSystemRole(string shareCode, SaveSystemRoleDTO saveSystemRoleDTO, int userID, string projectName)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_role_template " +
+                "@pObjID, " +
+                "@pParentID, " +
+                "@pObjName, " +
+                "@pProjectName, " +
+                "@pCreateBy");
+
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar,10);
+            pObjID.Direction = ParameterDirection.Input;
+            pObjID.Value = saveSystemRoleDTO.objID;
+            sql.Parameters.Add(pObjID);
+
+            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.VarChar, 10);
+            pParentID.Direction = ParameterDirection.Input;
+            pParentID.Value = saveSystemRoleDTO.parentID;
+            sql.Parameters.Add(pParentID);
+
+            SqlParameter pObjName = new SqlParameter(@"pObjName", SqlDbType.VarChar, 255);
+            pObjName.Direction = ParameterDirection.Input;
+            pObjName.Value = saveSystemRoleDTO.objName;
+            sql.Parameters.Add(pObjName);
+
+            SqlParameter pProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 255);
+            pProjectName.Direction = ParameterDirection.Input;
+            pProjectName.Value = projectName;
+            sql.Parameters.Add(pProjectName);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertSystemRoleAssign(string shareCode, SaveSystemRoleDTO saveSystemRoleDTO, SaveSystemRole saveSystemRole, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_role_assignment " +
+                "@pObjID, " +
+                "@pPositionID, " +
+                "@pIsActive, " +
+                "@pCreateBy");
+
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
+            pObjID.Direction = ParameterDirection.Input;
+            pObjID.Value = saveSystemRoleDTO.objID;
+            sql.Parameters.Add(pObjID);
+
+            SqlParameter pPositionID = new SqlParameter(@"pPositionID", SqlDbType.Int);
+            pPositionID.Direction = ParameterDirection.Input;
+            pPositionID.Value = saveSystemRole.positionID;
+            sql.Parameters.Add(pPositionID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.VarChar, 255);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = saveSystemRole.isActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateSystemRole(string shareCode, SaveSystemRoleDTO saveSystemRoleDTO, int userID, string projectName)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_system_role_template " +
+                "@pObjID, " +
+                "@pParentID, " +
+                "@pObjName, " +
+                "@pProjectName, " +
+                "@pIsActive, " +
+                "@pUpdateBy");
+
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
+            pObjID.Direction = ParameterDirection.Input;
+            pObjID.Value = saveSystemRoleDTO.objID;
+            sql.Parameters.Add(pObjID);
+
+            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.VarChar, 10);
+            pParentID.Direction = ParameterDirection.Input;
+            pParentID.Value = saveSystemRoleDTO.parentID;
+            sql.Parameters.Add(pParentID);
+
+            SqlParameter pObjName = new SqlParameter(@"pObjName", SqlDbType.VarChar, 255);
+            pObjName.Direction = ParameterDirection.Input;
+            pObjName.Value = saveSystemRoleDTO.objName;
+            sql.Parameters.Add(pObjName);
+
+            SqlParameter pProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 255);
+            pProjectName.Direction = ParameterDirection.Input;
+            pProjectName.Value = projectName;
+            sql.Parameters.Add(pProjectName);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = saveSystemRoleDTO.isActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateSystemRoleAssign(string shareCode, SaveSystemRoleDTO saveSystemRoleDTO, SaveSystemRole saveSystemRole, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_system_role_assignment " +
+                "@pObjID, " +
+                "@pPositionID, " +
+                "@pIsActive, " +
+                "@pUpdateBy");
+
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
+            pObjID.Direction = ParameterDirection.Input;
+            pObjID.Value = saveSystemRoleDTO.objID;
+            sql.Parameters.Add(pObjID);
+
+            SqlParameter pPositionID = new SqlParameter(@"pPositionID", SqlDbType.Int);
+            pPositionID.Direction = ParameterDirection.Input;
+            pPositionID.Value = saveSystemRole.positionID;
+            sql.Parameters.Add(pPositionID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.VarChar, 255);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = saveSystemRole.isActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
+        #endregion
+
     }
 
     public class SQLCustomExecute

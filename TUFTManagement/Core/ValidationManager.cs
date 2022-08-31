@@ -540,5 +540,48 @@ namespace TUFTManagement.Core
             return value;
         }
 
+        public static ValidationModel CheckValidationDupicateInsertSystemRole(string lang, SaveSystemRoleDTO saveSystemRoleDTO)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(state);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+
+        public static ValidationModel CheckValidationObject(string lang, SaveSystemRoleDTO saveSystemRoleDTO)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(state);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+
+
     }
 }

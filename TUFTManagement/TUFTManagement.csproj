@@ -201,6 +201,7 @@
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\RequestDTO.cs" />
+    <Compile Include="DTO\SaveSystemRoleDTO.cs" />
     <Compile Include="DTO\SearchWorkShiftTimeAllTotalDTO.cs" />
     <Compile Include="DTO\SearchWorktimePendingTotalDTO.cs" />
     <Compile Include="DTO\SaveEmpStatusDTO.cs" />
