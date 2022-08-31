@@ -338,8 +338,6 @@ namespace TUFTManagement.Services
                 {
                     int firstTransChange = _sql.InsertFirstEmpWorkTimeTransChangeTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
                     int secondTransChange = _sql.InsertSecondEmpWorkTimeTransChangeTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
-                    //int updateNewWorkShift = _sql.UpdateEmpWorkShif(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
-                    //int updateWorkShiftTrade = _sql.UpdateEmpWorkShiftByTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
                 }
                 else
                 {
@@ -352,6 +350,83 @@ namespace TUFTManagement.Services
             catch (Exception ex)
             {
                 LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpWorkShiftTimeTransChangeService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel ApproveEmpWorkShiftTimeTransChangeService(string shareCode, string authorization, string lang, string platform, int logID,
+            ApproveChangeWorkShiftTimeRequestDTO approveChangeWorkShiftTimeRequestDTO, string roleIDList, int tokenUserID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationApproveTransChange(1, lang, platform, approveChangeWorkShiftTimeRequestDTO, shareCode);
+
+                if (validation.Success == true)
+                {
+                    //Approve CASE
+                    foreach (int ApproveEmpWorkTimeID in approveChangeWorkShiftTimeRequestDTO.approveListEmpWorkTimeID)
+                    {
+                        GetTransWorkShiftDTO getDetails = _sql.GetTransChangeWorkShift(shareCode, ApproveEmpWorkTimeID);
+                        
+                        
+                        if (getDetails.action == 1)
+                        {
+                            //Update work shift CASE
+                            SaveChangeWorkShiftTimeRequestDTO itemUpdate = new SaveChangeWorkShiftTimeRequestDTO();
+                            itemUpdate.empWorkTimeID = getDetails.workTimeID;
+                            itemUpdate.newWorkShiftID = getDetails.workShiftIdNew;
+
+                            int changeCase = _sql.UpdateEmpWorkShif(shareCode, itemUpdate, tokenUserID);
+                        }
+                        else if (getDetails.action == 2)
+                        {
+                            //Trade work shift CASE
+                            SaveChangeWorkShiftTimeRequestDTO targetUpdate = new SaveChangeWorkShiftTimeRequestDTO();
+                            targetUpdate.empWorkTimeID = getDetails.workTimeID;
+                            targetUpdate.newWorkShiftID = getDetails.workShiftIdNew;
+
+                            SaveChangeWorkShiftTimeRequestDTO effectUpdate = new SaveChangeWorkShiftTimeRequestDTO();
+                            effectUpdate.empWorkTimeID = getDetails.tradeWorkTimeID;
+                            effectUpdate.newWorkShiftID = getDetails.workTimeID;
+                            
+                            int tradeTargetCase = _sql.UpdateEmpWorkShif(shareCode, targetUpdate, tokenUserID);
+                            int tradeEffectCase = _sql.UpdateEmpWorkShif(shareCode, effectUpdate, tokenUserID);
+                            
+                        }
+                    }
+                    string approvedList = _sql.ApproveEmpWorkShift(shareCode, approveChangeWorkShiftTimeRequestDTO.prepairApproveListEmpWorkTimeID, 1, tokenUserID);
+                    
+                    //Reject CASE
+                    string rejectList = _sql.ApproveEmpWorkShift(shareCode, approveChangeWorkShiftTimeRequestDTO.prepairRejectListEmpWorkTimeID, 2, tokenUserID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+                
+                
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "ApproveEmpWorkShiftTimeTransChangeService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());

@@ -126,6 +126,52 @@ namespace TUFTManagement.Core
             }
             return value;
         }
+        public static ValidationModel CheckValidationApproveTransChange(int chkID, string lang, string platform, ApproveChangeWorkShiftTimeRequestDTO approveChangeWorkShiftTimeRequestDTO, string shareCode)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                #region E301007
+
+                foreach (int itemApprove in approveChangeWorkShiftTimeRequestDTO.approveListEmpWorkTimeID)
+                {
+                    GetEmpWorkTime dataCheck = _sql.GetEmpWorkTimeNewVer(itemApprove, shareCode);
+                    if (dataCheck.isFix == 1)
+                    {
+                        state = ValidationModel.InvalidState.E301007; //check is fix
+                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message + " : empWorkTimeID " + dataCheck.empWorkTimeID , InvalidText = getMessage.topic };
+                    }
+                }
+
+                foreach (int itemReject in approveChangeWorkShiftTimeRequestDTO.rejectListEmpWorkTimeID)
+                {
+                    GetEmpWorkTime dataCheck = _sql.GetEmpWorkTimeNewVer(itemReject, shareCode);
+                    if (dataCheck.isFix == 1)
+                    {
+                        state = ValidationModel.InvalidState.E301007; //check is fix
+                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message + " : empWorkTimeID " + dataCheck.empWorkTimeID , InvalidText = getMessage.topic };
+                    }
+                }
+
+                #endregion
+
+                getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(state);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
         public static ValidationModel CheckValidationTransChange(string lang, string platform, int transChangeID)
         {
             ValidationModel value = new ValidationModel();

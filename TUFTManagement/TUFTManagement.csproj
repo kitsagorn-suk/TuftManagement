@@ -201,6 +201,7 @@
     <Compile Include="DTO\PageRequestDTO.cs" />
     <Compile Include="DTO\SaveBodySetRequestDTO.cs" />
     <Compile Include="DTO\RequestDTO.cs" />
+    <Compile Include="DTO\ApproveChangeWorkShiftTimeRequestDTO.cs" />
     <Compile Include="DTO\SaveChangeWorkShiftTimeRequestDTO.cs" />
     <Compile Include="DTO\SearchWorkShiftTimeAllTotalDTO.cs" />
     <Compile Include="DTO\SearchWorktimePendingTotalDTO.cs" />
@@ -218,6 +219,7 @@
     <Compile Include="DTO\SearchSystemMasterDTO.cs" />
     <Compile Include="DTO\SearchWorkTimePendingDTO.cs" />
     <Compile Include="DTO\SearchWorkTimeDTO.cs" />
+    <Compile Include="DTO\GetTransWorkShiftDTO.cs" />
     <Compile Include="DTO\SystemMasterDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -265,6 +267,7 @@
     <Compile Include="Models\GetWorkShiftModel.cs" />
     <Compile Include="Models\GetWorkShiftTimeHeaderModel.cs" />
     <Compile Include="Models\InsertLoginModel.cs" />
+    <Compile Include="Models\GetAccessRoleModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\LogModel.cs" />
     <Compile Include="Models\GetMasterPositionModel.cs" />

@@ -72,6 +72,35 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/get/accessRole")]
+        [HttpGet]
+        public IHttpActionResult GetAccessRole()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(request.Headers.ToString());
+                int logID = _sql.InsertLogReceiveData("GetAccessRole", json, timestampNow.ToString(), authHeader,
+                    0, fromProject.ToLower());
+                LoginService srv = new LoginService();
+
+                var obj = srv.GetAccessRole(authHeader, lang, fromProject.ToLower(), shareCode, data.userID, logID);
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
         [Route("1.0/logout")]
         [HttpPost]
         public IHttpActionResult Logout()
@@ -1605,6 +1634,78 @@ namespace TUFTManagement.Controllers
 
         #region wait approve zone
 
+        [Route("1.0/save/changeWorkShiftTime")]
+        [HttpPost]
+        public IHttpActionResult SaveChangeWorkShiftTime(SaveChangeWorkShiftTimeRequestDTO saveChangeWorkShiftTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveChangeWorkShiftTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveChangeWorkShiftTime", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+
+                if (saveChangeWorkShiftTimeRequestDTO.empWorkTimeID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.userID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.userID.Equals(null))
+                {
+                    checkMissingOptional += "userID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.workShiftID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.workShiftID.Equals(null))
+                {
+                    checkMissingOptional += "workShiftID ";
+                }
+
+                if (saveChangeWorkShiftTimeRequestDTO.newEmpWorkTimeID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newEmpWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "newEmpWorkTimeID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.newUserID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newUserID.Equals(null))
+                {
+                    checkMissingOptional += "newUserID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.newWorkShiftID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newWorkShiftID.Equals(null))
+                {
+                    checkMissingOptional += "newWorkShiftID ";
+                }
+
+                if (saveChangeWorkShiftTimeRequestDTO.remark.Equals(0) || saveChangeWorkShiftTimeRequestDTO.remark.Equals(null))
+                {
+                    checkMissingOptional += "remark ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    InsertService srv = new InsertService();
+                    obj = srv.InsertEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveChangeWorkShiftTimeRequestDTO, data.roleIDList, data.userID);
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
         [Route("1.0/search/worktime/pending")]
         [HttpPost]
         public IHttpActionResult SearchWorkTimePending(SearchWorkTimePendingDTO searchWorkTimePendingDTO)
@@ -1661,9 +1762,9 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.0/save/changeWorkShiftTime")]
+        [Route("1.0/Approve/changeWorkShiftTime")]
         [HttpPost]
-        public IHttpActionResult SaveChangeWorkShiftTime(SaveChangeWorkShiftTimeRequestDTO saveChangeWorkShiftTimeRequestDTO)
+        public IHttpActionResult ApproveChangeWorkShiftTime(ApproveChangeWorkShiftTimeRequestDTO approveChangeWorkShiftTimeRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -1677,42 +1778,28 @@ namespace TUFTManagement.Controllers
             try
             {
                 var obj = new object();
-                string json = JsonConvert.SerializeObject(saveChangeWorkShiftTimeRequestDTO);
-                int logID = _sql.InsertLogReceiveData("SaveChangeWorkShiftTime", json, timestampNow.ToString(), authHeader,
+                string json = JsonConvert.SerializeObject(approveChangeWorkShiftTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("ApproveChangeWorkShiftTime", json, timestampNow.ToString(), authHeader,
                     data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
+                string strApproveListEmpWorkTimeID = JsonConvert.SerializeObject(approveChangeWorkShiftTimeRequestDTO.approveListEmpWorkTimeID);
+                strApproveListEmpWorkTimeID = string.Join(",", approveChangeWorkShiftTimeRequestDTO.approveListEmpWorkTimeID);
+                approveChangeWorkShiftTimeRequestDTO.prepairApproveListEmpWorkTimeID = strApproveListEmpWorkTimeID;
 
-                if (saveChangeWorkShiftTimeRequestDTO.empWorkTimeID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.empWorkTimeID.Equals(null))
-                    {
-                        checkMissingOptional += "empWorkTimeID ";
-                    }
-                if (saveChangeWorkShiftTimeRequestDTO.userID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.userID.Equals(null))
-                {
-                    checkMissingOptional += "userID ";
-                }
-                if (saveChangeWorkShiftTimeRequestDTO.workShiftID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.workShiftID.Equals(null))
-                {
-                    checkMissingOptional += "workShiftID ";
-                }
+                string strRejectListEmpWorkTimeID = JsonConvert.SerializeObject(approveChangeWorkShiftTimeRequestDTO.rejectListEmpWorkTimeID);
+                strRejectListEmpWorkTimeID = string.Join(",", approveChangeWorkShiftTimeRequestDTO.rejectListEmpWorkTimeID);
+                approveChangeWorkShiftTimeRequestDTO.prepairRejectListEmpWorkTimeID = strRejectListEmpWorkTimeID;
 
-                if (saveChangeWorkShiftTimeRequestDTO.newEmpWorkTimeID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newEmpWorkTimeID.Equals(null))
+                if (string.IsNullOrEmpty(approveChangeWorkShiftTimeRequestDTO.prepairApproveListEmpWorkTimeID))
                 {
-                    checkMissingOptional += "newEmpWorkTimeID ";
-                }
-                if (saveChangeWorkShiftTimeRequestDTO.newUserID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newUserID.Equals(null))
-                {
-                    checkMissingOptional += "newUserID ";
-                }
-                if (saveChangeWorkShiftTimeRequestDTO.newWorkShiftID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newWorkShiftID.Equals(null))
-                {
-                    checkMissingOptional += "newWorkShiftID ";
+                    checkMissingOptional += "approveListEmpWorkTimeID[] ";
                 }
 
-                if (saveChangeWorkShiftTimeRequestDTO.remark.Equals(0) || saveChangeWorkShiftTimeRequestDTO.remark.Equals(null))
+                if (string.IsNullOrEmpty(approveChangeWorkShiftTimeRequestDTO.prepairRejectListEmpWorkTimeID))
                 {
-                    checkMissingOptional += "remark ";
+                    checkMissingOptional += "rejectListEmpWorkTimeID[] ";
                 }
                 
                 if (checkMissingOptional != "")
@@ -1722,7 +1809,7 @@ namespace TUFTManagement.Controllers
                 else
                 {
                     InsertService srv = new InsertService();
-                    obj = srv.InsertEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveChangeWorkShiftTimeRequestDTO, data.roleIDList, data.userID);
+                    obj = srv.ApproveEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, approveChangeWorkShiftTimeRequestDTO, data.roleIDList, data.userID);
                 }
 
                 return Ok(obj);

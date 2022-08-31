@@ -6,6 +6,7 @@ using System.Web.Configuration;
 using TUFTManagement.Core;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
+using static TUFTManagement.Models.GetAccessRoleModel;
 
 namespace TUFTManagement.Services
 {
@@ -40,9 +41,7 @@ namespace TUFTManagement.Services
 
                     value.data.shareHolder = new List<ShareHolderList>();
                     value.data.shareHolder = _sql.GetUserShareHolder(value.data.id, lang);
-                    
-                    value.data.accessList = new List<AccessRole>();
-                    //value.data.accessList = _sql.GetAllAccessRole(int.Parse(roleID));
+
                 }
                 else
                 {
@@ -55,6 +54,48 @@ namespace TUFTManagement.Services
             catch (Exception ex)
             {
                 LogManager.ServiceLog.WriteExceptionLog(ex, "Login:" + username);
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetAccessRoleModel GetAccessRole(string authorization, string lang, string fromProject, string shareCode, int userID, int logID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetAccessRoleModel value = new GetAccessRoleModel();
+            try
+            {
+
+                value.data = new GetAccessRole();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, "");
+
+                if (validation.Success == true)
+                {
+                    value.data.accessList = _sql.GetAllAccessRoleByPosition(shareCode, fromProject, userID);
+                }
+                else
+                {
+                    value.data = null;
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetAccessRole");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());
