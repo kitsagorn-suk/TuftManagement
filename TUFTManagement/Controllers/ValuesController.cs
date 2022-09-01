@@ -679,8 +679,8 @@ namespace TUFTManagement.Controllers
                     {
                         foreach (SaveSystemRoleTemp item in saveSystemRoleAssignDTO.listTemp)
                         {
-                            int _chkDup = _sql.CheckDuplicateObjID(item.objID, shareCode);
-                            int _chkParent = _sql.CheckDuplicateObjID(item.parentID, shareCode);
+                            int _chkDup = _sql.CheckDuplicateObjID(item.objID, fromProject.ToLower(), shareCode);
+                            int _chkParent = _sql.CheckDuplicateObjID(item.parentID, fromProject.ToLower(), shareCode);
 
                             int _chkDupPosition = _sql.CheckPositionIDAssignment(item.objID, saveSystemRoleAssignDTO.positionID, shareCode);
 
@@ -690,7 +690,7 @@ namespace TUFTManagement.Controllers
 
 
                             }
-                            else if (_chkDup > 0 && _chkParent > 0)
+                            else if ((_chkDup > 0 && _chkParent > 0) || (_chkDup > 0 && item.parentID == "0"))
                             {
                                 obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.userID, shareCode);
 
