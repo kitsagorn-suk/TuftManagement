@@ -7660,7 +7660,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.VarChar, 255);
             pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = saveSystemRoleTemp.isActive;
+            pIsActive.Value = 1;
             sql.Parameters.Add(pIsActive);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
