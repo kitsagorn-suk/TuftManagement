@@ -602,7 +602,7 @@ namespace TUFTManagement.Services
             }
             catch (Exception ex)
             {
-                //LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalAllDropdown:");
+                LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalSaveSystemRole:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());

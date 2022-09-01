@@ -11,5 +11,6 @@ namespace TUFTManagement.DTO
         public int provinceID { set; get; } = 0;
         public int districtID { set; get; } = 0;
         public int departmentID { set; get; } = 0;
+        public string workDate { set; get; } = "";
     }
 }

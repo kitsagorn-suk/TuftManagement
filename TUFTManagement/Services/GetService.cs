@@ -102,6 +102,46 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+        public GetEmpTradeWorkShiftDropdownModel GetEmpTradeWorkShiftDropdownService(string shareCode, string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetEmpTradeWorkShiftDropdownModel value = new GetEmpTradeWorkShiftDropdownModel();
+            try
+            {
+                value.data = new List<EmpTradeWorkShift>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.GetDropdownEmpTradeWorkShift(shareCode, lang, request.workDate);
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpTradeWorkShiftDropdownService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
         public GetDropdownTitleNameModel GetTitleNameDropdownService(string authorization, string lang, string platform, int logID, GetDropdownRequestDTO request)
         {
             if (_sql == null)
@@ -184,7 +224,8 @@ namespace TUFTManagement.Services
         }
 
 
-        public GetEmpProfileModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, int userID)
+        public GetEmpProfileModel GetEmpProfileV1_1Service(string shareCode, string authorization, string lang, string fromProject, 
+            int logID, int userID)
         {
             if (_sql == null)
             {
@@ -196,18 +237,18 @@ namespace TUFTManagement.Services
             {
                 EmpProfile data = new EmpProfile();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, fromProject);
 
                 if (validation.Success == true)
                 {
                     data = _sql.GetEmpProfile(shareCode, userID, lang);
                     value.data = data;
 
-                    value.data.role = new List<RoleIDList>();
-                    value.data.role = _sql.GetUserRole(userID, lang);
+                    //value.data.role = new List<RoleIDList>();
+                    //value.data.role = _sql.GetUserRole(userID, lang);
 
                     value.data.shareHolder = new List<ShareHolderList>();
-                    value.data.shareHolder = _sql.GetUserShareHolder(userID, lang);
+                    value.data.shareHolder = _sql.GetUserShareHolder(userID, lang, fromProject);
 
                     value.data.accessList = new List<AccessRole>();
 
@@ -236,7 +277,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetEmployeeDetailsModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, int userID, RequestDTO requestDTO)
+        public GetEmployeeDetailsModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, 
+            int logID, int userID, RequestDTO requestDTO)
         {
             if (_sql == null)
             {
@@ -539,7 +581,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetEmpWorkShiftTimeModel GetEmpWorkShiftTimeService(string authorization, string lang, string platform, int logID, GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string roleIDList, string shareCode)
+        public GetEmpWorkShiftTimeModel GetEmpWorkShiftTimeService(string authorization, string lang, string platform, int logID, 
+            GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string shareCode)
         {
             if (_sql == null)
             {
@@ -669,7 +712,7 @@ namespace TUFTManagement.Services
                     string theString = string.Join(",", terms);
 
                     List<GetWorkShift> allWS = new List<GetWorkShift>();
-                    allWS = _sql.GetAllWorkShift(shareCode);
+                    allWS = _sql.GetAllWorkShiftList(shareCode);
 
                     foreach (GetWorkShift item in allWS)
                     {

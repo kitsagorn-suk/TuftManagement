@@ -13,7 +13,8 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, string TableName, int userID, string shareCode)
+        public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, 
+            string TableName, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -95,7 +96,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetMasterDataModel GetMasterService(string authorization, string lang, string platform, int logID, int masterID, string TableName, string shareCode)
+        public GetMasterDataModel GetMasterService(string authorization, string lang, string platform, int logID, int masterID, 
+            string TableName, string shareCode)
         {
             if (_sql == null)
             {
@@ -138,7 +140,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchMasterDataModel SearchMasterService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
+        public SearchMasterDataModel SearchMasterService(string authorization, string lang, string platform, int logID, 
+            SearchMasterDataDTO searchMasterDataDTO, string TableName, string shareCode)
         {
             if (_sql == null)
             {
@@ -181,7 +184,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchMasterDataBodySetModel SearchMasterBodySetService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
+        public SearchMasterDataBodySetModel SearchMasterBodySetService(string authorization, string lang, string platform, 
+            int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string shareCode)
         {
             if (_sql == null)
             {
@@ -279,7 +283,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchMasterDataDepartmentModel SearchMasterDepartmentService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
+        public SearchMasterDataDepartmentModel SearchMasterDepartmentService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string shareCode)
         {
             if (_sql == null)
             {
@@ -432,7 +436,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchMasterKeyModel SearchMasterKeyService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string roleIDList, string shareCode)
+        public SearchMasterKeyModel SearchMasterKeyService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string shareCode)
         {
             if (_sql == null)
             {
@@ -596,7 +600,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchSystemMasterModel SearchSystemMasterService(string authorization, string lang, string platform, int logID, SearchSystemMasterDTO searchSystemMasterDTO, string TableName, string roleIDList, string shareCode)
+        public SearchSystemMasterModel SearchSystemMasterService(string authorization, string lang, string platform, int logID, SearchSystemMasterDTO searchSystemMasterDTO, string TableName, string shareCode)
         {
             if (_sql == null)
             {
@@ -2690,7 +2694,8 @@ namespace TUFTManagement.Services
         //    }
         //    return value;
         //}
-        public ReturnIdModel DeleteBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel DeleteBodySetService(string authorization, string lang, string platform, int logID, 
+            SaveBodySetRequestDTO saveBodySetDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -2735,7 +2740,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertBodySetService(string authorization, string lang, string platform, int logID,
-            SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID, string shareCode)
+            SaveBodySetRequestDTO saveBodySetDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -2774,7 +2779,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel UpdateBodySetService(string authorization, string lang, string platform, int logID, SaveBodySetRequestDTO saveBodySetDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {

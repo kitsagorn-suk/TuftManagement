@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Configuration;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
+using static TUFTManagement.DTO.SaveChangeWorkShiftTimeRequestDTO;
 using static TUFTManagement.DTO.SaveEmpWorkTimeRequestDTO_V1_1;
 
 namespace TUFTManagement.Core
@@ -436,40 +437,75 @@ namespace TUFTManagement.Core
             return list;
         }
 
-        public List<RoleIDList> GetUserRole(int pUserID, string pLang)
+        public List<AccessRole> GetAllAccessRoleByPosition(string shareCode, string projectName, int pUserID)
         {
-            List<RoleIDList> list = new List<RoleIDList>();
+            List<AccessRole> list = new List<AccessRole>();
 
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_user_role @pUserID, @pLang");
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_access_role @pUserID, @pProjectName ");
 
             SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             paramUserID.Direction = ParameterDirection.Input;
             paramUserID.Value = pUserID;
-
-            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
-            paramLang.Direction = ParameterDirection.Input;
-            paramLang.Value = pLang;
-
             sql.Parameters.Add(paramUserID);
-            sql.Parameters.Add(paramLang);
 
-            table = sql.executeQueryWithReturnTable();
+            SqlParameter paramProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 255);
+            paramProjectName.Direction = ParameterDirection.Input;
+            paramProjectName.Value = projectName;
+            sql.Parameters.Add(paramProjectName);
+
+            
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
-                RoleIDList data;
+                AccessRole data;
                 foreach (DataRow row in table.Rows)
                 {
-                    data = new RoleIDList();
-                    data.loadDataUserRole(row);
+                    data = new AccessRole();
+                    data.loadDataAccessRole(row);
                     list.Add(data);
                 }
+
             }
             return list;
         }
 
-        public List<ShareHolderList> GetUserShareHolder(int pUserID, string pLang)
+        //public List<RoleIDList> GetUserRole(int pUserID, string pLang)
+        //{
+        //    List<RoleIDList> list = new List<RoleIDList>();
+
+        //    DataTable table = new DataTable();
+        //    SQLCustomExecute sql = new SQLCustomExecute("exec get_user_role @pUserID, @pLang");
+
+        //    SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+        //    paramUserID.Direction = ParameterDirection.Input;
+        //    paramUserID.Value = pUserID;
+
+        //    SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+        //    paramLang.Direction = ParameterDirection.Input;
+        //    paramLang.Value = pLang;
+
+        //    sql.Parameters.Add(paramUserID);
+        //    sql.Parameters.Add(paramLang);
+
+        //    table = sql.executeQueryWithReturnTable();
+
+        //    if (table != null && table.Rows.Count > 0)
+        //    {
+        //        RoleIDList data;
+        //        foreach (DataRow row in table.Rows)
+        //        {
+        //            data = new RoleIDList();
+        //            data.loadDataUserRole(row);
+        //            list.Add(data);
+        //        }
+        //    }
+        //    return list;
+        //}
+
+        public List<ShareHolderList> GetUserShareHolder(int pUserID, string pLang, string pFromProject)
         {
             List<ShareHolderList> list = new List<ShareHolderList>();
 
@@ -499,6 +535,9 @@ namespace TUFTManagement.Core
 
                     data.agentList = new List<AgentList>();
                     data.agentList = GetUserAgent(pUserID, data.shareID, pLang);
+
+                    data.accessList = new List<AccessRole>();
+                    data.accessList = GetAllAccessRoleByPosition(data.shareCode, pFromProject, pUserID);
 
                     list.Add(data);
                 }
@@ -900,7 +939,7 @@ namespace TUFTManagement.Core
             paramIsFix.Value = empWorkTimeRequestDTO.isFix;
             sql.Parameters.Add(paramIsFix);
 
-            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Bit);
+            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             paramCreateBy.Direction = ParameterDirection.Input;
             paramCreateBy.Value = userID;
             sql.Parameters.Add(paramCreateBy);
@@ -920,6 +959,211 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public int InsertFirstEmpWorkTimeTransChangeTrade(string shareCode, SaveChangeWorkShiftTimeRequestDTO saveTransChangeDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_time_trans_change_trade " +
+                "@pWorkTimeID, " +
+                "@pUserID, " +
+                "@pNewWorkShiftID, " +
+                "@pTradeID, " +
+                "@pRemark, " +
+                "@pCreateBy");
+
+            SqlParameter paramWorkTimeID = new SqlParameter(@"pWorkTimeID", SqlDbType.Int);
+            paramWorkTimeID.Direction = ParameterDirection.Input;
+            paramWorkTimeID.Value = saveTransChangeDTO.empWorkTimeID;
+            sql.Parameters.Add(paramWorkTimeID);
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = saveTransChangeDTO.userID;
+            sql.Parameters.Add(paramUserID);
+
+            SqlParameter paramNewWorkShiftID = new SqlParameter(@"pNewWorkShiftID", SqlDbType.Int);
+            paramNewWorkShiftID.Direction = ParameterDirection.Input;
+            paramNewWorkShiftID.Value = saveTransChangeDTO.newWorkShiftID;
+            sql.Parameters.Add(paramNewWorkShiftID);
+
+            SqlParameter paramTradeID = new SqlParameter(@"pTradeID", SqlDbType.Int);
+            paramTradeID.Direction = ParameterDirection.Input;
+            paramTradeID.Value = saveTransChangeDTO.newUserID;
+            sql.Parameters.Add(paramTradeID);
+
+            SqlParameter paramRemark = new SqlParameter(@"pRemark", SqlDbType.VarChar, 255);
+            paramRemark.Direction = ParameterDirection.Input;
+            paramRemark.Value = saveTransChangeDTO.remark;
+            sql.Parameters.Add(paramRemark);
+
+            SqlParameter paramNewEmpWorkTimeID = new SqlParameter(@"paNewEmpWorkTimeID", SqlDbType.Int);
+            paramNewEmpWorkTimeID.Direction = ParameterDirection.Input;
+            paramNewEmpWorkTimeID.Value = saveTransChangeDTO.newEmpWorkTimeID;
+            sql.Parameters.Add(paramNewEmpWorkTimeID);
+
+            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            paramCreateBy.Direction = ParameterDirection.Input;
+            paramCreateBy.Value = userID;
+            sql.Parameters.Add(paramCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+            int id = 0;
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+
+            return id;
+        }
+        public int InsertSecondEmpWorkTimeTransChangeTrade(string shareCode, SaveChangeWorkShiftTimeRequestDTO saveTransChangeDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_time_trans_change_trade " +
+                "@pWorkTimeID, " +
+                "@pUserID, " +
+                "@pNewWorkShiftID, " +
+                "@pTradeID, " +
+                "@pRemark, " +
+                "@pCreateBy");
+
+            SqlParameter paramWorkTimeID = new SqlParameter(@"pWorkTimeID", SqlDbType.Int);
+            paramWorkTimeID.Direction = ParameterDirection.Input;
+            paramWorkTimeID.Value = saveTransChangeDTO.newEmpWorkTimeID;
+            sql.Parameters.Add(paramWorkTimeID);
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = saveTransChangeDTO.newUserID;
+            sql.Parameters.Add(paramUserID);
+
+            SqlParameter paramNewWorkShiftID = new SqlParameter(@"pNewWorkShiftID", SqlDbType.Int);
+            paramNewWorkShiftID.Direction = ParameterDirection.Input;
+            paramNewWorkShiftID.Value = saveTransChangeDTO.workShiftID;
+            sql.Parameters.Add(paramNewWorkShiftID);
+
+            SqlParameter paramTradeID = new SqlParameter(@"pTradeID", SqlDbType.Int);
+            paramTradeID.Direction = ParameterDirection.Input;
+            paramTradeID.Value = saveTransChangeDTO.userID;
+            sql.Parameters.Add(paramTradeID);
+
+            SqlParameter paramRemark = new SqlParameter(@"pRemark", SqlDbType.VarChar, 255);
+            paramRemark.Direction = ParameterDirection.Input;
+            paramRemark.Value = saveTransChangeDTO.remark;
+            sql.Parameters.Add(paramRemark);
+
+            SqlParameter paramCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            paramCreateBy.Direction = ParameterDirection.Input;
+            paramCreateBy.Value = userID;
+            sql.Parameters.Add(paramCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+            int id = 0;
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+
+            return id;
+        }
+        public int UpdateEmpWorkShif(string shareCode, SaveChangeWorkShiftTimeRequestDTO saveTransChangeDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_work_time " +
+                "@pId, " +
+                "@pWorkShiftID, " +
+                "@pUpdateBy");
+
+            SqlParameter paramId = new SqlParameter(@"pId", SqlDbType.Int);
+            paramId.Direction = ParameterDirection.Input;
+            paramId.Value = saveTransChangeDTO.empWorkTimeID;
+            sql.Parameters.Add(paramId);
+
+            SqlParameter paramWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            paramWorkShiftID.Direction = ParameterDirection.Input;
+            paramWorkShiftID.Value = saveTransChangeDTO.newWorkShiftID;
+            sql.Parameters.Add(paramWorkShiftID);
+            
+            SqlParameter paramUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            paramUpdateBy.Direction = ParameterDirection.Input;
+            paramUpdateBy.Value = userID;
+            sql.Parameters.Add(paramUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+            int id = 0;
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                id = int.Parse(dr["id"].ToString());
+            }
+
+            return id;
+        }
+        public string ApproveEmpWorkShift(string shareCode, string transChangeList, int statusApprove, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec approve_work_shift_time " +
+                "@pTranChangeList, " +
+                "@pStatusApprove, " +
+                "@pUpdateBy");
+
+            SqlParameter paramTranChangeList = new SqlParameter(@"pTranChangeList", SqlDbType.VarChar, 100);
+            paramTranChangeList.Direction = ParameterDirection.Input;
+            paramTranChangeList.Value = transChangeList;
+            sql.Parameters.Add(paramTranChangeList);
+
+            SqlParameter paramStatusApprove = new SqlParameter(@"pStatusApprove", SqlDbType.Int);
+            paramStatusApprove.Direction = ParameterDirection.Input;
+            paramStatusApprove.Value = statusApprove;
+            sql.Parameters.Add(paramStatusApprove);
+
+            SqlParameter paramUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            paramUpdateBy.Direction = ParameterDirection.Input;
+            paramUpdateBy.Value = userID;
+            sql.Parameters.Add(paramUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+            
+            string idList = "";
+            if (table != null && table.Rows.Count > 0)
+            {
+                DataRow dr = table.Rows[0];
+                idList = dr["id_list"].ToString();
+            }
+
+            return idList;
+        }
+        public GetTransWorkShiftDTO GetTransChangeWorkShift(string shareCode, int transChangeWorkShiftID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_trans_change_work_shift " +
+                "@pTransChangeWorkShiftID");
+
+            SqlParameter paramTransChangeWorkShiftID = new SqlParameter(@"pTransChangeWorkShiftID", SqlDbType.Int);
+            paramTransChangeWorkShiftID.Direction = ParameterDirection.Input;
+            paramTransChangeWorkShiftID.Value = transChangeWorkShiftID;
+            sql.Parameters.Add(paramTransChangeWorkShiftID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            GetTransWorkShiftDTO data = new GetTransWorkShiftDTO();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
         public int getUserIdByEmpProfileID(string shareCode, int empProfileID)
         {
             int userID = 0;
@@ -6480,7 +6724,7 @@ namespace TUFTManagement.Core
             return connectionEncoded;
         }
 
-        public DataTable GetAllEmpCode(string pLang)
+        public DataTable GetAllEmpCode(string shareCode, string pLang)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_all_emp_code " +
@@ -6491,17 +6735,17 @@ namespace TUFTManagement.Core
             paramLang.Value = pLang;
             sql.Parameters.Add(paramLang);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             return table;
         }
 
-        public DataTable GetAllWorkShift()
+        public DataTable GetAllWorkShift(string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_all_work_shift ");
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             return table;
         }
@@ -6572,6 +6816,40 @@ namespace TUFTManagement.Core
 
             return listData;
         }
+        public List<EmpTradeWorkShift> GetDropdownEmpTradeWorkShift(string shareCode, string lang, string workDate)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_dropdown_emp_work_shift_trans_change " +
+                "@pWorkDate, " +
+                "@pLang");
+
+            SqlParameter pWorkDate = new SqlParameter(@"pWorkDate", SqlDbType.Date);
+            pWorkDate.Direction = ParameterDirection.Input;
+            pWorkDate.Value = workDate;
+            sql.Parameters.Add(pWorkDate);
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<EmpTradeWorkShift> listData = new List<EmpTradeWorkShift>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmpTradeWorkShift data = new EmpTradeWorkShift();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
         public List<DropdownSubDistrict> GetDropdownSubDistrict(string lang, int districtID)
         {
             DataTable table = new DataTable();
@@ -7318,7 +7596,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public List<GetWorkShift> GetAllWorkShift(string shareCode)
+        public List<GetWorkShift> GetAllWorkShiftList(string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_all_work_shift ");
@@ -7824,7 +8102,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

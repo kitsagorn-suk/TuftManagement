@@ -280,10 +280,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/01/2018 12:20:56</publishTime>
     </File>
     <File Include="bin/TUFTManagement.dll">
-      <publishTime>08/02/2022 16:00:27</publishTime>
+      <publishTime>09/01/2022 13:54:40</publishTime>
     </File>
     <File Include="bin/TUFTManagement.pdb">
-      <publishTime>08/02/2022 16:00:27</publishTime>
+      <publishTime>09/01/2022 13:54:40</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>01/23/2014 13:57:34</publishTime>
@@ -382,7 +382,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/15/2022 14:34:03</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>08/02/2022 16:00:28</publishTime>
+      <publishTime>09/01/2022 13:54:40</publishTime>
     </File>
   </ItemGroup>
 </Project>

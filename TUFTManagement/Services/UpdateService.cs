@@ -12,7 +12,7 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public ReturnIdModel UpdateEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
+        public ReturnIdModel UpdateEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             if (_sql == null)
             {
@@ -159,7 +159,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateEmpRateService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpRateRequestDTO saveEmpRateDTO, string roleIDList, int userID)
+        public ReturnIdModel UpdateEmpRateService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpRateRequestDTO saveEmpRateDTO, int userID)
         {
             if (_sql == null)
             {
@@ -207,7 +207,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateEmpWorkShiftService(string authorization, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, string roleIDList, int userID)
+        public ReturnIdModel UpdateEmpWorkShiftService(string authorization, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
         {
             if (_sql == null)
             {
@@ -253,7 +253,7 @@ namespace TUFTManagement.Services
             }
             return value;
         }
-        public ReturnIdModel UpdateEmpWorkTimeService(string authorization, string lang, string platform, int logID, SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, string roleIDList, int userID)
+        public ReturnIdModel UpdateEmpWorkTimeService(string authorization, string lang, string platform, int logID, SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int userID)
         {
             if (_sql == null)
             {
@@ -333,7 +333,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel ApproveWorkTimeTransChangeService(string authorization, string lang, string platform, int logID, SaveWorkTimeTransChangeRequestDTO transChangeRequest, string roleIDList, int userID)
+        public ReturnIdModel ApproveWorkTimeTransChangeService(string authorization, string lang, string platform, int logID, SaveWorkTimeTransChangeRequestDTO transChangeRequest, int userID)
         {
             if (_sql == null)
             {
@@ -386,7 +386,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateEmpStatusService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpStatusDTO saveEmpStatusDTO, string roleIDList, int userID)
+        public ReturnIdModel UpdateEmpStatusService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpStatusDTO saveEmpStatusDTO, int userID)
         {
             if (_sql == null)
             {
@@ -430,7 +430,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateLeaveDetailService(string authorization, string lang, string platform, int logID, SaveLeaveDetailDTO saveLeaveDetailDTO, string roleIDList, int userID,string shareCode)
+        public ReturnIdModel UpdateLeaveDetailService(string authorization, string lang, string platform, int logID, SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
         {
             if (_sql == null)
             {
@@ -692,7 +692,8 @@ namespace TUFTManagement.Services
 
 
         #region SystemRole
-        public ReturnIdModel UpdateSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel UpdateSystemRoleTempService(string authorization, string lang, string platform, int logID, 
+            SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -731,7 +732,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel UpdateSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
         {
             if (_sql == null)
             {

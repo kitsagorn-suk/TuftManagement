@@ -72,6 +72,35 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/get/accessRole")]
+        [HttpGet]
+        public IHttpActionResult GetAccessRole()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(request.Headers.ToString());
+                int logID = _sql.InsertLogReceiveData("GetAccessRole", json, timestampNow.ToString(), authHeader,
+                    0, fromProject.ToLower());
+                LoginService srv = new LoginService();
+
+                var obj = srv.GetAccessRole(authHeader, lang, fromProject.ToLower(), shareCode, data.userID, logID);
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
         [Route("1.0/logout")]
         [HttpPost]
         public IHttpActionResult Logout()
@@ -215,6 +244,17 @@ namespace TUFTManagement.Controllers
                     else
                     {
                         throw new Exception("Missing Parameter : departmentID");
+                    }
+                }
+                else if (getDropdownRequestDTO.moduleName.ToLower() == "empTradeWorkShift".ToLower())
+                {
+                    if (string.IsNullOrEmpty(getDropdownRequestDTO.workDate))
+                    {
+                        throw new Exception("Missing Parameter : workDate");
+                    }
+                    else
+                    {
+                        obj = srv.GetEmpTradeWorkShiftDropdownService(shareCode, authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                     }
                 }
                 else
@@ -541,7 +581,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -646,25 +686,25 @@ namespace TUFTManagement.Controllers
 
                             if (_chkDup == 0 && _chkParent > 0)
                             {
-                                obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item,  data.userID, shareCode);
 
 
                             }
                             else if (_chkDup > 0 && _chkParent > 0)
                             {
-                                obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.userID, shareCode);
 
 
                             }
 
                             if (_chkDupPosition == 0 )
                             {
-                                obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
 
                             }
                             else
                             {
-                                obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
 
                             }
                         }
@@ -756,12 +796,12 @@ namespace TUFTManagement.Controllers
                     if (saveEmpProfileDTO.empProfileID.Equals(0) && saveEmpProfileDTO.mode.ToLower() == "insert")
                     {
                         InsertService srv = new InsertService();
-                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
                     }
                     else if (saveEmpProfileDTO.empProfileID > 0 && saveEmpProfileDTO.mode.ToLower() == "update")
                     {
                         UpdateService srv = new UpdateService();
-                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
                     }
                 }
                 
@@ -906,12 +946,12 @@ namespace TUFTManagement.Controllers
             try
             {
                 string json = JsonConvert.SerializeObject(data.userID);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfileV1_1", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
+                var obj = srv.GetEmpProfileV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
                 
                 return Ok(obj);
             }
@@ -953,7 +993,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1004,11 +1044,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpRateDTO.empRateID.Equals(0) || saveEmpRateDTO.empRateID.Equals(null))
                 {
-                    obj = srv.InsertEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
+                    obj = srv.InsertEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO,  data.userID);
                 }
                 else
                 {
-                    obj = srv2.UpdateEmpRateService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
+                    obj = srv2.UpdateEmpRateService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO,  data.userID);
                 }
                 
 
@@ -1085,7 +1125,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpRateService(authHeader, lang, fromProject.ToLower(), logID, empRateRequestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpRateService(authHeader, lang, fromProject.ToLower(), logID, empRateRequestDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1135,7 +1175,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 UpdateService srv = new UpdateService();
-                var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO, data.roleIDList, data.userID);
+                var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1188,15 +1228,15 @@ namespace TUFTManagement.Controllers
                 {
                     if (saveEmpWorkShiftRequestDTO.empWorkShiftID.Equals(0) && saveEmpWorkShiftRequestDTO.mode.ToLower() == "insert")
                     {
-                        obj = srvInsert.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                        obj = srvInsert.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
                     }
                     else if (saveEmpWorkShiftRequestDTO.empWorkShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "update")
                     {
-                        obj = srvUpdate.UpdateEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                        obj = srvUpdate.UpdateEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
                     }
                     else if (saveEmpWorkShiftRequestDTO.empWorkShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "delete")
                     {
-                        obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                        obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
                     }
                 }
                 
@@ -1276,7 +1316,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, requestDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1347,8 +1387,8 @@ namespace TUFTManagement.Controllers
                             dsexcelRecords = reader.AsDataSet();
                             reader.Close();
 
-                            DataTable dtEmpCode = _sql.GetAllEmpCode(lang);
-                            DataTable dtWorkShift = _sql.GetAllWorkShift();
+                            DataTable dtEmpCode = _sql.GetAllEmpCode(shareCode, lang);
+                            DataTable dtWorkShift = _sql.GetAllWorkShift(shareCode);
 
                             if (dsexcelRecords != null && dsexcelRecords.Tables.Count > 0)
                             {
@@ -1370,7 +1410,7 @@ namespace TUFTManagement.Controllers
                                         throw new Exception("กรุณาระบุเดือน");
                                     }
 
-                                    int countDate = DateTime.DaysInMonth(year, month);                                    
+                                    int countDate = DateTime.DaysInMonth(year, month);
                                     string isFix = Convert.ToString(dtExcel.Rows[i][1]);
 
                                     string empCode = Convert.ToString(dtExcel.Rows[i][0]);
@@ -1385,13 +1425,14 @@ namespace TUFTManagement.Controllers
                                         employeeUpload.departmentPositionName = dremp[0]["dept_position_name"].ToString();
                                         employeeUpload.isFix = int.Parse(isFix);
                                     }
-                                    
-                                    for (int j = 2; j < 31; j++)
+
+                                    for (int j = 2; j < countDate + 2; j++)
                                     {
                                         WorkShiftUpload workShiftUpload = new WorkShiftUpload();
-                                        int.TryParse(dtExcel.Rows[i][j - 1].ToString(), out day);
+                                        int.TryParse(dtExcel.Rows[2][j].ToString(), out day);
 
-                                        string wsCode = Convert.ToString(dtExcel.Rows[i][j]);                                        
+                                        string wsCode = Convert.ToString(dtExcel.Rows[i][j]);
+
                                         string workDate = year.ToString() + "-" + month.ToString() + "-" + day.ToString();
 
                                         DataRow[] drwork = dtWorkShift.Select("ws_code='" + wsCode + "'");
@@ -1403,39 +1444,16 @@ namespace TUFTManagement.Controllers
                                             workShiftUpload.wsCode = drwork[0]["ws_code"].ToString();
                                             workShiftUpload.timeStart = drwork[0]["time_start"].ToString();
                                             workShiftUpload.timeEnd = drwork[0]["time_end"].ToString();
-                                            workShiftUpload.workDate = workDate;
+                                            workShiftUpload.workDate = Utility.convertToDateServiceFormatString(workDate);
                                         }
                                         employeeUpload.workShiftUpload.Add(workShiftUpload);
                                     }
                                     value.data.employeeUpload.Add(employeeUpload);
-                                    //for (int j = 1; j <= countDate; j++)
-                                    //{
-                                    //    string work_shift = Convert.ToString(dtExcel.Rows[i][j].ToString());
-                                    //    DataRow[] drwork = dtWorkShift.Select("ws_code='" + work_shift + "'");
-                                    //    if (drwork.Length > 0)
-                                    //    {
-                                    //        int.TryParse(drwork[0]["id"].ToString(), out workShiftID);
-                                    //    }
-                                    //    emp_work_time objWork = new emp_work_time();
-                                    //    objWork.user_id = userID;
-                                    //    objWork.work_shift_id = workShiftID;
-                                    //    objWork.work_date = Convert.ToDateTime(year.ToString() + '-' + month.ToString().PadLeft(2, '0') + '-' + j.ToString().PadLeft(2, '0'));
-                                    //    objWork.is_fix = true;
-                                    //    objEntity.emp_work_time.Add(objWork);
-                                    //}
+                                    
                                 }
 
-                                int output = objEntity.SaveChanges();
-                                if (output > 0)
-                                {
-                                    value.success = true;
-                                    value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
-                                }
-                                else
-                                {
-                                    value.success = false;
-                                    value.msg = new MsgModel() { code = 0, text = "Something Went Wrong!, The Excel file uploaded has fiald.", topic = "No Success" };
-                                }
+                                value.success = true;
+                                value.msg = new MsgModel() { code = 0, text = "The Excel file has been successfully uploaded.", topic = "Success" };
                             }
                             else
                             {
@@ -1567,7 +1585,7 @@ namespace TUFTManagement.Controllers
 
                     if (checkMissingOptional == "" && saveEmpWorkTimeRequestDTO_V1_1.empWorkTimeRequestDTO.Count > 0)
                     {
-                        obj = srv.InsertEmpWorkTimeV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO_V1_1, data.roleIDList, data.userID);
+                        obj = srv.InsertEmpWorkTimeV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO_V1_1,  data.userID);
                     }
                 }
 
@@ -1687,7 +1705,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.GetEmpWorkShiftTimeService(authHeader, lang, fromProject.ToLower(), logID, getHistoryWorkShiftTimeDTO, data.roleIDList, shareCode);
+                obj = srv.GetEmpWorkShiftTimeService(authHeader, lang, fromProject.ToLower(), logID, getHistoryWorkShiftTimeDTO,  shareCode);
 
                 return Ok(obj);
             }
@@ -1703,6 +1721,78 @@ namespace TUFTManagement.Controllers
 
 
         #region wait approve zone
+
+        [Route("1.0/save/changeWorkShiftTime")]
+        [HttpPost]
+        public IHttpActionResult SaveChangeWorkShiftTime(SaveChangeWorkShiftTimeRequestDTO saveChangeWorkShiftTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(saveChangeWorkShiftTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("SaveChangeWorkShiftTime", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+
+                if (saveChangeWorkShiftTimeRequestDTO.empWorkTimeID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.empWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "empWorkTimeID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.userID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.userID.Equals(null))
+                {
+                    checkMissingOptional += "userID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.workShiftID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.workShiftID.Equals(null))
+                {
+                    checkMissingOptional += "workShiftID ";
+                }
+
+                if (saveChangeWorkShiftTimeRequestDTO.newEmpWorkTimeID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newEmpWorkTimeID.Equals(null))
+                {
+                    checkMissingOptional += "newEmpWorkTimeID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.newUserID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newUserID.Equals(null))
+                {
+                    checkMissingOptional += "newUserID ";
+                }
+                if (saveChangeWorkShiftTimeRequestDTO.newWorkShiftID.Equals(0) || saveChangeWorkShiftTimeRequestDTO.newWorkShiftID.Equals(null))
+                {
+                    checkMissingOptional += "newWorkShiftID ";
+                }
+
+                if (saveChangeWorkShiftTimeRequestDTO.remark.Equals(0) || saveChangeWorkShiftTimeRequestDTO.remark.Equals(null))
+                {
+                    checkMissingOptional += "remark ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    InsertService srv = new InsertService();
+                    obj = srv.InsertEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveChangeWorkShiftTimeRequestDTO,  data.userID);
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         [Route("1.0/search/worktime/pending")]
         [HttpPost]
@@ -1751,6 +1841,64 @@ namespace TUFTManagement.Controllers
                 }
 
                 obj = srv.SearchWorkTimePendingService(authHeader, lang, fromProject.ToLower(), logID, searchWorkTimePendingDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/Approve/changeWorkShiftTime")]
+        [HttpPost]
+        public IHttpActionResult ApproveChangeWorkShiftTime(ApproveChangeWorkShiftTimeRequestDTO approveChangeWorkShiftTimeRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(approveChangeWorkShiftTimeRequestDTO);
+                int logID = _sql.InsertLogReceiveData("ApproveChangeWorkShiftTime", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                string strApproveListEmpWorkTimeID = JsonConvert.SerializeObject(approveChangeWorkShiftTimeRequestDTO.approveListEmpWorkTimeID);
+                strApproveListEmpWorkTimeID = string.Join(",", approveChangeWorkShiftTimeRequestDTO.approveListEmpWorkTimeID);
+                approveChangeWorkShiftTimeRequestDTO.prepairApproveListEmpWorkTimeID = strApproveListEmpWorkTimeID;
+
+                string strRejectListEmpWorkTimeID = JsonConvert.SerializeObject(approveChangeWorkShiftTimeRequestDTO.rejectListEmpWorkTimeID);
+                strRejectListEmpWorkTimeID = string.Join(",", approveChangeWorkShiftTimeRequestDTO.rejectListEmpWorkTimeID);
+                approveChangeWorkShiftTimeRequestDTO.prepairRejectListEmpWorkTimeID = strRejectListEmpWorkTimeID;
+
+                if (string.IsNullOrEmpty(approveChangeWorkShiftTimeRequestDTO.prepairApproveListEmpWorkTimeID))
+                {
+                    checkMissingOptional += "approveListEmpWorkTimeID[] ";
+                }
+
+                if (string.IsNullOrEmpty(approveChangeWorkShiftTimeRequestDTO.prepairRejectListEmpWorkTimeID))
+                {
+                    checkMissingOptional += "rejectListEmpWorkTimeID[] ";
+                }
+                
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    InsertService srv = new InsertService();
+                    obj = srv.ApproveEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, approveChangeWorkShiftTimeRequestDTO,  data.userID);
+                }
 
                 return Ok(obj);
             }
@@ -1811,7 +1959,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -1870,7 +2018,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -1929,7 +2077,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -1988,7 +2136,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2047,7 +2195,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2133,7 +2281,7 @@ namespace TUFTManagement.Controllers
 
                     if (transChangeRequestDTO.transChangeID.Equals(0) || transChangeRequestDTO.transChangeID.Equals(null))
                     {
-                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, fromProject.ToLower(), logID, transChangeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, fromProject.ToLower(), logID, transChangeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2341,7 +2489,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_position", data.roleIDList, shareCode);
+                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_position",  shareCode);
 
                 return Ok(obj);
             }
@@ -2397,7 +2545,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterBodySetService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_body_set", data.roleIDList, shareCode);
+                obj = srv.SearchMasterBodySetService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_body_set", shareCode);
 
                 return Ok(obj);
             }
@@ -2445,15 +2593,15 @@ namespace TUFTManagement.Controllers
                 {
                     if (saveBodySetDTO.mode.ToLower().Equals("insert"))
                     {
-                        obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO,  data.userID, shareCode);
                     }
                     else if (saveBodySetDTO.mode.ToLower().Equals("update"))
                     {
-                        obj = srv.UpdateBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srv.UpdateBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO,  data.userID, shareCode);
                     }
                     else if (saveBodySetDTO.mode.ToLower().Equals("delete"))
                     {
-                        obj = srv.DeleteBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srv.DeleteBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO,  data.userID, shareCode);
                     }
                 }
 
@@ -2694,7 +2842,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterDepartmentService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_department", data.roleIDList, shareCode);
+                obj = srv.SearchMasterDepartmentService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_department",  shareCode);
 
                 return Ok(obj);
             }
@@ -2881,7 +3029,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterKeyService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_master_key", data.roleIDList, shareCode);
+                obj = srv.SearchMasterKeyService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_master_key",  shareCode);
 
                 return Ok(obj);
             }
@@ -3100,7 +3248,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, searchSystemMasterDataDTO, "system_master", data.roleIDList, shareCode);
+                obj = srv.SearchSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, searchSystemMasterDataDTO, "system_master",  shareCode);
 
                 return Ok(obj);
             }
@@ -3427,15 +3575,15 @@ namespace TUFTManagement.Controllers
                 {
                     if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
                     {
-                        obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID, shareCode);
                     }
                     else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
                     {
-                        obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID, shareCode);
                     }
                     //else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
                     //{
-                        //obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID);
+                        //obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID);
                     //}
                 }
 

@@ -6,6 +6,7 @@ using System.Web;
 using TUFTManagement.Core;
 using TUFTManagement.DTO;
 using TUFTManagement.Models;
+using static TUFTManagement.DTO.SaveChangeWorkShiftTimeRequestDTO;
 using static TUFTManagement.DTO.SaveEmpWorkTimeRequestDTO_V1_1;
 
 namespace TUFTManagement.Services
@@ -17,7 +18,7 @@ namespace TUFTManagement.Services
         #region Insert Employees
 
         public InsertLoginModel InsertEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID,
-            SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
+            SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             if (_sql == null)
             {
@@ -100,7 +101,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertEmpRateService(string authorization, string lang, string platform, int logID,
-            SaveEmpRateRequestDTO saveEmpRateDTO, string roleIDList, int userID)
+            SaveEmpRateRequestDTO saveEmpRateDTO, int userID)
         {
             if (_sql == null)
             {
@@ -140,7 +141,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertEmpWorkShiftService(string authorization, string lang, string platform, int logID,
-            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, string roleIDList, int userID)
+            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
         {
             if (_sql == null)
             {
@@ -180,7 +181,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertLeaveDetailService(string authorization, string lang, string platform, int logID,
-    SaveLeaveDetailDTO saveLeaveDetailDTO, string roleIDList, int userID,string shareCode)
+    SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
         {
             if (_sql == null)
             {
@@ -268,7 +269,7 @@ namespace TUFTManagement.Services
         #region Insert Time Attendance
 
         public ReturnIdModel InsertEmpWorkTimeV1_1Service(string shareCode, string authorization, string lang, string platform, int logID,
-            SaveEmpWorkTimeRequestDTO_V1_1 saveEmpWorkTimeRequestDTO_V1_1, string roleIDList, int tokenUserID)
+            SaveEmpWorkTimeRequestDTO_V1_1 saveEmpWorkTimeRequestDTO_V1_1, int tokenUserID)
         {
             if (_sql == null)
             {
@@ -320,10 +321,129 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public ReturnIdModel InsertEmpWorkShiftTimeTransChangeService(string shareCode, string authorization, string lang, string platform, int logID,
+            SaveChangeWorkShiftTimeRequestDTO saveChangeWorkShiftTimeRequestDTO, int tokenUserID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+            
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationWorktime(1, lang, platform, saveChangeWorkShiftTimeRequestDTO.empWorkTimeID, shareCode);
+                if (validation.Success == true)
+                {
+                    int firstTransChange = _sql.InsertFirstEmpWorkTimeTransChangeTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
+                    int secondTransChange = _sql.InsertSecondEmpWorkTimeTransChangeTrade(shareCode, saveChangeWorkShiftTimeRequestDTO, tokenUserID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertEmpWorkShiftTimeTransChangeService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel ApproveEmpWorkShiftTimeTransChangeService(string shareCode, string authorization, string lang, string platform, int logID,
+            ApproveChangeWorkShiftTimeRequestDTO approveChangeWorkShiftTimeRequestDTO, int tokenUserID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationApproveTransChange(1, lang, platform, approveChangeWorkShiftTimeRequestDTO, shareCode);
+
+                if (validation.Success == true)
+                {
+                    //Approve CASE
+                    foreach (int ApproveEmpWorkTimeID in approveChangeWorkShiftTimeRequestDTO.approveListEmpWorkTimeID)
+                    {
+                        GetTransWorkShiftDTO getDetails = _sql.GetTransChangeWorkShift(shareCode, ApproveEmpWorkTimeID);
+                        
+                        
+                        if (getDetails.action == 1)
+                        {
+                            //Update work shift CASE
+                            SaveChangeWorkShiftTimeRequestDTO itemUpdate = new SaveChangeWorkShiftTimeRequestDTO();
+                            itemUpdate.empWorkTimeID = getDetails.workTimeID;
+                            itemUpdate.newWorkShiftID = getDetails.workShiftIdNew;
+
+                            int changeCase = _sql.UpdateEmpWorkShif(shareCode, itemUpdate, tokenUserID);
+                        }
+                        else if (getDetails.action == 2)
+                        {
+                            //Trade work shift CASE
+                            SaveChangeWorkShiftTimeRequestDTO targetUpdate = new SaveChangeWorkShiftTimeRequestDTO();
+                            targetUpdate.empWorkTimeID = getDetails.workTimeID;
+                            targetUpdate.newWorkShiftID = getDetails.workShiftIdNew;
+
+                            SaveChangeWorkShiftTimeRequestDTO effectUpdate = new SaveChangeWorkShiftTimeRequestDTO();
+                            effectUpdate.empWorkTimeID = getDetails.tradeWorkTimeID;
+                            effectUpdate.newWorkShiftID = getDetails.workTimeID;
+                            
+                            int tradeTargetCase = _sql.UpdateEmpWorkShif(shareCode, targetUpdate, tokenUserID);
+                            int tradeEffectCase = _sql.UpdateEmpWorkShif(shareCode, effectUpdate, tokenUserID);
+                            
+                        }
+                    }
+                    string approvedList = _sql.ApproveEmpWorkShift(shareCode, approveChangeWorkShiftTimeRequestDTO.prepairApproveListEmpWorkTimeID, 1, tokenUserID);
+                    
+                    //Reject CASE
+                    string rejectList = _sql.ApproveEmpWorkShift(shareCode, approveChangeWorkShiftTimeRequestDTO.prepairRejectListEmpWorkTimeID, 2, tokenUserID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+                
+                
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "ApproveEmpWorkShiftTimeTransChangeService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
         #endregion
 
         #region SystemRole
-        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -362,7 +482,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
         {
             if (_sql == null)
             {

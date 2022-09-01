@@ -20,9 +20,9 @@ namespace TUFTManagement.Models
         public int positionID { get; set; } = 0;
         public string positionName { get; set; } = "";
         public string token { get; set; } = "";
-        public List<RoleIDList> role { get; set; }
+        //public List<RoleIDList> role { get; set; }
         public List<ShareHolderList> shareHolder { get; set; }
-        public List<AccessRole> accessList { get; set; }
+        
 
         public void loadData(DataRow dr)
         {
@@ -45,17 +45,17 @@ namespace TUFTManagement.Models
         }
     }
 
-    public class RoleIDList
-    {
-        public int roleID { set; get; } = 0;
-        public string roleName { set; get; } = "";
+    //public class RoleIDList
+    //{
+    //    public int roleID { set; get; } = 0;
+    //    public string roleName { set; get; } = "";
 
-        public void loadDataUserRole(DataRow dr)
-        {
-            roleID = int.Parse(dr["role_id"].ToString());
-            roleName = dr["name"].ToString();
-        }
-    }
+    //    public void loadDataUserRole(DataRow dr)
+    //    {
+    //        roleID = int.Parse(dr["role_id"].ToString());
+    //        roleName = dr["name"].ToString();
+    //    }
+    //}
 
     public class ShareHolderList
     {
@@ -63,7 +63,8 @@ namespace TUFTManagement.Models
         public string shareCode { set; get; } = "";
         public string shareName { set; get; } = "";
         public List<AgentList> agentList { get; set; }
-        
+        public List<AccessRole> accessList { get; set; }
+
         public void loadDataShareHolder(DataRow dr)
         {
             shareID = int.Parse(dr["share_id"].ToString());

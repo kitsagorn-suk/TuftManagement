@@ -33,7 +33,7 @@ namespace TUFTManagement.Core
                 dataAuth.userID = int.Parse(tokenPayload["user_id"].ToString());
                 dataAuth.createDate = Convert.ToDouble(tokenPayload["create_date"].ToString());
                 dataAuth.expireDate = Convert.ToDouble(tokenPayload["expire_date"].ToString());
-                dataAuth.roleIDList = tokenPayload["roleIDList"].ToString();
+                dataAuth.positionID = int.Parse(tokenPayload["position_id"].ToString());
                 dataAuth.shareCodeList = tokenPayload["shareCodeList"].ToString();
 
                 dataAuth.userName = tokenHeader["username"].ToString();
