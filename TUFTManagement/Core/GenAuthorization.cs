@@ -9,7 +9,8 @@ namespace TUFTManagement.Core
 {
     public class GenAuthorization
     {
-        public static string GetAuthorization(string username, string password, string signal, string fromProject, CheckUserByTokenModel dataFormToken)
+        public static string GetAuthorization(string username, string password, string signal, string fromProject, 
+            CheckUserByTokenModel dataFormToken)
         {
             SQLManager _sql = SQLManager.Instance;
             int expire_token = int.Parse(WebConfigurationManager.AppSettings["expire_token"]);
@@ -30,7 +31,7 @@ namespace TUFTManagement.Core
             payload += " \"expire_date\":" + timestampExpire + ",";
             payload += " \"create_date\":" + timestampNow + ",";
             payload += " \"user_id\":" + dataFormToken.userID + ",";
-            payload += " \"roleIDList\":" + dataFormToken.roleIDList + ",";
+            payload += " \"position_id\":" + dataFormToken.positionID + ",";
             payload += " \"shareCodeList\":\"" + dataFormToken.shareCodeList + "\",";
             payload += " }";
 

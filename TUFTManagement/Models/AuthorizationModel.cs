@@ -10,7 +10,8 @@ namespace TUFTManagement.Models
         public int userID { get; set; } = 0;
         public int profileID { get; set; } = 0;
         public int companyID { get; set; } = 0;
-        public string roleIDList { get; set; } = "";
+        public int positionID { get; set; } = 0;
+        //public string roleIDList { get; set; } = "";
         public string userName { get; set; } = "";
         public string password { get; set; } = "";
         public string shareCodeList { get; set; } = "";

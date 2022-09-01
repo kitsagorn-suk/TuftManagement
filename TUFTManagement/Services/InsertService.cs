@@ -18,7 +18,7 @@ namespace TUFTManagement.Services
         #region Insert Employees
 
         public InsertLoginModel InsertEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID,
-            SaveEmpProfileDTO saveEmpProfileDTO, string roleIDList, int userID)
+            SaveEmpProfileDTO saveEmpProfileDTO, int userID)
         {
             if (_sql == null)
             {
@@ -101,7 +101,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertEmpRateService(string authorization, string lang, string platform, int logID,
-            SaveEmpRateRequestDTO saveEmpRateDTO, string roleIDList, int userID)
+            SaveEmpRateRequestDTO saveEmpRateDTO, int userID)
         {
             if (_sql == null)
             {
@@ -141,7 +141,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertEmpWorkShiftService(string authorization, string lang, string platform, int logID,
-            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, string roleIDList, int userID)
+            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
         {
             if (_sql == null)
             {
@@ -181,7 +181,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertLeaveDetailService(string authorization, string lang, string platform, int logID,
-    SaveLeaveDetailDTO saveLeaveDetailDTO, string roleIDList, int userID,string shareCode)
+    SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
         {
             if (_sql == null)
             {
@@ -269,7 +269,7 @@ namespace TUFTManagement.Services
         #region Insert Time Attendance
 
         public ReturnIdModel InsertEmpWorkTimeV1_1Service(string shareCode, string authorization, string lang, string platform, int logID,
-            SaveEmpWorkTimeRequestDTO_V1_1 saveEmpWorkTimeRequestDTO_V1_1, string roleIDList, int tokenUserID)
+            SaveEmpWorkTimeRequestDTO_V1_1 saveEmpWorkTimeRequestDTO_V1_1, int tokenUserID)
         {
             if (_sql == null)
             {
@@ -322,7 +322,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertEmpWorkShiftTimeTransChangeService(string shareCode, string authorization, string lang, string platform, int logID,
-            SaveChangeWorkShiftTimeRequestDTO saveChangeWorkShiftTimeRequestDTO, string roleIDList, int tokenUserID)
+            SaveChangeWorkShiftTimeRequestDTO saveChangeWorkShiftTimeRequestDTO, int tokenUserID)
         {
             if (_sql == null)
             {
@@ -364,7 +364,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel ApproveEmpWorkShiftTimeTransChangeService(string shareCode, string authorization, string lang, string platform, int logID,
-            ApproveChangeWorkShiftTimeRequestDTO approveChangeWorkShiftTimeRequestDTO, string roleIDList, int tokenUserID)
+            ApproveChangeWorkShiftTimeRequestDTO approveChangeWorkShiftTimeRequestDTO, int tokenUserID)
         {
             if (_sql == null)
             {
@@ -443,7 +443,7 @@ namespace TUFTManagement.Services
         #endregion
 
         #region SystemRole
-        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -482,7 +482,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
         {
             if (_sql == null)
             {

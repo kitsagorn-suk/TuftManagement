@@ -581,7 +581,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -686,25 +686,25 @@ namespace TUFTManagement.Controllers
 
                             if (_chkDup == 0 && _chkParent > 0)
                             {
-                                obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item,  data.userID, shareCode);
 
 
                             }
                             else if (_chkDup > 0 && _chkParent > 0)
                             {
-                                obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.userID, shareCode);
 
 
                             }
 
                             if (_chkDupPosition == 0 )
                             {
-                                obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
 
                             }
                             else
                             {
-                                obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item, data.roleIDList, data.userID, shareCode);
+                                obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
 
                             }
                         }
@@ -796,12 +796,12 @@ namespace TUFTManagement.Controllers
                     if (saveEmpProfileDTO.empProfileID.Equals(0) && saveEmpProfileDTO.mode.ToLower() == "insert")
                     {
                         InsertService srv = new InsertService();
-                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
                     }
                     else if (saveEmpProfileDTO.empProfileID > 0 && saveEmpProfileDTO.mode.ToLower() == "update")
                     {
                         UpdateService srv = new UpdateService();
-                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
                     }
                 }
                 
@@ -993,7 +993,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1044,11 +1044,11 @@ namespace TUFTManagement.Controllers
 
                 if (saveEmpRateDTO.empRateID.Equals(0) || saveEmpRateDTO.empRateID.Equals(null))
                 {
-                    obj = srv.InsertEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
+                    obj = srv.InsertEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO,  data.userID);
                 }
                 else
                 {
-                    obj = srv2.UpdateEmpRateService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.roleIDList, data.userID);
+                    obj = srv2.UpdateEmpRateService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO,  data.userID);
                 }
                 
 
@@ -1125,7 +1125,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpRateService(authHeader, lang, fromProject.ToLower(), logID, empRateRequestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpRateService(authHeader, lang, fromProject.ToLower(), logID, empRateRequestDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1175,7 +1175,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 UpdateService srv = new UpdateService();
-                var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO, data.roleIDList, data.userID);
+                var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1228,15 +1228,15 @@ namespace TUFTManagement.Controllers
                 {
                     if (saveEmpWorkShiftRequestDTO.empWorkShiftID.Equals(0) && saveEmpWorkShiftRequestDTO.mode.ToLower() == "insert")
                     {
-                        obj = srvInsert.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                        obj = srvInsert.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
                     }
                     else if (saveEmpWorkShiftRequestDTO.empWorkShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "update")
                     {
-                        obj = srvUpdate.UpdateEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                        obj = srvUpdate.UpdateEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
                     }
                     else if (saveEmpWorkShiftRequestDTO.empWorkShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "delete")
                     {
-                        obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.roleIDList, data.userID);
+                        obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
                     }
                 }
                 
@@ -1316,7 +1316,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.roleIDList, data.userID);
+                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, requestDTO,  data.userID);
 
                 return Ok(obj);
             }
@@ -1585,7 +1585,7 @@ namespace TUFTManagement.Controllers
 
                     if (checkMissingOptional == "" && saveEmpWorkTimeRequestDTO_V1_1.empWorkTimeRequestDTO.Count > 0)
                     {
-                        obj = srv.InsertEmpWorkTimeV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO_V1_1, data.roleIDList, data.userID);
+                        obj = srv.InsertEmpWorkTimeV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO_V1_1,  data.userID);
                     }
                 }
 
@@ -1705,7 +1705,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.GetEmpWorkShiftTimeService(authHeader, lang, fromProject.ToLower(), logID, getHistoryWorkShiftTimeDTO, data.roleIDList, shareCode);
+                obj = srv.GetEmpWorkShiftTimeService(authHeader, lang, fromProject.ToLower(), logID, getHistoryWorkShiftTimeDTO,  shareCode);
 
                 return Ok(obj);
             }
@@ -1783,7 +1783,7 @@ namespace TUFTManagement.Controllers
                 else
                 {
                     InsertService srv = new InsertService();
-                    obj = srv.InsertEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveChangeWorkShiftTimeRequestDTO, data.roleIDList, data.userID);
+                    obj = srv.InsertEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveChangeWorkShiftTimeRequestDTO,  data.userID);
                 }
 
                 return Ok(obj);
@@ -1897,7 +1897,7 @@ namespace TUFTManagement.Controllers
                 else
                 {
                     InsertService srv = new InsertService();
-                    obj = srv.ApproveEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, approveChangeWorkShiftTimeRequestDTO, data.roleIDList, data.userID);
+                    obj = srv.ApproveEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, approveChangeWorkShiftTimeRequestDTO,  data.userID);
                 }
 
                 return Ok(obj);
@@ -1959,7 +1959,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2018,7 +2018,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2077,7 +2077,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2136,7 +2136,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2195,7 +2195,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2281,7 +2281,7 @@ namespace TUFTManagement.Controllers
 
                     if (transChangeRequestDTO.transChangeID.Equals(0) || transChangeRequestDTO.transChangeID.Equals(null))
                     {
-                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, fromProject.ToLower(), logID, transChangeRequestDTO, data.roleIDList, data.userID);
+                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, fromProject.ToLower(), logID, transChangeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2489,7 +2489,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_position", data.roleIDList, shareCode);
+                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_position",  shareCode);
 
                 return Ok(obj);
             }
@@ -2545,7 +2545,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterBodySetService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_body_set", data.roleIDList, shareCode);
+                obj = srv.SearchMasterBodySetService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_body_set", shareCode);
 
                 return Ok(obj);
             }
@@ -2593,15 +2593,15 @@ namespace TUFTManagement.Controllers
                 {
                     if (saveBodySetDTO.mode.ToLower().Equals("insert"))
                     {
-                        obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srv.InsertBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO,  data.userID, shareCode);
                     }
                     else if (saveBodySetDTO.mode.ToLower().Equals("update"))
                     {
-                        obj = srv.UpdateBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srv.UpdateBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO,  data.userID, shareCode);
                     }
                     else if (saveBodySetDTO.mode.ToLower().Equals("delete"))
                     {
-                        obj = srv.DeleteBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srv.DeleteBodySetService(authHeader, lang, fromProject.ToLower(), logID, saveBodySetDTO,  data.userID, shareCode);
                     }
                 }
 
@@ -2842,7 +2842,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterDepartmentService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_department", data.roleIDList, shareCode);
+                obj = srv.SearchMasterDepartmentService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_department",  shareCode);
 
                 return Ok(obj);
             }
@@ -3029,7 +3029,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchMasterKeyService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_master_key", data.roleIDList, shareCode);
+                obj = srv.SearchMasterKeyService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_master_key",  shareCode);
 
                 return Ok(obj);
             }
@@ -3248,7 +3248,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, searchSystemMasterDataDTO, "system_master", data.roleIDList, shareCode);
+                obj = srv.SearchSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, searchSystemMasterDataDTO, "system_master",  shareCode);
 
                 return Ok(obj);
             }
@@ -3575,15 +3575,15 @@ namespace TUFTManagement.Controllers
                 {
                     if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
                     {
-                        obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID, shareCode);
                     }
                     else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
                     {
-                        obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID, shareCode);
+                        obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID, shareCode);
                     }
                     //else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
                     //{
-                        //obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.roleIDList, data.userID);
+                        //obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID);
                     //}
                 }
 

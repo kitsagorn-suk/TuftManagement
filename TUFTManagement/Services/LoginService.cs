@@ -32,12 +32,13 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    string auth = GenAuthorization.GetAuthorization(username, password, "InventoryComplex", fromProject.ToLower(), dataFormToken);
+                    string auth = GenAuthorization.GetAuthorization(username, password, "InventoryComplex", 
+                        fromProject.ToLower(), dataFormToken);
                     value.data = _sql.Login(username, password, auth, lang);
                     value.data.token = auth;
 
-                    value.data.role = new List<RoleIDList>();
-                    value.data.role = _sql.GetUserRole(value.data.id, lang);
+                    //value.data.role = new List<RoleIDList>();
+                    //value.data.role = _sql.GetUserRole(value.data.id, lang);
 
                     value.data.shareHolder = new List<ShareHolderList>();
                     value.data.shareHolder = _sql.GetUserShareHolder(value.data.id, lang, fromProject);

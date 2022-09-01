@@ -20,7 +20,7 @@ namespace TUFTManagement.Models
         public string nickName { set; get; } = "";
         public string phoneNumber { set; get; } = "";
 
-        public List<RoleIDList> role { get; set; }
+        //public List<RoleIDList> role { get; set; }
         public List<ShareHolderList> shareHolder { get; set; }
         public List<AccessRole> accessList { get; set; }
 

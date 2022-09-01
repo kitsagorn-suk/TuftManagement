@@ -244,8 +244,8 @@ namespace TUFTManagement.Services
                     data = _sql.GetEmpProfile(shareCode, userID, lang);
                     value.data = data;
 
-                    value.data.role = new List<RoleIDList>();
-                    value.data.role = _sql.GetUserRole(userID, lang);
+                    //value.data.role = new List<RoleIDList>();
+                    //value.data.role = _sql.GetUserRole(userID, lang);
 
                     value.data.shareHolder = new List<ShareHolderList>();
                     value.data.shareHolder = _sql.GetUserShareHolder(userID, lang, fromProject);
@@ -581,7 +581,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetEmpWorkShiftTimeModel GetEmpWorkShiftTimeService(string authorization, string lang, string platform, int logID, GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string roleIDList, string shareCode)
+        public GetEmpWorkShiftTimeModel GetEmpWorkShiftTimeService(string authorization, string lang, string platform, int logID, 
+            GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string shareCode)
         {
             if (_sql == null)
             {

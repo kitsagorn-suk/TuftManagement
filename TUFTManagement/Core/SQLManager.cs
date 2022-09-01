@@ -472,38 +472,38 @@ namespace TUFTManagement.Core
             return list;
         }
 
-        public List<RoleIDList> GetUserRole(int pUserID, string pLang)
-        {
-            List<RoleIDList> list = new List<RoleIDList>();
+        //public List<RoleIDList> GetUserRole(int pUserID, string pLang)
+        //{
+        //    List<RoleIDList> list = new List<RoleIDList>();
 
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_user_role @pUserID, @pLang");
+        //    DataTable table = new DataTable();
+        //    SQLCustomExecute sql = new SQLCustomExecute("exec get_user_role @pUserID, @pLang");
 
-            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
-            paramUserID.Direction = ParameterDirection.Input;
-            paramUserID.Value = pUserID;
+        //    SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+        //    paramUserID.Direction = ParameterDirection.Input;
+        //    paramUserID.Value = pUserID;
 
-            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
-            paramLang.Direction = ParameterDirection.Input;
-            paramLang.Value = pLang;
+        //    SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+        //    paramLang.Direction = ParameterDirection.Input;
+        //    paramLang.Value = pLang;
 
-            sql.Parameters.Add(paramUserID);
-            sql.Parameters.Add(paramLang);
+        //    sql.Parameters.Add(paramUserID);
+        //    sql.Parameters.Add(paramLang);
 
-            table = sql.executeQueryWithReturnTable();
+        //    table = sql.executeQueryWithReturnTable();
 
-            if (table != null && table.Rows.Count > 0)
-            {
-                RoleIDList data;
-                foreach (DataRow row in table.Rows)
-                {
-                    data = new RoleIDList();
-                    data.loadDataUserRole(row);
-                    list.Add(data);
-                }
-            }
-            return list;
-        }
+        //    if (table != null && table.Rows.Count > 0)
+        //    {
+        //        RoleIDList data;
+        //        foreach (DataRow row in table.Rows)
+        //        {
+        //            data = new RoleIDList();
+        //            data.loadDataUserRole(row);
+        //            list.Add(data);
+        //        }
+        //    }
+        //    return list;
+        //}
 
         public List<ShareHolderList> GetUserShareHolder(int pUserID, string pLang, string pFromProject)
         {
