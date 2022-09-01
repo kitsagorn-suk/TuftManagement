@@ -641,7 +641,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/save/systemrole")]
         [HttpPost]
-        public IHttpActionResult SaveSystemRole(SaveSystemRoleDTO saveSystemRoleDTO)
+        public IHttpActionResult SaveSystemRole(SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -660,51 +660,65 @@ namespace TUFTManagement.Controllers
 
             try
             {
-                string json = JsonConvert.SerializeObject(saveSystemRoleDTO);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveSystemRole", json, timestampNow.ToString(), headersDTO,
+                string json = JsonConvert.SerializeObject(saveSystemRoleAssignDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveSystemRoleAssign", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 ValidateService validateService = new ValidateService();
-                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRole(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleDTO);
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRole(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO);
 
+                int _chkPosition = _sql.CheckPositionID(saveSystemRoleAssignDTO.positionID);
 
-                InsertService srvInsert = new InsertService();
-                UpdateService srvUpdate = new UpdateService();
-                var obj = new object();
-
-                if (chkRequestBody.Success == true)
+                if(_chkPosition != 0)
                 {
-                    int _chkDup = _sql.CheckDuplicateObjID(saveSystemRoleDTO.objID, shareCode);
-                    int _chkParent = _sql.CheckDuplicateObjID(saveSystemRoleDTO.parentID, shareCode);
-                   
-                    if (_chkDup == 0 && _chkParent > 0)
+                    InsertService srvInsert = new InsertService();
+                    UpdateService srvUpdate = new UpdateService();
+                    var obj = new object();
+
+                    if (chkRequestBody.Success == true)
                     {
-                        obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, data.roleIDList, data.userID, shareCode);
-
-                        foreach(SaveSystemRole item in saveSystemRoleDTO.listPosition)
+                        foreach (SaveSystemRoleTemp item in saveSystemRoleAssignDTO.listTemp)
                         {
-                            obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, item, data.roleIDList, data.userID, shareCode);
+                            int _chkDup = _sql.CheckDuplicateObjID(item.objID, shareCode);
+                            int _chkParent = _sql.CheckDuplicateObjID(item.parentID, shareCode);
 
+                            int _chkDupPosition = _sql.CheckPositionIDAssignment(item.objID, saveSystemRoleAssignDTO.positionID, shareCode);
+
+                            if (_chkDup == 0 && _chkParent > 0)
+                            {
+                                obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.roleIDList, data.userID, shareCode);
+
+
+                            }
+                            else if (_chkDup > 0 && _chkParent > 0)
+                            {
+                                obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.roleIDList, data.userID, shareCode);
+
+
+                            }
+
+                            if (_chkDupPosition == 0 )
+                            {
+                                obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item, data.roleIDList, data.userID, shareCode);
+
+                            }
+                            else
+                            {
+                                obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item, data.roleIDList, data.userID, shareCode);
+
+                            }
                         }
 
                     }
-                    else if (_chkDup > 0 && _chkParent > 0)
-                    {
-                        obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, data.roleIDList, data.userID, shareCode);
 
-                        foreach (SaveSystemRole item in saveSystemRoleDTO.listPosition)
-                        {
-                            obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleDTO, item, data.roleIDList, data.userID, shareCode);
-
-                        }
-                    }
-                    
-
-
-                   
+                    return Ok(obj);
+                }
+                else
+                {
+                    throw new Exception("Don't have this position ID");
                 }
 
-                return Ok(obj);
+                
             }
             catch (Exception ex)
             {

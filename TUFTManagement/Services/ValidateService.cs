@@ -566,7 +566,7 @@ namespace TUFTManagement.Services
             }
         }
 
-        public ValidationModel RequireOptionalSaveSystemRole(string shareCode, string lang, string platform, int logID, SaveSystemRoleDTO saveSystemRoleDTO)
+        public ValidationModel RequireOptionalSaveSystemRole(string shareCode, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
         {
             if (_sql == null)
             {
@@ -579,23 +579,15 @@ namespace TUFTManagement.Services
             {
                 string checkMissingOptional = "";
 
-                if (string.IsNullOrEmpty(saveSystemRoleDTO.objID))
+                if (saveSystemRoleAssignDTO.listTemp.Count == 0)
                 {
                     checkMissingOptional += "objID ";
                 }
-                if (string.IsNullOrEmpty(saveSystemRoleDTO.objName))
-                {
-                    checkMissingOptional += "objName ";
-                }
-                if (string.IsNullOrEmpty(saveSystemRoleDTO.parentID))
-                {
-                    checkMissingOptional += "parentID ";
-                }
-                if (saveSystemRoleDTO.listPosition.Count == 0)
+                if (saveSystemRoleAssignDTO.positionID  == 0)
                 {
                     checkMissingOptional += "positionID ";
                 }
-
+                
                 if (checkMissingOptional != "")
                 {
                     throw new Exception("Missing Parameter : " + checkMissingOptional);

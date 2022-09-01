@@ -443,8 +443,7 @@ namespace TUFTManagement.Services
         #endregion
 
         #region SystemRole
-        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID,
-    SaveSystemRoleDTO saveSystemRoleDTO, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -454,10 +453,10 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertSystemRole(lang, saveSystemRoleDTO);
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertSystemRole(lang, saveSystemRoleTemp);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertSystemRole(shareCode, saveSystemRoleDTO, userID, platform);
+                    value.data = _sql.InsertSystemRole(shareCode, saveSystemRoleTemp, userID, platform);
                 }
                 else
                 {
@@ -483,8 +482,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleDTO saveSystemRoleDTO,
-SaveSystemRole saveSystemRole, string roleIDList, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, string roleIDList, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -494,10 +492,10 @@ SaveSystemRole saveSystemRole, string roleIDList, int userID, string shareCode)
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidationObject(lang, saveSystemRoleDTO);
+                ValidationModel validation = ValidationManager.CheckValidationObject(lang, saveSystemRoleAssignDTO);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertSystemRoleAssign(shareCode, saveSystemRoleDTO, saveSystemRole, userID);
+                    value.data = _sql.InsertSystemRoleAssign(shareCode, saveSystemRoleAssignDTO, saveSystemRoleTemp, userID);
                 }
                 else
                 {
