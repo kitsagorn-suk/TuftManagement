@@ -684,7 +684,7 @@ namespace TUFTManagement.Controllers
 
                             int _chkDupPosition = _sql.CheckPositionIDAssignment(item.objID, saveSystemRoleAssignDTO.positionID, shareCode);
 
-                            if (_chkDup == 0 && _chkParent > 0)
+                            if ((_chkDup == 0 && _chkParent > 0) || (_chkDup == 0 && item.parentID == "0"))
                             {
                                 obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item,  data.userID, shareCode);
 
