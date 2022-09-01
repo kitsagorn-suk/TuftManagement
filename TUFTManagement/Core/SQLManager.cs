@@ -7929,12 +7929,13 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel UpdateSystemRoleAssign(string shareCode, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID)
+        public _ReturnIdModel UpdateSystemRoleAssign(string shareCode, string ProjectName, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_system_role_assignment " +
                 "@pObjID, " +
                 "@pPositionID, " +
+                "@pProjName, " +
                 "@pIsActive, " +
                 "@pUpdateBy");
 
@@ -7947,6 +7948,11 @@ namespace TUFTManagement.Core
             pPositionID.Direction = ParameterDirection.Input;
             pPositionID.Value = saveSystemRoleAssignDTO.positionID;
             sql.Parameters.Add(pPositionID);
+
+            SqlParameter pProjName = new SqlParameter(@"pProjName", SqlDbType.VarChar, 255);
+            pProjName.Direction = ParameterDirection.Input;
+            pProjName.Value = ProjectName;
+            sql.Parameters.Add(pProjName);
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.VarChar, 255);
             pIsActive.Direction = ParameterDirection.Input;
