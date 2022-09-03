@@ -814,5 +814,183 @@ namespace TUFTManagement.Services
 
         #endregion
 
+        #region systemrole
+
+        public SearchAllSystemRoleAssignModel SearchAllSystemRoleAssign(string authorization, string lang, string platform, int logID, SearchSystemRoleAssignDTO searchSystemRoleAssignDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllSystemRoleAssignModel value = new SearchAllSystemRoleAssignModel();
+            try
+            {
+                Pagination<SearchAllSystemRoleAssign> data = new Pagination<SearchAllSystemRoleAssign>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchAllSystemRoleAssign(shareCode, searchSystemRoleAssignDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllSystemRoleAssign:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetDetailSystemRoleAssignModel GetDetailSystemRoleAssignService(string authorization, string lang, string platform, int logID, int ID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetDetailSystemRoleAssignModel value = new GetDetailSystemRoleAssignModel();
+            try
+            {
+                Assign data = new Assign();
+
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetDetailSystemRoleAssign(ID, shareCode);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetBodySetService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        public SearchAllSystemRoleTempModel SearchAllSystemRoleTemp(string authorization, string lang, string platform, int logID, SearchSystemRoleTempDTO searchSystemRoleTempDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllSystemRoleTempModel value = new SearchAllSystemRoleTempModel();
+            try
+            {
+                Pagination<SearchAllSystemRoleTemp> data = new Pagination<SearchAllSystemRoleTemp>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchAllSystemRoleTemp(shareCode, searchSystemRoleTempDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllSystemRoleAssign:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetDetailSystemRoleTempModel GetDetailSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTempDTO saveSystemRoleTempDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetDetailSystemRoleTempModel value = new GetDetailSystemRoleTempModel();
+            try
+            {
+                Temp data = new Temp();
+
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetDetailSystemRoleTemp(saveSystemRoleTempDTO, platform, shareCode);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetDetailSystemRoleTempService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+
+        #endregion
+
     }
 }

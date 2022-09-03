@@ -48,7 +48,7 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveData("Login", json, timestampNow.ToString(), authHeader,
                     0, fromProject.ToLower());
 
-                
+
                 if (string.IsNullOrEmpty(loginRs.username))
                 {
                     throw new Exception("invalid : user_name ");
@@ -57,7 +57,7 @@ namespace TUFTManagement.Controllers
                 {
                     throw new Exception("invalid : password ");
                 }
-                
+
                 string username = loginRs.username;
                 string password = loginRs.password;
 
@@ -113,7 +113,7 @@ namespace TUFTManagement.Controllers
 
             AuthenticationController _auth = AuthenticationController.Instance;
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-            
+
             try
             {
                 string json = JsonConvert.SerializeObject(request.Headers.ToString());
@@ -237,7 +237,7 @@ namespace TUFTManagement.Controllers
                 }
                 else if (getDropdownRequestDTO.moduleName.ToLower() == "positionFilter".ToLower())
                 {
-                    if(getDropdownRequestDTO.departmentID != 0)
+                    if (getDropdownRequestDTO.departmentID != 0)
                     {
                         obj = srv.GetPositionByDepartmentDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                     }
@@ -261,8 +261,8 @@ namespace TUFTManagement.Controllers
                 {
                     obj = srv.GetAllDropdownService(authHeader, lang, fromProject.ToLower(), logID, getDropdownRequestDTO);
                 }
-                
-                
+
+
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -287,7 +287,7 @@ namespace TUFTManagement.Controllers
             headersDTO.fromProject = fromProject;
             headersDTO.shareCode = shareCode;
 
-            
+
 
             //var obj = new Object();
             UploadModel value = new UploadModel();
@@ -581,7 +581,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO,  data.userID);
+                var obj = srv.DeleteEmpFileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, requestDTO, data.userID);
 
                 return Ok(obj);
             }
@@ -639,9 +639,10 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.0/save/systemrole")]
+        #region systemrole
+        [Route("1.0/save/systemroleAssign")]
         [HttpPost]
-        public IHttpActionResult SaveSystemRole(SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
+        public IHttpActionResult SaveSystemRoleAssign(SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -665,11 +666,11 @@ namespace TUFTManagement.Controllers
                     data.userID, fromProject.ToLower());
 
                 ValidateService validateService = new ValidateService();
-                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRole(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO);
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRoleAssign(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO);
 
                 int _chkPosition = _sql.CheckPositionID(saveSystemRoleAssignDTO.positionID);
 
-                if(_chkPosition != 0)
+                if (_chkPosition != 0)
                 {
                     InsertService srvInsert = new InsertService();
                     UpdateService srvUpdate = new UpdateService();
@@ -677,36 +678,13 @@ namespace TUFTManagement.Controllers
 
                     if (chkRequestBody.Success == true)
                     {
-                        foreach (SaveSystemRoleTemp item in saveSystemRoleAssignDTO.listTemp)
+                        if (saveSystemRoleAssignDTO.id == 0)
                         {
-                            int _chkDup = _sql.CheckDuplicateObjID(item.objID, fromProject.ToLower(), shareCode);
-                            int _chkParent = _sql.CheckDuplicateObjID(item.parentID, fromProject.ToLower(), shareCode);
-
-                            int _chkDupPosition = _sql.CheckPositionIDAssignment(item.objID, saveSystemRoleAssignDTO.positionID, shareCode);
-
-                            if ((_chkDup == 0 && _chkParent > 0) || (_chkDup == 0 && item.parentID == "0"))
-                            {
-                                obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item,  data.userID, shareCode);
-
-
-                            }
-                            else if ((_chkDup > 0 && _chkParent > 0) || (_chkDup > 0 && item.parentID == "0"))
-                            {
-                                obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.userID, shareCode);
-
-
-                            }
-
-                            if (_chkDupPosition == 0 )
-                            {
-                                obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
-
-                            }
-                            else
-                            {
-                                obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
-
-                            }
+                            obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, data.userID, shareCode);
+                        }
+                        else
+                        {
+                            obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, data.userID, shareCode);
                         }
 
                     }
@@ -718,13 +696,368 @@ namespace TUFTManagement.Controllers
                     throw new Exception("Don't have this position ID");
                 }
 
-                
+
             }
             catch (Exception ex)
             {
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.0/search/systemroleAssign")]
+        [HttpPost]
+        public IHttpActionResult SearchSystemRoleAssign(SearchSystemRoleAssignDTO searchSystemRoleAssignDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchSystemRoleAssignDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchSystemRoleAssign", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = new object();
+
+                if (searchSystemRoleAssignDTO.pageInt.Equals(null) || searchSystemRoleAssignDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchSystemRoleAssignDTO.perPage.Equals(null) || searchSystemRoleAssignDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchSystemRoleAssignDTO.sortField > 4)
+                {
+                    throw new Exception("invalid : sortField " + searchSystemRoleAssignDTO.sortField);
+                }
+                if (!(searchSystemRoleAssignDTO.sortType == "a" || searchSystemRoleAssignDTO.sortType == "d" || searchSystemRoleAssignDTO.sortType == "A" || searchSystemRoleAssignDTO.sortType == "D" || searchSystemRoleAssignDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllSystemRoleAssign(authHeader, lang, fromProject.ToLower(), logID, searchSystemRoleAssignDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/systemroleAssign")]
+        [HttpPost]
+        public IHttpActionResult GetDetailSystemRoleAssign(SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveSystemRoleAssignDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetDetailSystemRoleAssign", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = new object();
+
+                if (saveSystemRoleAssignDTO.id != 0)
+                {
+                    obj = srv.GetDetailSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO.id, shareCode);
+                }
+                else
+                {
+                    throw new Exception("Missing Parameter : ID ");
+                }
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/save/systemroleTemp")]
+        [HttpPost]
+        public IHttpActionResult SaveSystemRoleTemp(SaveSystemRoleTempDTO saveSystemRoleTempDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveSystemRoleTempDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveSystemRoleTemp", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRoleTemp(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleTempDTO);
+
+                //int _chkPosition = _sql.CheckPositionID(saveSystemRoleTempDTO.positionID);
+
+                int chkDupObjID = _sql.CheckDuplicateObjID(saveSystemRoleTempDTO.objectID, fromProject.ToLower(), shareCode);
+                int chkParent = _sql.CheckDuplicateObjID(saveSystemRoleTempDTO.parentID, fromProject.ToLower(), shareCode);
+
+
+                InsertService srvInsert = new InsertService();
+                UpdateService srvUpdate = new UpdateService();
+                var obj = new object();
+
+                if (chkRequestBody.Success == true)
+                {
+                    if(chkParent > 0 || saveSystemRoleTempDTO.parentID == 0)
+                    {
+                        if (chkDupObjID == 0)
+                        {
+                            obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleTempDTO, data.userID, shareCode);
+                        }
+                        else
+                        {
+                            obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleTempDTO, data.userID, shareCode);
+                        }
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/search/systemroleTemp")]
+        [HttpPost]
+        public IHttpActionResult SearchSystemRoleTemp(SearchSystemRoleTempDTO searchSystemRoleTempDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchSystemRoleTempDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchSystemRoleTempDTO", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = new object();
+
+                if (searchSystemRoleTempDTO.pageInt.Equals(null) || searchSystemRoleTempDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchSystemRoleTempDTO.perPage.Equals(null) || searchSystemRoleTempDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+                if (searchSystemRoleTempDTO.sortField > 4)
+                {
+                    throw new Exception("invalid : sortField " + searchSystemRoleTempDTO.sortField);
+                }
+                if (!(searchSystemRoleTempDTO.sortType == "a" || searchSystemRoleTempDTO.sortType == "d" || searchSystemRoleTempDTO.sortType == "A" || searchSystemRoleTempDTO.sortType == "D" || searchSystemRoleTempDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllSystemRoleTemp(authHeader, lang, fromProject.ToLower(), logID, searchSystemRoleTempDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/systemroleTemp")]
+        [HttpPost]
+        public IHttpActionResult GetDetailSystemRoleTemp(SaveSystemRoleTempDTO saveSystemRoleTempDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveSystemRoleTempDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetDetailSystemRoleTemp", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = new object();
+
+                if (saveSystemRoleTempDTO.objectID != 0)
+                {
+                    obj = srv.GetDetailSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleTempDTO, shareCode);
+                }
+                else
+                {
+                    throw new Exception("Missing Parameter : ObjectID ");
+                }
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+        #endregion
+
+        //[Route("1.0/save/systemrole")]
+        //[HttpPost]
+        //public IHttpActionResult SaveSystemRole(SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
+        //{
+        //    var request = HttpContext.Current.Request;
+        //    string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+        //    string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+        //    string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+        //    string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+        //    HeadersDTO headersDTO = new HeadersDTO();
+        //    headersDTO.authHeader = authHeader;
+        //    headersDTO.lang = lang;
+        //    headersDTO.fromProject = fromProject;
+        //    headersDTO.shareCode = shareCode;
+
+        //    AuthenticationController _auth = AuthenticationController.Instance;
+        //    AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+        //    try
+        //    {
+        //        string json = JsonConvert.SerializeObject(saveSystemRoleAssignDTO);
+        //        int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveSystemRoleAssign", json, timestampNow.ToString(), headersDTO,
+        //            data.userID, fromProject.ToLower());
+
+        //        ValidateService validateService = new ValidateService();
+        //        ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRole(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO);
+
+        //        int _chkPosition = _sql.CheckPositionID(saveSystemRoleAssignDTO.positionID);
+
+        //        if(_chkPosition != 0)
+        //        {
+        //            InsertService srvInsert = new InsertService();
+        //            UpdateService srvUpdate = new UpdateService();
+        //            var obj = new object();
+
+        //            if (chkRequestBody.Success == true)
+        //            {
+        //                foreach (SaveSystemRoleTemp item in saveSystemRoleAssignDTO.listTemp)
+        //                {
+        //                    int _chkDup = _sql.CheckDuplicateObjID(item.objID, fromProject.ToLower(), shareCode);
+        //                    int _chkParent = _sql.CheckDuplicateObjID(item.parentID, fromProject.ToLower(), shareCode);
+
+        //                    int _chkDupPosition = _sql.CheckPositionIDAssignment(item.objID, saveSystemRoleAssignDTO.positionID, shareCode);
+
+        //                    if ((_chkDup == 0 && _chkParent > 0) || (_chkDup == 0 && item.parentID == "0"))
+        //                    {
+        //                        obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item,  data.userID, shareCode);
+
+        //                    }
+        //                    else if ((_chkDup > 0 && _chkParent > 0) || (_chkDup > 0 && item.parentID == "0"))
+        //                    {
+        //                        obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.userID, shareCode);
+
+        //                    }
+
+        //                    if (_chkDupPosition == 0 )
+        //                    {
+        //                        obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
+
+        //                    }
+        //                    else
+        //                    {
+        //                        obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
+
+        //                    }
+        //                }
+
+        //            }
+
+        //            return Ok(obj);
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("Don't have this position ID");
+        //        }
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+        //    }
+        //}
 
 
         #endregion
@@ -3565,27 +3898,40 @@ namespace TUFTManagement.Controllers
                 ValidateService validateService = new ValidateService();
                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveLeaveDetail(shareCode, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO);
 
+                int allLeaveDays = _sql.GetTotalDayPerYear(saveLeaveDetailDTO.leaveId);
+                int useDay = _sql.GetTotalUseDayPerYear(saveLeaveDetailDTO.leaveId);
+
+                int remainDay = allLeaveDays - useDay;
 
                 InsertService srvInsert = new InsertService();
                 UpdateService srvUpdate = new UpdateService();
                 //DeleteService srvDelete = new DeleteService();
                 var obj = new object();
 
-                if (chkRequestBody.Success == true)
+                if(remainDay > 0)
                 {
-                    if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
+                    if (chkRequestBody.Success == true)
                     {
-                        obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID, shareCode);
-                    }
-                    else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
-                    {
-                        obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID, shareCode);
-                    }
-                    //else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
-                    //{
+                        if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
+                        {
+                            obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.userID, shareCode);
+                        }
+                        else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
+                        {
+                            obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.userID, shareCode);
+                        }
+                        //else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
+                        //{
                         //obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO,  data.userID);
-                    //}
+                        //}
+                    }
                 }
+                else
+                {
+                    throw new Exception("You choose an overdue leave date.");
+                }
+
+
 
                 return Ok(obj);
             }
@@ -3721,13 +4067,19 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "ApproveLeaveForm", json, timestampNow.ToString(), headersDTO,
                    data.userID, fromProject.ToLower());
 
+
+                int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
+                int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID);
+
+                int remainDay = allLeaveDays - useDay;
+
                 if (actionLeaveFormDTO.leaveID.Equals(null) || actionLeaveFormDTO.leaveID.Equals(0))
                 {
                     throw new Exception("leaveID ");
                 }
 
                 UpdateService srv = new UpdateService();
-                var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+                var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, remainDay, data.userID, shareCode);
                 return Ok(obj);
             }
             catch (Exception ex)

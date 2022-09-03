@@ -586,7 +586,7 @@ namespace TUFTManagement.Core
             return value;
         }
 
-        public static ValidationModel CheckValidationDupicateInsertSystemRole(string lang, SaveSystemRoleTemp saveSystemRoleTemp)
+        public static ValidationModel CheckValidationDupicateInsertSystemRole(string lang, SaveSystemRoleTempDTO saveSystemRoleTempDTO)
         {
             ValidationModel value = new ValidationModel();
             try

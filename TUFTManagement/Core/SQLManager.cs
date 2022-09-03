@@ -2357,6 +2357,11 @@ namespace TUFTManagement.Core
             pNumberOfDays.Value = saveLeaveDetailDTO.numdays;
             sql.Parameters.Add(pNumberOfDays);
 
+            //SqlParameter pRemaining = new SqlParameter(@"pRemaining", SqlDbType.Int);
+            //pRemaining.Direction = ParameterDirection.Input;
+            //pRemaining.Value = allLeaveDays;
+            //sql.Parameters.Add(pRemaining);
+
             SqlParameter pLeaveReason = new SqlParameter(@"pLeaveReason", SqlDbType.VarChar, 250);
             pLeaveReason.Direction = ParameterDirection.Input;
             pLeaveReason.Value = saveLeaveDetailDTO.leavereason;
@@ -2481,17 +2486,23 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel ApproveLeaveForm(int leaveID, int userID, string shareCode)
+        public _ReturnIdModel ApproveLeaveForm(int leaveID, int remainDay, int userID, string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_approve_leave " +
                 "@pLeaveID," +
+                "@pRemain," +
                 "@pApproveBy");
 
             SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
             pLeaveID.Direction = ParameterDirection.Input;
-            pLeaveID.Value = leaveID;
+            pLeaveID.Value = remainDay;
             sql.Parameters.Add(pLeaveID);
+
+            SqlParameter pRemain = new SqlParameter(@"pRemain", SqlDbType.Int);
+            pRemain.Direction = ParameterDirection.Input;
+            pRemain.Value = leaveID;
+            sql.Parameters.Add(pRemain);
 
             SqlParameter pApproveBy = new SqlParameter(@"pApproveBy", SqlDbType.Int);
             pApproveBy.Direction = ParameterDirection.Input;
@@ -2707,6 +2718,62 @@ namespace TUFTManagement.Core
 
             return total;
         }
+
+        public int GetTotalDayPerYear(int leaveID)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_day_of_leave " +
+                "@pLeaveID ");
+
+            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
+            pLeaveID.Direction = ParameterDirection.Input;
+            pLeaveID.Value = leaveID;
+            sql.Parameters.Add(pLeaveID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public int GetTotalUseDayPerYear(int leaveID)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_total_use_day_for_leave " +
+                "@pLeaveID");
+
+            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
+            pLeaveID.Direction = ParameterDirection.Input;
+            pLeaveID.Value = leaveID;
+            sql.Parameters.Add(pLeaveID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+
 
         #endregion
 
@@ -7741,7 +7808,7 @@ namespace TUFTManagement.Core
         #endregion
 
         #region SystemRole
-        public int CheckDuplicateObjID(string objID, string projectName, string shareCode)
+        public int CheckDuplicateObjID(int objID, string projectName, string shareCode)
         {
             int total = 0;
             DataTable table = new DataTable();
@@ -7749,7 +7816,7 @@ namespace TUFTManagement.Core
                 "@pObjID, " +
                 "@pProjName");
 
-            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.Int);
             pObjID.Direction = ParameterDirection.Input;
             pObjID.Value = objID;
             sql.Parameters.Add(pObjID);
@@ -7773,69 +7840,18 @@ namespace TUFTManagement.Core
             return total;
         }
 
-        public _ReturnIdModel InsertSystemRole(string shareCode, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string projectName)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_role_template " +
-                "@pObjID, " +
-                "@pParentID, " +
-                "@pObjName, " +
-                "@pProjName, " +
-                "@pCreateBy");
-
-            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar,10);
-            pObjID.Direction = ParameterDirection.Input;
-            pObjID.Value = saveSystemRoleTemp.objID;
-            sql.Parameters.Add(pObjID);
-
-            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.VarChar, 10);
-            pParentID.Direction = ParameterDirection.Input;
-            pParentID.Value = saveSystemRoleTemp.parentID;
-            sql.Parameters.Add(pParentID);
-
-            SqlParameter pObjName = new SqlParameter(@"pObjName", SqlDbType.VarChar, 255);
-            pObjName.Direction = ParameterDirection.Input;
-            pObjName.Value = saveSystemRoleTemp.objName;
-            sql.Parameters.Add(pObjName);
-
-            SqlParameter pProjName = new SqlParameter(@"pProjName", SqlDbType.VarChar, 255);
-            pProjName.Direction = ParameterDirection.Input;
-            pProjName.Value = projectName;
-            sql.Parameters.Add(pProjName);
-
-            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
-            pCreateBy.Direction = ParameterDirection.Input;
-            pCreateBy.Value = userID;
-            sql.Parameters.Add(pCreateBy);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            _ReturnIdModel data = new _ReturnIdModel();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-
-            return data;
-        }
-
-        public _ReturnIdModel InsertSystemRoleAssign(string shareCode, string projectName, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID)
+        public _ReturnIdModel InsertSystemRoleAssign(string shareCode, string projectName, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_role_assignment " +
                 "@pObjID, " +
                 "@pPositionID, " +
                 "@pProjName, " +
-                "@pIsActive, " +
                 "@pCreateBy");
 
             SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
             pObjID.Direction = ParameterDirection.Input;
-            pObjID.Value = saveSystemRoleTemp.objID;
+            pObjID.Value = saveSystemRoleAssignDTO.objectID;
             sql.Parameters.Add(pObjID);
 
             SqlParameter pPositionID = new SqlParameter(@"pPositionID", SqlDbType.Int);
@@ -7845,7 +7861,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pProjName = new SqlParameter(@"pProjName", SqlDbType.VarChar, 255);
             pProjName.Direction = ParameterDirection.Input;
-            pProjName.Value = 1;
+            pProjName.Value = projectName;
             sql.Parameters.Add(pProjName);
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
@@ -7873,63 +7889,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel UpdateSystemRole(string shareCode, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string projectName)
-        {
-            DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec update_system_role_template " +
-                "@pObjID, " +
-                "@pParentID, " +
-                "@pObjName, " +
-                "@pProjectName, " +
-                "@pIsActive, " +
-                "@pUpdateBy");
-
-            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
-            pObjID.Direction = ParameterDirection.Input;
-            pObjID.Value = saveSystemRoleTemp.objID;
-            sql.Parameters.Add(pObjID);
-
-            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.VarChar, 10);
-            pParentID.Direction = ParameterDirection.Input;
-            pParentID.Value = saveSystemRoleTemp.parentID;
-            sql.Parameters.Add(pParentID);
-
-            SqlParameter pObjName = new SqlParameter(@"pObjName", SqlDbType.VarChar, 255);
-            pObjName.Direction = ParameterDirection.Input;
-            pObjName.Value = saveSystemRoleTemp.objName;
-            sql.Parameters.Add(pObjName);
-
-            SqlParameter pProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 255);
-            pProjectName.Direction = ParameterDirection.Input;
-            pProjectName.Value = projectName;
-            sql.Parameters.Add(pProjectName);
-
-            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
-            pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = saveSystemRoleTemp.isActive;
-            sql.Parameters.Add(pIsActive);
-
-            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
-            pUpdateBy.Direction = ParameterDirection.Input;
-            pUpdateBy.Value = userID;
-            sql.Parameters.Add(pUpdateBy);
-
-            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
-
-            _ReturnIdModel data = new _ReturnIdModel();
-
-            if (table != null && table.Rows.Count > 0)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    data.loadData(row);
-                }
-            }
-
-            return data;
-        }
-
-        public _ReturnIdModel UpdateSystemRoleAssign(string shareCode, string ProjectName, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID)
+        public _ReturnIdModel UpdateSystemRoleAssign(string shareCode, string ProjectName, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_system_role_assignment " +
@@ -7941,7 +7901,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
             pObjID.Direction = ParameterDirection.Input;
-            pObjID.Value = saveSystemRoleTemp.objID;
+            pObjID.Value = saveSystemRoleAssignDTO.objectID;
             sql.Parameters.Add(pObjID);
 
             SqlParameter pPositionID = new SqlParameter(@"pPositionID", SqlDbType.Int);
@@ -7956,7 +7916,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.VarChar, 255);
             pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = saveSystemRoleTemp.isActive;
+            pIsActive.Value = saveSystemRoleAssignDTO.isActive;
             sql.Parameters.Add(pIsActive);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
@@ -7978,6 +7938,371 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public Pagination<SearchAllSystemRoleAssign> SearchAllSystemRoleAssign(string shareCode, SearchSystemRoleAssignDTO searchSystemRoleAssignDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_role_assign_page " +
+                "@pTextSearch, " +
+                "@pId, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchSystemRoleAssignDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
+            pId.Direction = ParameterDirection.Input;
+            pId.Value = searchSystemRoleAssignDTO.pId;
+            sql.Parameters.Add(pId);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchSystemRoleAssignDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchSystemRoleAssignDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchSystemRoleAssignDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchSystemRoleAssignDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllSystemRoleAssign> pagination = new Pagination<SearchAllSystemRoleAssign>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllSystemRoleAssign data = new SearchAllSystemRoleAssign();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllSystemRoleAssign(shareCode, searchSystemRoleAssignDTO);
+
+            pagination.SetPagination(total, searchSystemRoleAssignDTO.perPage, searchSystemRoleAssignDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchAllSystemRoleAssign(string shareCode, SearchSystemRoleAssignDTO searchSystemRoleAssignDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_role_assign_total " +
+                 "@pTextSearch, " +
+                "@pId");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchSystemRoleAssignDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
+            pId.Direction = ParameterDirection.Input;
+            pId.Value = searchSystemRoleAssignDTO.pId;
+            sql.Parameters.Add(pId);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public Assign GetDetailSystemRoleAssign(int id ,string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_detail_system_role_assign " +
+                "@pId");
+
+            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
+            pId.Direction = ParameterDirection.Input;
+            pId.Value = id;
+            sql.Parameters.Add(pId);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Assign data = new Assign();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel InsertSystemRoleTemp(string shareCode, SaveSystemRoleTempDTO saveSystemRoleTempDTO, int userID, string projectName)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_role_template " +
+                "@pObjID, " +
+                "@pParentID, " +
+                "@pObjName, " +
+                "@pProjName, " +
+                "@pCreateBy");
+
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
+            pObjID.Direction = ParameterDirection.Input;
+            pObjID.Value = saveSystemRoleTempDTO.objectID;
+            sql.Parameters.Add(pObjID);
+
+            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.VarChar, 10);
+            pParentID.Direction = ParameterDirection.Input;
+            pParentID.Value = saveSystemRoleTempDTO.parentID;
+            sql.Parameters.Add(pParentID);
+
+            SqlParameter pObjName = new SqlParameter(@"pObjName", SqlDbType.VarChar, 255);
+            pObjName.Direction = ParameterDirection.Input;
+            pObjName.Value = saveSystemRoleTempDTO.objectName;
+            sql.Parameters.Add(pObjName);
+
+            SqlParameter pProjName = new SqlParameter(@"pProjName", SqlDbType.VarChar, 255);
+            pProjName.Direction = ParameterDirection.Input;
+            pProjName.Value = projectName;
+            sql.Parameters.Add(pProjName);
+
+            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
+            pCreateBy.Direction = ParameterDirection.Input;
+            pCreateBy.Value = userID;
+            sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateSystemRoleTemp(string shareCode, SaveSystemRoleTempDTO saveSystemRoleTempDTO, int userID, string projectName)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_system_role_template " +
+                "@pObjID, " +
+                "@pParentID, " +
+                "@pObjName, " +
+                "@pProjectName, " +
+                "@pIsActive, " +
+                "@pUpdateBy");
+
+            SqlParameter pObjID = new SqlParameter(@"pObjID", SqlDbType.VarChar, 10);
+            pObjID.Direction = ParameterDirection.Input;
+            pObjID.Value = saveSystemRoleTempDTO.objectID;
+            sql.Parameters.Add(pObjID);
+
+            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.VarChar, 10);
+            pParentID.Direction = ParameterDirection.Input;
+            pParentID.Value = saveSystemRoleTempDTO.parentID;
+            sql.Parameters.Add(pParentID);
+
+            SqlParameter pObjName = new SqlParameter(@"pObjName", SqlDbType.VarChar, 255);
+            pObjName.Direction = ParameterDirection.Input;
+            pObjName.Value = saveSystemRoleTempDTO.objectName;
+            sql.Parameters.Add(pObjName);
+
+            SqlParameter pProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 255);
+            pProjectName.Direction = ParameterDirection.Input;
+            pProjectName.Value = projectName;
+            sql.Parameters.Add(pProjectName);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = saveSystemRoleTempDTO.isActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchAllSystemRoleTemp> SearchAllSystemRoleTemp(string shareCode, SearchSystemRoleTempDTO searchSystemRoleTempDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_role_temp_page " +
+                "@pTextSearch, " +
+                "@pId, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchSystemRoleTempDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
+            pId.Direction = ParameterDirection.Input;
+            pId.Value = searchSystemRoleTempDTO.pId;
+            sql.Parameters.Add(pId);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchSystemRoleTempDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchSystemRoleTempDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchSystemRoleTempDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchSystemRoleTempDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllSystemRoleTemp> pagination = new Pagination<SearchAllSystemRoleTemp>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllSystemRoleTemp data = new SearchAllSystemRoleTemp();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllSystemRoleTemp(shareCode, searchSystemRoleTempDTO);
+
+            pagination.SetPagination(total, searchSystemRoleTempDTO.perPage, searchSystemRoleTempDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchAllSystemRoleTemp(string shareCode, SearchSystemRoleTempDTO searchSystemRoleTempDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_role_temp_total " +
+                 "@pTextSearch, " +
+                "@pId");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchSystemRoleTempDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
+            pId.Direction = ParameterDirection.Input;
+            pId.Value = searchSystemRoleTempDTO.pId;
+            sql.Parameters.Add(pId);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public Temp GetDetailSystemRoleTemp(SaveSystemRoleTempDTO saveSystemRoleTempDTO, string projectName, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_detail_system_role_temp " +
+                "@pObjectID, " +
+                "@pParentID, " +
+                "@pProjectName");
+
+            SqlParameter pObjectID = new SqlParameter(@"pObjectID", SqlDbType.Int);
+            pObjectID.Direction = ParameterDirection.Input;
+            pObjectID.Value = saveSystemRoleTempDTO.objectID;
+            sql.Parameters.Add(pObjectID);
+
+            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.Int);
+            pParentID.Direction = ParameterDirection.Input;
+            pParentID.Value = saveSystemRoleTempDTO.parentID;
+            sql.Parameters.Add(pParentID);
+
+            SqlParameter pProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar,255);
+            pProjectName.Direction = ParameterDirection.Input;
+            pProjectName.Value = projectName;
+            sql.Parameters.Add(pProjectName);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Temp data = new Temp();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
 
         public int CheckPositionID(int positionID)
         {

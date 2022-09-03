@@ -566,7 +566,7 @@ namespace TUFTManagement.Services
             }
         }
 
-        public ValidationModel RequireOptionalSaveSystemRole(string shareCode, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
+        public ValidationModel RequireOptionalSaveSystemRoleAssign(string shareCode, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
         {
             if (_sql == null)
             {
@@ -578,11 +578,7 @@ namespace TUFTManagement.Services
             try
             {
                 string checkMissingOptional = "";
-
-                if (saveSystemRoleAssignDTO.listTemp.Count == 0)
-                {
-                    checkMissingOptional += "objID ";
-                }
+                
                 if (saveSystemRoleAssignDTO.positionID  == 0)
                 {
                     checkMissingOptional += "positionID ";
@@ -602,7 +598,48 @@ namespace TUFTManagement.Services
             }
             catch (Exception ex)
             {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalSaveSystemRole:");
+                LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalSaveSystemRoleAssign:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+        }
+
+        public ValidationModel RequireOptionalSaveSystemRoleTemp(string shareCode, string lang, string platform, int logID, SaveSystemRoleTempDTO saveSystemRoleTempDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ValidationModel validation = new ValidationModel();
+
+            try
+            {
+                string checkMissingOptional = "";
+
+                if (saveSystemRoleTempDTO.objectID == 0)
+                {
+                    checkMissingOptional += "objID ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    validation = ValidationManager.CheckValidationWithShareCode(shareCode, 0, lang, platform);
+                }
+
+                return validation;
+
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "RequireOptionalSaveSystemRoleTemp:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());

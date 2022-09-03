@@ -443,7 +443,7 @@ namespace TUFTManagement.Services
         #endregion
 
         #region SystemRole
-        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTempDTO saveSystemRoleTempDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -453,10 +453,10 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertSystemRole(lang, saveSystemRoleTemp);
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertSystemRole(lang, saveSystemRoleTempDTO);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertSystemRole(shareCode, saveSystemRoleTemp, userID, platform);
+                    value.data = _sql.InsertSystemRoleTemp(shareCode, saveSystemRoleTempDTO, userID, platform);
                 }
                 else
                 {
@@ -468,7 +468,7 @@ namespace TUFTManagement.Services
             }
             catch (Exception ex)
             {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertSystemRoleService:");
+                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertSystemRoleTempService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataError(logID, ex.ToString());
@@ -482,7 +482,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
+        public ReturnIdModel InsertSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -495,7 +495,7 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidationObject(lang, saveSystemRoleAssignDTO);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertSystemRoleAssign(shareCode, platform, saveSystemRoleAssignDTO, saveSystemRoleTemp, userID);
+                    value.data = _sql.InsertSystemRoleAssign(shareCode, platform, saveSystemRoleAssignDTO, userID);
                 }
                 else
                 {
