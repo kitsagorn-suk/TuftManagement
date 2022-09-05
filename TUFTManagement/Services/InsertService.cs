@@ -495,7 +495,7 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidationObject(lang, saveSystemRoleAssignDTO);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertSystemRoleAssign(shareCode, saveSystemRoleAssignDTO, saveSystemRoleTemp, userID);
+                    value.data = _sql.InsertSystemRoleAssign(shareCode, platform, saveSystemRoleAssignDTO, saveSystemRoleTemp, userID);
                 }
                 else
                 {
