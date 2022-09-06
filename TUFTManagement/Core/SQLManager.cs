@@ -2320,7 +2320,7 @@ namespace TUFTManagement.Core
 
         #region leave
 
-        public _ReturnIdModel InsertLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int userID, string shareCode)
+        public _ReturnIdModel InsertLeaveDetail(SaveLeaveDetailDTO saveLeaveDetailDTO, int remainDay, int userID, string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_leave " +
@@ -2330,6 +2330,7 @@ namespace TUFTManagement.Core
                 "@pEndDate, " +
                 "@pNumberOfDays," +
                 "@pLeaveReason," +
+                "@pRemaining, " +
                 "@pCreateBy");
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
@@ -2357,15 +2358,15 @@ namespace TUFTManagement.Core
             pNumberOfDays.Value = saveLeaveDetailDTO.numdays;
             sql.Parameters.Add(pNumberOfDays);
 
-            //SqlParameter pRemaining = new SqlParameter(@"pRemaining", SqlDbType.Int);
-            //pRemaining.Direction = ParameterDirection.Input;
-            //pRemaining.Value = allLeaveDays;
-            //sql.Parameters.Add(pRemaining);
-
             SqlParameter pLeaveReason = new SqlParameter(@"pLeaveReason", SqlDbType.VarChar, 250);
             pLeaveReason.Direction = ParameterDirection.Input;
             pLeaveReason.Value = saveLeaveDetailDTO.leavereason;
             sql.Parameters.Add(pLeaveReason);
+
+            SqlParameter pRemaining = new SqlParameter(@"pRemaining", SqlDbType.Int);
+            pRemaining.Direction = ParameterDirection.Input;
+            pRemaining.Value = remainDay;
+            sql.Parameters.Add(pRemaining);
 
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
@@ -2523,12 +2524,12 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID, string rejectReason, int remainDay, string shareCode)
+        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID, string rejectReason, string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_reject_leave " +
                 "@pLeaveID," +
-                "@pRemain, " +
+                //"@pRemain, " +
                 "@pRejectReason," +
                 "@pRejectBy");
 
@@ -2536,11 +2537,6 @@ namespace TUFTManagement.Core
             pLeaveID.Direction = ParameterDirection.Input;
             pLeaveID.Value = leaveID;
             sql.Parameters.Add(pLeaveID);
-
-            SqlParameter pRemain = new SqlParameter(@"pRemain", SqlDbType.Int);
-            pRemain.Direction = ParameterDirection.Input;
-            pRemain.Value = remainDay;
-            sql.Parameters.Add(pRemain);
 
             SqlParameter pRejectReason = new SqlParameter(@"pRejectReason", SqlDbType.VarChar);
             pRejectReason.Direction = ParameterDirection.Input;
@@ -2743,12 +2739,12 @@ namespace TUFTManagement.Core
 
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_day_of_leave " +
-                "@pLeaveID ");
+                "@pLeaveTypeID ");
 
-            SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
-            pLeaveID.Direction = ParameterDirection.Input;
-            pLeaveID.Value = leaveID;
-            sql.Parameters.Add(pLeaveID);
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.Int);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = leaveID;
+            sql.Parameters.Add(pLeaveTypeID);
 
             table = sql.executeQueryWithReturnTable();
 
@@ -2763,6 +2759,34 @@ namespace TUFTManagement.Core
 
             return total;
         }
+
+        public int GetTotalDayPerYearByLeaveType(int leaveTypeID)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_day_of_leave_by_leave_type " +
+                "@pLeaveTypeID ");
+
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.Int);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = leaveTypeID;
+            sql.Parameters.Add(pLeaveTypeID);
+
+            table = sql.executeQueryWithReturnTable();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
 
         public int GetTotalUseDayPerYear(int leaveID, string shareCode)
         {
@@ -6179,6 +6203,83 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel CancelSystemPosition(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec cancel_system_position " +
+                "@pID," +
+                "@pIsActive," +
+                "@pUpdateBy ");
+
+            SqlParameter pID = new SqlParameter(@"pID", SqlDbType.Int);
+            pID.Direction = ParameterDirection.Input;
+            pID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = masterDataDTO.IsActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel CancelSystemDepartment(MasterDataDTO masterDataDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec cancel_system_department " +
+                "@pID," +
+                "@pIsActive," +
+                "@pUpdateBy ");
+
+            SqlParameter pID = new SqlParameter(@"pID", SqlDbType.Int);
+            pID.Direction = ParameterDirection.Input;
+            pID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = masterDataDTO.IsActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
         public MasterData GetMasterData(string shareCode, int id, string TableName)
         {
             DataTable table = new DataTable();
@@ -8059,6 +8160,101 @@ namespace TUFTManagement.Core
 
             return data;
         }
+
+        public _ReturnIdModel UpdateActiveSystemRoleAssign(string shareCode, string ProjectName, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec cancel_system_role_assign " +
+                "@pPId, " +
+                "@pProjectName, " +
+                "@pIsActive, " +
+                "@pUpdateBy");
+
+            SqlParameter pPId = new SqlParameter(@"pPId", SqlDbType.Int);
+            pPId.Direction = ParameterDirection.Input;
+            pPId.Value = saveSystemRoleAssignDTO.id;
+            sql.Parameters.Add(pPId);
+
+            SqlParameter pProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 255);
+            pProjectName.Direction = ParameterDirection.Input;
+            pProjectName.Value = ProjectName.ToLower();
+            sql.Parameters.Add(pProjectName);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = saveSystemRoleAssignDTO.isActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public _ReturnIdModel UpdateActiveSystemRoleTemp(string shareCode, string ProjectName, SaveSystemRoleTempDTO saveSystemRoleTempDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec cancel_system_role_template " +
+                "@pObjectID, " +
+                "@pParentID, " +
+                "@pIsActive, " +
+                "@pProjectName, " +
+                "@pUpdateBy");
+
+            SqlParameter pObjectID = new SqlParameter(@"pObjectID", SqlDbType.Int);
+            pObjectID.Direction = ParameterDirection.Input;
+            pObjectID.Value = saveSystemRoleTempDTO.objectID;
+            sql.Parameters.Add(pObjectID);
+
+            SqlParameter pParentID = new SqlParameter(@"pParentID", SqlDbType.Int);
+            pParentID.Direction = ParameterDirection.Input;
+            pParentID.Value = saveSystemRoleTempDTO.parentID;
+            sql.Parameters.Add(pParentID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = saveSystemRoleTempDTO.isActive;
+            sql.Parameters.Add(pIsActive);
+
+            SqlParameter pProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 255);
+            pProjectName.Direction = ParameterDirection.Input;
+            pProjectName.Value = ProjectName;
+            sql.Parameters.Add(pProjectName);
+            
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
 
         public Pagination<SearchAllSystemRoleAssign> SearchAllSystemRoleAssign(string shareCode, SearchSystemRoleAssignDTO searchSystemRoleAssignDTO)
         {

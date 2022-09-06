@@ -181,7 +181,7 @@ namespace TUFTManagement.Services
         }
 
         public ReturnIdModel InsertLeaveDetailService(string authorization, string lang, string platform, int logID,
-    SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
+    SaveLeaveDetailDTO saveLeaveDetailDTO,int remainDay, int userID,string shareCode)
         {
             if (_sql == null)
             {
@@ -194,7 +194,7 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidationDupicateInsertLeaveDetail(lang, saveLeaveDetailDTO);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertLeaveDetail(saveLeaveDetailDTO, userID, shareCode);
+                    value.data = _sql.InsertLeaveDetail(saveLeaveDetailDTO, remainDay, userID, shareCode);
                 }
                 else
                 {
