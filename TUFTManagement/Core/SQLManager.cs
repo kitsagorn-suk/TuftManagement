@@ -2502,12 +2502,12 @@ namespace TUFTManagement.Core
 
             SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
             pLeaveID.Direction = ParameterDirection.Input;
-            pLeaveID.Value = remainDay;
+            pLeaveID.Value = leaveID;
             sql.Parameters.Add(pLeaveID);
 
             SqlParameter pRemain = new SqlParameter(@"pRemain", SqlDbType.Int);
             pRemain.Direction = ParameterDirection.Input;
-            pRemain.Value = leaveID;
+            pRemain.Value = remainDay;
             sql.Parameters.Add(pRemain);
 
             SqlParameter pApproveBy = new SqlParameter(@"pApproveBy", SqlDbType.Int);
@@ -2529,11 +2529,12 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID, string rejectReason, string shareCode)
+        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID, string rejectReason, int remainDay, string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_reject_leave " +
                 "@pLeaveID," +
+                "@pRemain, " +
                 "@pRejectReason," +
                 "@pRejectBy");
 
@@ -2541,6 +2542,11 @@ namespace TUFTManagement.Core
             pLeaveID.Direction = ParameterDirection.Input;
             pLeaveID.Value = leaveID;
             sql.Parameters.Add(pLeaveID);
+
+            SqlParameter pRemain = new SqlParameter(@"pRemain", SqlDbType.Int);
+            pRemain.Direction = ParameterDirection.Input;
+            pRemain.Value = remainDay;
+            sql.Parameters.Add(pRemain);
 
             SqlParameter pRejectReason = new SqlParameter(@"pRejectReason", SqlDbType.VarChar);
             pRejectReason.Direction = ParameterDirection.Input;
@@ -2605,6 +2611,8 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_page " +
                 "@pTextSearch, " +
                 "@pLeaveTypeID, " +
+                "@pDepartmentIDList" +
+                "@pPositionIDList" +
                 "@pFromDate, " +
                 "@pToDate, " +
                 "@pLang, " +
@@ -2622,6 +2630,16 @@ namespace TUFTManagement.Core
             pLeaveTypeID.Direction = ParameterDirection.Input;
             pLeaveTypeID.Value = searchLeaveDTO.leaveTypeSearch;
             sql.Parameters.Add(pLeaveTypeID);
+
+            SqlParameter pDepartmentIDList = new SqlParameter(@"pDepartmentIDList", SqlDbType.VarChar, 100);
+            pDepartmentIDList.Direction = ParameterDirection.Input;
+            pDepartmentIDList.Value = searchLeaveDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentIDList);
+
+            SqlParameter pPositionIDList = new SqlParameter(@"pPositionIDList", SqlDbType.VarChar, 100);
+            pPositionIDList.Direction = ParameterDirection.Input;
+            pPositionIDList.Value = searchLeaveDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionIDList);
 
             SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
             pFromDate.Direction = ParameterDirection.Input;
@@ -2668,7 +2686,7 @@ namespace TUFTManagement.Core
                 foreach (DataRow row in table.Rows)
                 {
                     SearchAllLeave data = new SearchAllLeave();
-                    data.loadData(row);
+                    data.LoadData(row);
                     pagination.data.Add(data);
                 }
             }
@@ -2752,7 +2770,7 @@ namespace TUFTManagement.Core
             return total;
         }
 
-        public int GetTotalUseDayPerYear(int leaveID)
+        public int GetTotalUseDayPerYear(int leaveID, string shareCode)
         {
             int total = 0;
 
@@ -2765,7 +2783,7 @@ namespace TUFTManagement.Core
             pLeaveID.Value = leaveID;
             sql.Parameters.Add(pLeaveID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -2778,6 +2796,109 @@ namespace TUFTManagement.Core
 
             return total;
         }
+
+        public AllLeaveShift GetWorkShiftLeave(string shareCode, string userList, int workShiftID, string workDate)
+        {
+            int total = 0;
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_header " +
+                "@pUserIDList, " +
+                "@pWorkShiftID, " +
+                "@pWorkDate");
+
+            SqlParameter pUserIDList = new SqlParameter(@"pUserIDList", SqlDbType.VarChar, 200);
+            pUserIDList.Direction = ParameterDirection.Input;
+            pUserIDList.Value = userList;
+            sql.Parameters.Add(pUserIDList);
+
+            SqlParameter pWorkShiftID = new SqlParameter(@"pWorkShiftID", SqlDbType.Int);
+            pWorkShiftID.Direction = ParameterDirection.Input;
+            pWorkShiftID.Value = workShiftID;
+            sql.Parameters.Add(pWorkShiftID);
+
+            SqlParameter pWorkDate = new SqlParameter(@"pWorkDate", SqlDbType.VarChar, 25);
+            pWorkDate.Direction = ParameterDirection.Input;
+            pWorkDate.Value = workDate;
+            sql.Parameters.Add(pWorkDate);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            AllLeaveShift data = new AllLeaveShift();
+
+            if (table != null)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.LoadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public AllLeave GetLeave(string shareCode, string userList, int leaveTypeID, string workDate)
+        {
+            int total = 0;
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_header " +
+                "@pUserIDList, " +
+                "@pLeaveTypeID, " +
+                "@pWorkDate");
+
+            SqlParameter pUserIDList = new SqlParameter(@"pUserIDList", SqlDbType.VarChar, 200);
+            pUserIDList.Direction = ParameterDirection.Input;
+            pUserIDList.Value = userList;
+            sql.Parameters.Add(pUserIDList);
+
+            SqlParameter pLeaveTypeID = new SqlParameter(@"pLeaveTypeID", SqlDbType.Int);
+            pLeaveTypeID.Direction = ParameterDirection.Input;
+            pLeaveTypeID.Value = leaveTypeID;
+            sql.Parameters.Add(pLeaveTypeID);
+
+            SqlParameter pWorkDate = new SqlParameter(@"pWorkDate", SqlDbType.VarChar, 25);
+            pWorkDate.Direction = ParameterDirection.Input;
+            pWorkDate.Value = workDate;
+            sql.Parameters.Add(pWorkDate);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            AllLeave data = new AllLeave();
+
+            if (table != null)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.LoadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
+        public List<GetLeave> GetAllLeaveList()
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_leave_type ");
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<GetLeave> listData = new List<GetLeave>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    GetLeave data = new GetLeave();
+                    data.LoadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+
 
 
 

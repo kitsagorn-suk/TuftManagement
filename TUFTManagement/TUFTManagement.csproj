@@ -265,6 +265,7 @@
     <Compile Include="Models\GetEmpRateModel.cs" />
     <Compile Include="Models\GetFeedbackModel.cs" />
     <Compile Include="Models\GetLeaveDetailModel.cs" />
+    <Compile Include="Models\GetLeaveModel.cs" />
     <Compile Include="Models\GetMasterDataModel.cs" />
     <Compile Include="Models\GetDropdownTitleNameModel.cs" />
     <Compile Include="Models\GetMasterKeyModel.cs" />

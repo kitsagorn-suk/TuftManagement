@@ -526,7 +526,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID, string shareCode)
+        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int remainDay, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -543,7 +543,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    value.data = _sql.RejectLeaveForm(actionLeaveFormDTO.leaveID, userID, actionLeaveFormDTO.rejectReason , shareCode);
+                    value.data = _sql.RejectLeaveForm(actionLeaveFormDTO.leaveID, userID, actionLeaveFormDTO.rejectReason, remainDay, shareCode);
 
                     //MailService srv = new MailService();
                     //if (_sql.CheckleaveIsEdit(value.data.id))

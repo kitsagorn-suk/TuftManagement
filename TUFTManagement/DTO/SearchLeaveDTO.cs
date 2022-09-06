@@ -9,6 +9,10 @@ namespace TUFTManagement.DTO
     {
         public string paramSearch { set; get; } = "";
         public string leaveTypeSearch { set; get; } = "";
+        public string[] departmentSearch { set; get; } = { "" };
+        public string prepairDepartmentSearch { set; get; } = "";
+        public string[] positionSearch { set; get; } = { "" };
+        public string prepairPositionSearch { set; get; } = "";
         public string leaveFrom { set; get; } = "";
         public string leaveTo { set; get; } = "";
         public string lang { set; get; } = "";
