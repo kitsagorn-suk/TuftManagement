@@ -3809,6 +3809,14 @@ namespace TUFTManagement.Controllers
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
 
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchLeaveDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchLeaveDTO.departmentSearch);
+                searchLeaveDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchLeaveDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchLeaveDTO.positionSearch);
+                searchLeaveDTO.prepairPositionSearch = strPositionSearch;
+
                 if (searchLeaveDTO.pageInt.Equals(null) || searchLeaveDTO.pageInt.Equals(0))
                 {
                     throw new Exception("invalid : pageInt ");
@@ -3899,7 +3907,7 @@ namespace TUFTManagement.Controllers
                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveLeaveDetail(shareCode, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO);
 
                 int allLeaveDays = _sql.GetTotalDayPerYear(saveLeaveDetailDTO.leaveId);
-                int useDay = _sql.GetTotalUseDayPerYear(saveLeaveDetailDTO.leaveId);
+                int useDay = _sql.GetTotalUseDayPerYear(saveLeaveDetailDTO.leaveId, shareCode);
 
                 int remainDay = allLeaveDays - useDay;
 
@@ -3908,7 +3916,7 @@ namespace TUFTManagement.Controllers
                 //DeleteService srvDelete = new DeleteService();
                 var obj = new object();
 
-                if(remainDay > 0)
+                if(remainDay - saveLeaveDetailDTO.numdays > 0)
                 {
                     if (chkRequestBody.Success == true)
                     {
@@ -4033,8 +4041,14 @@ namespace TUFTManagement.Controllers
                 }
                 #endregion
 
+                int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
+                //int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID, shareCode);
+
+                //int remainDay = allLeaveDays - useDay;
+
+
                 UpdateService srv = new UpdateService();
-                var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+                var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, allLeaveDays, data.userID, shareCode);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -4067,16 +4081,17 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "ApproveLeaveForm", json, timestampNow.ToString(), headersDTO,
                    data.userID, fromProject.ToLower());
 
-
-                int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
-                int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID);
-
-                int remainDay = allLeaveDays - useDay;
-
                 if (actionLeaveFormDTO.leaveID.Equals(null) || actionLeaveFormDTO.leaveID.Equals(0))
                 {
                     throw new Exception("leaveID ");
                 }
+
+                int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
+                int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID, shareCode);
+
+                int remainDay = allLeaveDays - useDay;
+
+               
 
                 UpdateService srv = new UpdateService();
                 var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, remainDay, data.userID, shareCode);

@@ -2968,15 +2968,65 @@ namespace TUFTManagement.Services
             }
 
             SearchAllLeaveModel value = new SearchAllLeaveModel();
+            value.data = new SearchAllLeaveDetail();
+            value.data.dataSearch = new Pagination<SearchAllLeave>();
+            value.data.dataShift = new List<AllLeaveShift>();
+            value.data.dataLeave = new List<AllLeave>();
             try
             {
-                Pagination<SearchAllLeave> data = new Pagination<SearchAllLeave>();
+                Pagination<SearchAllLeave> dataSearch = new Pagination<SearchAllLeave>();
+                List<AllLeaveShift> dataShift = new List<AllLeaveShift>();
+                List<AllLeave> dataLeave = new List<AllLeave>();
 
                 ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.SearchAllLeave(shareCode, searchLeavetDTO);
+                    dataSearch = _sql.SearchAllLeave(shareCode, searchLeavetDTO);
+
+                    List<SearchAllLeave> total = dataSearch.data;
+
+                    List<int> termsList = new List<int>();
+                    foreach (SearchAllLeave item in total)
+                    {
+                        termsList.Add(item.empID);
+                    }
+                    int[] terms = termsList.ToArray();
+                    string theString = string.Join(",", terms);
+
+                    List<GetWorkShift> allWS = new List<GetWorkShift>();
+                    allWS = _sql.GetAllWorkShiftList(shareCode);
+
+                    foreach (GetWorkShift item in allWS)
+                    {
+                        AllLeaveShift sss = new AllLeaveShift();
+                        sss = _sql.GetWorkShiftLeave(shareCode, theString, item.workShiftID, searchLeavetDTO.paramSearch);
+
+                        dataShift.Add(sss);
+                    }
+
+                    List<SearchAllLeave> totalLeave = dataSearch.data;
+
+                    List<int> _termsList = new List<int>();
+                    foreach (SearchAllLeave item in totalLeave)
+                    {
+                        _termsList.Add(item.empID);
+                    }
+                    int[] _terms = _termsList.ToArray();
+                    string _theString = string.Join(",", _terms);
+
+                    List<GetLeave> _allWS = new List<GetLeave>();
+                    _allWS = _sql.GetAllLeaveList();
+
+                    foreach (GetLeave item in _allWS)
+                    {
+                        AllLeave listLeave = new AllLeave();
+                        listLeave = _sql.GetLeave(shareCode, _theString, item.leaveTypeID, searchLeavetDTO.paramSearch);
+
+                        dataLeave.Add(listLeave);
+                    }
+
+                    //dataLeave = _sql.;
                 }
                 else
                 {
@@ -2984,7 +3034,9 @@ namespace TUFTManagement.Services
                 }
 
                 value.success = validation.Success;
-                value.data = data;
+                value.data.dataSearch = dataSearch;
+                value.data.dataShift = dataShift;
+                value.data.dataLeave = dataLeave;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }
             catch (Exception ex)
