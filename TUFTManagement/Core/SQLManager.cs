@@ -1734,6 +1734,7 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_rate " +
                 "@pEmpID, " +
                 "@pServiceNo, " +
+                "@pProductGrade, " +
                 "@pStartDrink, " +
                 "@pFullDrink, " +
                 "@pRateStaff, " +
@@ -1752,6 +1753,11 @@ namespace TUFTManagement.Core
             paramServiceNo.Value = saveEmpRateDTO.serviceNo;
             sql.Parameters.Add(paramServiceNo);
 
+            SqlParameter paramProductGrade = new SqlParameter(@"pProductGrade", SqlDbType.Int);
+            paramProductGrade.Direction = ParameterDirection.Input;
+            paramProductGrade.Value = saveEmpRateDTO.productGrade;
+            sql.Parameters.Add(paramProductGrade);
+
             SqlParameter paramStartDrink = new SqlParameter(@"pStartDrink", SqlDbType.Int);
             paramStartDrink.Direction = ParameterDirection.Input;
             paramStartDrink.Value = saveEmpRateDTO.startDrink;
@@ -1762,22 +1768,22 @@ namespace TUFTManagement.Core
             paramFullDrink.Value = saveEmpRateDTO.fullDrink;
             sql.Parameters.Add(paramFullDrink);
 
-            SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Int);
+            SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Float);
             paramRateStaff.Direction = ParameterDirection.Input;
             paramRateStaff.Value = saveEmpRateDTO.rateStaff;
             sql.Parameters.Add(paramRateStaff);
 
-            SqlParameter paramRateManager = new SqlParameter(@"pRateManager", SqlDbType.Int);
+            SqlParameter paramRateManager = new SqlParameter(@"pRateManager", SqlDbType.Float);
             paramRateManager.Direction = ParameterDirection.Input;
             paramRateManager.Value = saveEmpRateDTO.rateManager;
             sql.Parameters.Add(paramRateManager);
 
-            SqlParameter paramRateOwner = new SqlParameter(@"pRateOwner", SqlDbType.Int);
+            SqlParameter paramRateOwner = new SqlParameter(@"pRateOwner", SqlDbType.Float);
             paramRateOwner.Direction = ParameterDirection.Input;
             paramRateOwner.Value = saveEmpRateDTO.rateOwner;
             sql.Parameters.Add(paramRateOwner);
 
-            SqlParameter paramRateConfirm = new SqlParameter(@"pRateConfirm", SqlDbType.Int);
+            SqlParameter paramRateConfirm = new SqlParameter(@"pRateConfirm", SqlDbType.Float);
             paramRateConfirm.Direction = ParameterDirection.Input;
             paramRateConfirm.Value = saveEmpRateDTO.rateConfirm;
             sql.Parameters.Add(paramRateConfirm);
@@ -3055,6 +3061,7 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_rate " +
                 "@pId, " +
                 "@pServiceNo, " +
+                "@pProductGrade, " +
                 "@pStartDrink, " +
                 "@pFullDrink, " +
                 "@pRateStaff, " +
@@ -3073,6 +3080,11 @@ namespace TUFTManagement.Core
             paramServiceNo.Value = saveEmpRateDTO.serviceNo;
             sql.Parameters.Add(paramServiceNo);
 
+            SqlParameter paramProductGrade = new SqlParameter(@"pProductGrade", SqlDbType.Int);
+            paramProductGrade.Direction = ParameterDirection.Input;
+            paramProductGrade.Value = saveEmpRateDTO.productGrade;
+            sql.Parameters.Add(paramProductGrade);
+
             SqlParameter paramStartDrink = new SqlParameter(@"pStartDrink", SqlDbType.Int);
             paramStartDrink.Direction = ParameterDirection.Input;
             paramStartDrink.Value = saveEmpRateDTO.startDrink;
@@ -3083,22 +3095,22 @@ namespace TUFTManagement.Core
             paramFullDrink.Value = saveEmpRateDTO.fullDrink;
             sql.Parameters.Add(paramFullDrink);
 
-            SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Int);
+            SqlParameter paramRateStaff = new SqlParameter(@"pRateStaff", SqlDbType.Float);
             paramRateStaff.Direction = ParameterDirection.Input;
             paramRateStaff.Value = saveEmpRateDTO.rateStaff;
             sql.Parameters.Add(paramRateStaff);
 
-            SqlParameter paramRateManager = new SqlParameter(@"pRateManager", SqlDbType.Int);
+            SqlParameter paramRateManager = new SqlParameter(@"pRateManager", SqlDbType.Float);
             paramRateManager.Direction = ParameterDirection.Input;
             paramRateManager.Value = saveEmpRateDTO.rateManager;
             sql.Parameters.Add(paramRateManager);
 
-            SqlParameter paramRateOwner = new SqlParameter(@"pRateOwner", SqlDbType.Int);
+            SqlParameter paramRateOwner = new SqlParameter(@"pRateOwner", SqlDbType.Float);
             paramRateOwner.Direction = ParameterDirection.Input;
             paramRateOwner.Value = saveEmpRateDTO.rateOwner;
             sql.Parameters.Add(paramRateOwner);
 
-            SqlParameter paramRateConfirm = new SqlParameter(@"pRateConfirm", SqlDbType.Int);
+            SqlParameter paramRateConfirm = new SqlParameter(@"pRateConfirm", SqlDbType.Float);
             paramRateConfirm.Direction = ParameterDirection.Input;
             paramRateConfirm.Value = saveEmpRateDTO.rateConfirm;
             sql.Parameters.Add(paramRateConfirm);
@@ -3449,6 +3461,43 @@ namespace TUFTManagement.Core
             pCreateBy.Direction = ParameterDirection.Input;
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+        public _ReturnIdModel UpdateFileDetails(string shareCode,int fileDetailID,  string newFileCode, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_file_details " +
+                "@pFileDetailID, " +
+                "@pNewFileCode, " +
+                "@pUpdateBy");
+
+            SqlParameter paramFileDetailID = new SqlParameter(@"pFileDetailID", SqlDbType.VarChar, 50);
+            paramFileDetailID.Direction = ParameterDirection.Input;
+            paramFileDetailID.Value = fileDetailID;
+            sql.Parameters.Add(paramFileDetailID);
+
+            SqlParameter paramNewFileCode = new SqlParameter(@"pNewFileCode", SqlDbType.VarChar, 50);
+            paramNewFileCode.Direction = ParameterDirection.Input;
+            paramNewFileCode.Value = newFileCode;
+            sql.Parameters.Add(paramNewFileCode);
+            
+            SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
+            pUpdateBy.Direction = ParameterDirection.Input;
+            pUpdateBy.Value = userID;
+            sql.Parameters.Add(pUpdateBy);
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
@@ -8102,7 +8151,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

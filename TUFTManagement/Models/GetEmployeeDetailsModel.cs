@@ -73,11 +73,12 @@ namespace TUFTManagement.Models
         public int hip { set; get; } = 0;
 
         public int empRateID { set; get; } = 0;
-        public int productCode { set; get; } = 0;
-        public int rateStaff { set; get; } = 0;
-        public int rateManager { set; get; } = 0;
-        public int rateOwner { set; get; } = 0;
-        public int rateConfirm { set; get; } = 0;
+        public int serviceNo { set; get; } = 0;
+        public int productGrade { set; get; } = 0;
+        public float rateStaff { set; get; } = 0;
+        public float rateManager { set; get; } = 0;
+        public float rateOwner { set; get; } = 0;
+        public float rateConfirm { set; get; } = 0;
 
         public string imageProfileUrl { set; get; } = "";
         public string imageIdentityUrl { set; get; } = "";
@@ -169,11 +170,12 @@ namespace TUFTManagement.Models
             hip = Convert.ToInt32(dr["hip"]);
 
             empRateID = Convert.ToInt32(dr["emp_rate_id"]);
-            productCode = Convert.ToInt32(dr["product_code"]);
-            rateStaff = Convert.ToInt32(dr["rate_staff"]);
-            rateManager = Convert.ToInt32(dr["rate_manager"]);
-            rateOwner = Convert.ToInt32(dr["rate_owner"]);
-            rateConfirm = Convert.ToInt32(dr["rate_confirm"]);
+            serviceNo = Convert.ToInt32(dr["service_no"]);
+            productGrade = Convert.ToInt32(dr["product_grade"]);
+            rateStaff = float.Parse(dr["rate_staff"].ToString());
+            rateManager = float.Parse(dr["rate_manager"].ToString());
+            rateOwner = float.Parse(dr["rate_owner"].ToString());
+            rateConfirm = float.Parse(dr["rate_confirm"].ToString());
 
             imageProfileUrl = dr["image_profile_url"].ToString();
             imageIdentityUrl = dr["image_iden_url"].ToString();
