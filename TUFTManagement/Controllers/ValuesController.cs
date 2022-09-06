@@ -26,6 +26,7 @@ namespace TUFTManagement.Controllers
     {
         private SQLManager _sql = SQLManager.Instance;
         private double timestampNow = Utility.DateTimeToUnixTimestamp(DateTime.Now);
+        
 
         #region Page Login
         [Route("1.0/login")]
@@ -1100,11 +1101,7 @@ namespace TUFTManagement.Controllers
                 }
                 saveEmpProfileDTO.shareCode = shareCode;
                 saveEmpProfileDTO.shareID = _sql.getShareIdByShareCode(shareCode);
-
-
-
-
-
+                
 
                  ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpProfile(shareCode, lang, fromProject.ToLower(), logID, saveEmpProfileDTO);
 
@@ -1122,6 +1119,18 @@ namespace TUFTManagement.Controllers
                     saveEmpProfileDTO.cZipcode = saveEmpProfileDTO.pZipcode;
                     saveEmpProfileDTO.cPhoneContact = saveEmpProfileDTO.pPhoneContact;
                 }
+
+                // prepair imageGalleryCode
+                Random rnd = new Random();
+                int passwordRandom = rnd.Next(100000, 999999);
+                string fileCode = Utility.MD5Hash(passwordRandom.ToString() + "_" + saveEmpProfileDTO.firstNameEN).ToUpper();
+                saveEmpProfileDTO.imageGalleryCode = fileCode;
+
+                foreach (int item in saveEmpProfileDTO.imageGallery)
+                {
+                    _sql.UpdateFileDetails(shareCode, item, fileCode, data.userID);
+                }
+                
 
                 var obj = new object();
                 if (chkRequestBody.Success == true)

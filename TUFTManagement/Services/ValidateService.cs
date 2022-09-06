@@ -171,7 +171,7 @@ namespace TUFTManagement.Services
                     checkMissingOptional += "employmentTypeID ";
                 }
 
-                if (!shareCode.ToLower().Equals("lls"))
+                if (!shareCode.ToLower().Equals("lls")) // ถ้าไม่ใช่ ลาลิสา
                 {
                     if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็นพริตตี้ รายวัน จะไม่เช็ค
                     {
@@ -359,42 +359,45 @@ namespace TUFTManagement.Services
                         checkMissingOptional += "bankID ";
                     }
                 }
-                
-                if (saveEmpProfileDTO.emergencyContact.Count > 0)
+
+                if (saveEmpProfileDTO.emergencyContact != null)
                 {
-                    if (saveEmpProfileDTO.emergencyContact.Count <= 5)
+                    if (saveEmpProfileDTO.emergencyContact.Count > 0)
+                    {
+                        if (saveEmpProfileDTO.emergencyContact.Count <= 5)
                         {
-                        foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
-                        {
-                            int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emergencyContactID);
-                            if (isDupName > 0)
+                            foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                             {
-                                throw new Exception("emergency fullname : "+ item.emerFullName +" is already");
-                            }
-                            else
-                            {
-                                if (string.IsNullOrEmpty(item.emerFullName))
+                                int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emergencyContactID);
+                                if (isDupName > 0)
                                 {
-                                    checkMissingOptional += "emerFullName ";
+                                    throw new Exception("emergency fullname : " + item.emerFullName + " is already");
                                 }
-                                if (item.emerRelationShipID.Equals(0))
+                                else
                                 {
-                                    checkMissingOptional += "emerRelationShipID ";
-                                }
-                                if (string.IsNullOrEmpty(item.emerContact))
-                                {
-                                    checkMissingOptional += "emerContact ";
+                                    if (string.IsNullOrEmpty(item.emerFullName))
+                                    {
+                                        checkMissingOptional += "emerFullName ";
+                                    }
+                                    if (item.emerRelationShipID.Equals(0))
+                                    {
+                                        checkMissingOptional += "emerRelationShipID ";
+                                    }
+                                    if (string.IsNullOrEmpty(item.emerContact))
+                                    {
+                                        checkMissingOptional += "emerContact ";
+                                    }
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        throw new Exception("emergency contact limit 5 record");
-                    }
+                        else
+                        {
+                            throw new Exception("emergency contact limit 5 record");
+                        }
 
-                    
+                    }
                 }
+                
 
                 if (saveEmpProfileDTO.positionID == 14) //ถ้าเป็นพริตตี้ ต้องกรอก
                 {
@@ -414,6 +417,10 @@ namespace TUFTManagement.Services
                     {
                         checkMissingOptional += "serviceNo ";
                     }
+                    if (saveEmpProfileDTO.productGrade.Equals(0))
+                    {
+                        checkMissingOptional += "productGrade ";
+                    }
                     if (saveEmpProfileDTO.rateStaff.Equals(0))
                     {
                         checkMissingOptional += "rateStaff ";
@@ -431,7 +438,6 @@ namespace TUFTManagement.Services
                         checkMissingOptional += "rateConfirm ";
                     }
                 }
-
                 
                 if (checkMissingOptional != "")
                 {
