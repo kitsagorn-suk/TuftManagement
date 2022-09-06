@@ -579,7 +579,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel ApproveLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID,string shareCode)
+        public ReturnIdModel ApproveLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int remainDay, int userID,string shareCode)
         {
             if (_sql == null)
             {
@@ -595,7 +595,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    value.data = _sql.ApproveLeaveForm(actionLeaveFormDTO.leaveID, userID, shareCode);
+                    value.data = _sql.ApproveLeaveForm(actionLeaveFormDTO.leaveID, remainDay, userID, shareCode);
 
                     //MailService srv = new MailService();
                     //if (_sql.CheckleaveIsEdit(value.data.id))
@@ -692,8 +692,7 @@ namespace TUFTManagement.Services
 
 
         #region SystemRole
-        public ReturnIdModel UpdateSystemRoleTempService(string authorization, string lang, string platform, int logID, 
-            SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
+        public ReturnIdModel UpdateSystemRoleTempService(string authorization, string lang, string platform, int logID, SaveSystemRoleTempDTO saveSystemRoleTempDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -703,10 +702,10 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertSystemRole(lang, saveSystemRoleTemp);
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertSystemRole(lang, saveSystemRoleTempDTO);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.UpdateSystemRole(shareCode, saveSystemRoleTemp, userID, platform);
+                    value.data = _sql.UpdateSystemRoleTemp(shareCode, saveSystemRoleTempDTO, userID, platform);
                 }
                 else
                 {
@@ -732,7 +731,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, SaveSystemRoleTemp saveSystemRoleTemp, int userID, string shareCode)
+        public ReturnIdModel UpdateSystemRoleAssignService(string authorization, string lang, string platform, int logID, SaveSystemRoleAssignDTO saveSystemRoleAssignDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -745,7 +744,7 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidationObject(lang, saveSystemRoleAssignDTO);
                 if (validation.Success == true)
                 {
-                    value.data = _sql.UpdateSystemRoleAssign(shareCode, platform, saveSystemRoleAssignDTO, saveSystemRoleTemp, userID);
+                    value.data = _sql.UpdateSystemRoleAssign(shareCode, platform, saveSystemRoleAssignDTO, userID);
                 }
                 else
                 {
