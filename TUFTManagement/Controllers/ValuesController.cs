@@ -3915,7 +3915,7 @@ namespace TUFTManagement.Controllers
                 ValidateService validateService = new ValidateService();
                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveLeaveDetail(shareCode, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO);
 
-                int allLeaveDays = _sql.GetTotalDayPerYear(saveLeaveDetailDTO.leaveId);
+                int allLeaveDays = _sql.GetTotalDayPerYear(saveLeaveDetailDTO.leavetypeId);
                 int useDay = _sql.GetTotalUseDayPerYear(saveLeaveDetailDTO.leaveId, shareCode);
 
                 int remainDay = allLeaveDays - useDay;
@@ -4104,6 +4104,64 @@ namespace TUFTManagement.Controllers
 
                 UpdateService srv = new UpdateService();
                 var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, remainDay, data.userID, shareCode);
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/search/pending/leave")]
+        [HttpPost]
+        public IHttpActionResult GetSearchPendingLeave(SearchPendingLeaveDTO searchPendingLeaveDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchPendingLeaveDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetSearchPendingLeave", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+
+               
+
+                if (searchPendingLeaveDTO.pageInt.Equals(null) || searchPendingLeaveDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchPendingLeaveDTO.perPage.Equals(null) || searchPendingLeaveDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchPendingLeaveDTO.sortField > 7)
+                {
+                    throw new Exception("invalid : sortField " + searchPendingLeaveDTO.sortField);
+                }
+                if (!(searchPendingLeaveDTO.sortType == "a" || searchPendingLeaveDTO.sortType == "d" || searchPendingLeaveDTO.sortType == "A" || searchPendingLeaveDTO.sortType == "D" || searchPendingLeaveDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllPendingLeave(authHeader, lang, fromProject.ToLower(), logID, searchPendingLeaveDTO, shareCode);
+
                 return Ok(obj);
             }
             catch (Exception ex)

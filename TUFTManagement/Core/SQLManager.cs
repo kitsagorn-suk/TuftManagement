@@ -471,40 +471,7 @@ namespace TUFTManagement.Core
             }
             return list;
         }
-
-        //public List<RoleIDList> GetUserRole(int pUserID, string pLang)
-        //{
-        //    List<RoleIDList> list = new List<RoleIDList>();
-
-        //    DataTable table = new DataTable();
-        //    SQLCustomExecute sql = new SQLCustomExecute("exec get_user_role @pUserID, @pLang");
-
-        //    SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
-        //    paramUserID.Direction = ParameterDirection.Input;
-        //    paramUserID.Value = pUserID;
-
-        //    SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
-        //    paramLang.Direction = ParameterDirection.Input;
-        //    paramLang.Value = pLang;
-
-        //    sql.Parameters.Add(paramUserID);
-        //    sql.Parameters.Add(paramLang);
-
-        //    table = sql.executeQueryWithReturnTable();
-
-        //    if (table != null && table.Rows.Count > 0)
-        //    {
-        //        RoleIDList data;
-        //        foreach (DataRow row in table.Rows)
-        //        {
-        //            data = new RoleIDList();
-        //            data.loadDataUserRole(row);
-        //            list.Add(data);
-        //        }
-        //    }
-        //    return list;
-        //}
-
+        
         public List<ShareHolderList> GetUserShareHolder(int pUserID, string pLang, string pFromProject)
         {
             List<ShareHolderList> list = new List<ShareHolderList>();
@@ -811,7 +778,6 @@ namespace TUFTManagement.Core
                 "@pPositionID, " +
                 "@pShareID, " +
                 "@pAgentID, " +
-                "@pRoleID, " +
                 "@pCreateBy");
 
             SqlParameter pUserName = new SqlParameter(@"pUserName", SqlDbType.VarChar, 200);
@@ -833,11 +799,6 @@ namespace TUFTManagement.Core
             pAgentID.Direction = ParameterDirection.Input;
             pAgentID.Value = saveEmpProfileDTO.agentID;
             sql.Parameters.Add(pAgentID);
-
-            SqlParameter pRoleID = new SqlParameter(@"pRoleID", SqlDbType.Int);
-            pRoleID.Direction = ParameterDirection.Input;
-            pRoleID.Value = saveEmpProfileDTO.roleID;
-            sql.Parameters.Add(pRoleID);
 
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
@@ -2611,8 +2572,8 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_page " +
                 "@pTextSearch, " +
                 "@pLeaveTypeID, " +
-                "@pDepartmentIDList" +
-                "@pPositionIDList" +
+                "@pDepartmentIDList, " +
+                "@pPositionIDList, " +
                 "@pFromDate, " +
                 "@pToDate, " +
                 "@pLang, " +
@@ -2729,6 +2690,97 @@ namespace TUFTManagement.Core
             pToDate.Value = searchLeaveDTO.leaveTo;
             sql.Parameters.Add(pToDate);
 
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public Pagination<SearchAllLeave> SearchAllPendingLeaves(string lang, string shareCode, SearchPendingLeaveDTO searchPendingLeaveDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_pending_page " +
+                "@pTextSearch, " +
+                "@pLang, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchPendingLeaveDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = lang;
+            sql.Parameters.Add(pLang);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchPendingLeaveDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchPendingLeaveDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchPendingLeaveDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchPendingLeaveDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllLeave> pagination = new Pagination<SearchAllLeave>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllLeave data = new SearchAllLeave();
+                    data.LoadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllPendingLeave(shareCode, searchPendingLeaveDTO);
+
+            pagination.SetPagination(total, searchPendingLeaveDTO.perPage, searchPendingLeaveDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchAllPendingLeave(string shareCode, SearchPendingLeaveDTO searchPendingLeaveDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_pending_total " +
+                "pTextSearch ");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = searchPendingLeaveDTO.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+            
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)

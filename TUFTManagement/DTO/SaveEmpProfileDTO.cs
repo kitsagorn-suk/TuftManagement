@@ -15,7 +15,6 @@ namespace TUFTManagement.DTO
         #region param เจาะรูไว้ ตอนนี้ defaut 
         public int agentID { set; get; } = 0;
         public int shareID { set; get; } = 0;
-        public int roleID { set; get; } = 7;
         #endregion
 
 
