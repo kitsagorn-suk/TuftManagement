@@ -76,16 +76,18 @@ namespace TUFTManagement.DTO
 
         public int empRateID { set; get; } = 0;
         public int serviceNo { set; get; } = 0;
+        public int productGrade { set; get; } = 0;
         public int startDrink { set; get; } = 0;
         public int fullDrink { set; get; } = 0;
-        public int rateStaff { set; get; } = 0;
-        public int rateManager { set; get; } = 0;
-        public int rateOwner { set; get; } = 0;
-        public int rateConfirm { set; get; } = 0;
+        public string rateStaff { set; get; } = "0";
+        public string rateManager { set; get; } = "0";
+        public string rateOwner { set; get; } = "0";
+        public string rateConfirm { set; get; } = "0";
 
         public string imageProfileCode { set; get; } = "";
-        public string imageGalleryCode { set; get; } = "";
         public string imageIdentityCode { set; get; } = "";
+        public string imageGalleryCode { set; get; } = "";
+        public int[] imageGallery { set; get; }
     }
     
     public class SaveEmergencyContact

@@ -60,12 +60,13 @@ namespace TUFTManagement.Services
                             SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
                             saveEmpRateRequestDTO.empID = saveEmpProfileDTO.userID;
                             saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
+                            saveEmpRateRequestDTO.productGrade = saveEmpProfileDTO.productGrade;
                             saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
                             saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
-                            saveEmpRateRequestDTO.rateStaff = saveEmpProfileDTO.rateStaff;
-                            saveEmpRateRequestDTO.rateManager = saveEmpProfileDTO.rateManager;
-                            saveEmpRateRequestDTO.rateOwner = saveEmpProfileDTO.rateOwner;
-                            saveEmpRateRequestDTO.rateConfirm = saveEmpProfileDTO.rateConfirm;
+                            saveEmpRateRequestDTO.rateStaff = float.Parse(saveEmpProfileDTO.rateStaff);
+                            saveEmpRateRequestDTO.rateManager = float.Parse(saveEmpProfileDTO.rateManager);
+                            saveEmpRateRequestDTO.rateOwner = float.Parse(saveEmpProfileDTO.rateOwner);
+                            saveEmpRateRequestDTO.rateConfirm = float.Parse(saveEmpProfileDTO.rateConfirm);
 
                             _sql.InsertEmpRate(shareCode, saveEmpRateRequestDTO, userID);
                         }
