@@ -64,7 +64,8 @@ namespace TUFTManagement.Services
                         validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
                         if (validation.Success == true)
                         {
-                            value.data = _sql.DeleteMasterData(shareCode, masterDataDTO, TableName, userID);
+                            value.data = _sql.CancelSystemDepartment(masterDataDTO, userID);
+                            //value.data = _sql.DeleteMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
                         else
                         {
@@ -282,6 +283,117 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+
+        public ReturnIdModel UpdateActiveSystemPositionService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                _ReturnIdModel data = new _ReturnIdModel();
+
+                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, "system_position", masterDataDTO);
+                if (validation.Success == true)
+                {
+                    //ValidationModel validation = new ValidationModel();
+                    //List<string> listobjectID = new List<string>();
+                    //listobjectID.Add("100401002");
+                    //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+                    validation = ValidationManager.CheckValidation(1, lang, platform);
+                    if (validation.Success == true)
+                    {
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, "system_position", "is_active", masterDataDTO.IsActive, userID);
+                        // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+                        value.data = _sql.CancelSystemPosition(masterDataDTO, userID); ;
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    }
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateActiveMasterService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel UpdateActiveSystemDepartmentService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, int userID, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                _ReturnIdModel data = new _ReturnIdModel();
+
+                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, "system_departrment", masterDataDTO);
+                if (validation.Success == true)
+                {
+                    //ValidationModel validation = new ValidationModel();
+                    //List<string> listobjectID = new List<string>();
+                    //listobjectID.Add("100401002");
+                    //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+                    validation = ValidationManager.CheckValidation(1, lang, platform);
+                    if (validation.Success == true)
+                    {
+                        _sql.InsertSystemLogChange(masterDataDTO.masterID, "system_departrment", "is_active", masterDataDTO.IsActive, userID);
+                        // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+                        value.data = _sql.CancelSystemDepartment(masterDataDTO, userID); ;
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    }
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateActiveMasterService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
 
         public SearchMasterDataDepartmentModel SearchMasterDepartmentService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string shareCode)
         {

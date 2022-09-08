@@ -705,6 +705,66 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/cancel/systemroleAssign")]
+        [HttpPost]
+        public IHttpActionResult CancelSystemRoleAssign(SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveSystemRoleAssignDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "CancelSystemRoleAssign", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRoleAssign(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO);
+
+                string checkMissingOptional = "";
+
+                if (saveSystemRoleAssignDTO.id == null || saveSystemRoleAssignDTO.id == 0)
+                {
+                    throw new Exception("Missing Parameter : id ");
+                }
+                if (saveSystemRoleAssignDTO.isActive == null )
+                {
+                    throw new Exception("Missing Parameter : isActive ");
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                var obj = new object();
+                UpdateService update = new UpdateService();
+                obj = update.UpdateActiveSystemRoleAssignService(authHeader, lang, fromProject, logID, saveSystemRoleAssignDTO, data.userID, shareCode);
+
+
+                return Ok(obj);
+               
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
         [Route("1.0/search/systemroleAssign")]
         [HttpPost]
         public IHttpActionResult SearchSystemRoleAssign(SearchSystemRoleAssignDTO searchSystemRoleAssignDTO)
@@ -868,6 +928,70 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.0/cancel/systemroleTemp")]
+        [HttpPost]
+        public IHttpActionResult CancelSystemRoleTemp(SaveSystemRoleTempDTO saveSystemRoleTempDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveSystemRoleTempDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "CancelSystemRoleTemp", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRoleTemp(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleTempDTO);
+
+                string checkMissingOptional = "";
+
+                if (saveSystemRoleTempDTO.objectID == null || saveSystemRoleTempDTO.objectID == 0)
+                {
+                    throw new Exception("Missing Parameter : id ");
+                }
+                if (saveSystemRoleTempDTO.parentID == null)
+                {
+                    throw new Exception("Missing Parameter : parentID ");
+                }
+                if (saveSystemRoleTempDTO.isActive == null)
+                {
+                    throw new Exception("Missing Parameter : isActive ");
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                var obj = new object();
+                UpdateService update = new UpdateService();
+                obj = update.UpdateActiveSystemRoleTempService(authHeader, lang, fromProject, logID, saveSystemRoleTempDTO, data.userID, shareCode);
+
+
+                return Ok(obj);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
 
         [Route("1.0/search/systemroleTemp")]
         [HttpPost]
@@ -3063,13 +3187,13 @@ namespace TUFTManagement.Controllers
                         checkMissingOptional += "nameTH ";
                     }
                 }
-                //else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                //{
-                //    if (masterDataDTO.masterID == 0)
-                //    {
-                //        checkMissingOptional += "masterID ";
-                //    }
-                //}
+                else if (masterDataDTO.mode.ToLower().Equals("delete"))
+                {
+                    if (masterDataDTO.masterID == 0)
+                    {
+                        checkMissingOptional += "masterID ";
+                    }
+                }
                 else
                 {
                     throw new Exception("Choose Mode Insert or Update");
@@ -3915,7 +4039,9 @@ namespace TUFTManagement.Controllers
                 ValidateService validateService = new ValidateService();
                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveLeaveDetail(shareCode, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO);
 
+
                 int allLeaveDays = _sql.GetTotalDayPerYear(saveLeaveDetailDTO.leavetypeId);
+
                 int useDay = _sql.GetTotalUseDayPerYear(saveLeaveDetailDTO.leaveId, shareCode);
 
                 int remainDay = allLeaveDays - useDay;
@@ -3925,13 +4051,13 @@ namespace TUFTManagement.Controllers
                 //DeleteService srvDelete = new DeleteService();
                 var obj = new object();
 
-                if(remainDay - saveLeaveDetailDTO.numdays > 0)
+                if(remainDay - saveLeaveDetailDTO.numdays >= 0)
                 {
                     if (chkRequestBody.Success == true)
                     {
                         if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
                         {
-                            obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.userID, shareCode);
+                            obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, remainDay, data.userID, shareCode);
                         }
                         else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
                         {
@@ -4050,14 +4176,14 @@ namespace TUFTManagement.Controllers
                 }
                 #endregion
 
-                int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
+                //int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.l);
                 //int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID, shareCode);
 
                 //int remainDay = allLeaveDays - useDay;
 
 
                 UpdateService srv = new UpdateService();
-                var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, allLeaveDays, data.userID, shareCode);
+                var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
                 return Ok(obj);
             }
             catch (Exception ex)
