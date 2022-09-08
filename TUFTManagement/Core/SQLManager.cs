@@ -2487,23 +2487,18 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel ApproveLeaveForm(int leaveID, int remainDay, int userID, string shareCode)
+        public _ReturnIdModel ApproveLeaveForm(int leaveID, int userID, string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_approve_leave " +
-                "@pLeaveID," +
-                "@pRemain," +
+                "@pLeaveID, " +
+                // "@pRemain," +
                 "@pApproveBy");
 
             SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
             pLeaveID.Direction = ParameterDirection.Input;
             pLeaveID.Value = leaveID;
             sql.Parameters.Add(pLeaveID);
-
-            SqlParameter pRemain = new SqlParameter(@"pRemain", SqlDbType.Int);
-            pRemain.Direction = ParameterDirection.Input;
-            pRemain.Value = remainDay;
-            sql.Parameters.Add(pRemain);
 
             SqlParameter pApproveBy = new SqlParameter(@"pApproveBy", SqlDbType.Int);
             pApproveBy.Direction = ParameterDirection.Input;
@@ -2524,24 +2519,19 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID, string rejectReason, string shareCode)
+        public _ReturnIdModel RejectLeaveForm(int leaveID, int userID,string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_reject_leave " +
                 "@pLeaveID," +
                 //"@pRemain, " +
-                "@pRejectReason," +
+                //"@pRejectReason," +
                 "@pRejectBy");
 
             SqlParameter pLeaveID = new SqlParameter(@"pLeaveID", SqlDbType.Int);
             pLeaveID.Direction = ParameterDirection.Input;
             pLeaveID.Value = leaveID;
             sql.Parameters.Add(pLeaveID);
-
-            SqlParameter pRejectReason = new SqlParameter(@"pRejectReason", SqlDbType.VarChar);
-            pRejectReason.Direction = ParameterDirection.Input;
-            pRejectReason.Value = rejectReason;
-            sql.Parameters.Add(pRejectReason);
 
             SqlParameter pRejectBy = new SqlParameter(@"pRejectBy", SqlDbType.Int);
             pRejectBy.Direction = ParameterDirection.Input;
@@ -2601,8 +2591,9 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_leave_page " +
                 "@pTextSearch, " +
                 "@pLeaveTypeID, " +
-                "@pDepartmentIDList" +
-                "@pPositionIDList" +
+                "@pDepartmentIDList, " +
+                "@pPositionIDList, " +
+                "@pEmpTypeList, " +
                 "@pFromDate, " +
                 "@pToDate, " +
                 "@pLang, " +
@@ -2630,6 +2621,11 @@ namespace TUFTManagement.Core
             pPositionIDList.Direction = ParameterDirection.Input;
             pPositionIDList.Value = searchLeaveDTO.prepairPositionSearch;
             sql.Parameters.Add(pPositionIDList);
+
+            SqlParameter pEmpTypeList = new SqlParameter(@"pEmpTypeList", SqlDbType.VarChar, 100);
+            pEmpTypeList.Direction = ParameterDirection.Input;
+            pEmpTypeList.Value = searchLeaveDTO.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmpTypeList);
 
             SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
             pFromDate.Direction = ParameterDirection.Input;

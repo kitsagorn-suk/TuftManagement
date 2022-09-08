@@ -3941,6 +3941,10 @@ namespace TUFTManagement.Controllers
                 strPositionSearch = string.Join(",", searchLeaveDTO.positionSearch);
                 searchLeaveDTO.prepairPositionSearch = strPositionSearch;
 
+                string strEmpTypeSearch = JsonConvert.SerializeObject(searchLeaveDTO.empTypeSearch);
+                strEmpTypeSearch = string.Join(",", searchLeaveDTO.empTypeSearch);
+                searchLeaveDTO.prepairEmpTypeSearch = strEmpTypeSearch;
+
                 if (searchLeaveDTO.pageInt.Equals(null) || searchLeaveDTO.pageInt.Equals(0))
                 {
                     throw new Exception("invalid : pageInt ");
@@ -4126,7 +4130,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/reject/leaveForm")]
         [HttpPost]
-        public IHttpActionResult RejectLeaveForm(ActionLeaveFormDTO actionLeaveFormDTO)
+        public IHttpActionResult RejectLeaveForm(ApproveLeaveRequestDTO approveLeaveRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -4144,24 +4148,32 @@ namespace TUFTManagement.Controllers
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
             try
             {
-                string json = JsonConvert.SerializeObject(actionLeaveFormDTO);
+                var obj = new object();
+
+                string json = JsonConvert.SerializeObject(approveLeaveRequestDTO);
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "RejectLeaveForm", json, timestampNow.ToString(), headersDTO,
                    data.userID, fromProject.ToLower());
 
                 #region msgCheck
-                string msgCheck = "";
-                if (actionLeaveFormDTO.leaveID.Equals(0) || actionLeaveFormDTO.leaveID.Equals(null))
+                 string checkMissingOptional = "";
+
+                string strRejectListLeaveID = JsonConvert.SerializeObject(approveLeaveRequestDTO.rejectListLeaveID);
+                strRejectListLeaveID = string.Join(",", approveLeaveRequestDTO.rejectListLeaveID);
+                approveLeaveRequestDTO.prepairRejectListLeaveID = strRejectListLeaveID;
+
+                if (string.IsNullOrEmpty(approveLeaveRequestDTO.prepairRejectListLeaveID))
                 {
-                    msgCheck += "leaveID ";
-                }
-                if (string.IsNullOrEmpty(actionLeaveFormDTO.rejectReason))
-                {
-                    msgCheck += "rejectReason ";
+                    checkMissingOptional += "rejectListLeaveID[] ";
                 }
 
-                if (!string.IsNullOrEmpty(msgCheck))
+                if (checkMissingOptional != "")
                 {
-                    throw new Exception(msgCheck);
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    UpdateService srv = new UpdateService();
+                    obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, approveLeaveRequestDTO, data.userID, shareCode);
                 }
                 #endregion
 
@@ -4171,8 +4183,8 @@ namespace TUFTManagement.Controllers
                 //int remainDay = allLeaveDays - useDay;
 
 
-                UpdateService srv = new UpdateService();
-                var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+               // UpdateService srv = new UpdateService();
+                //var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -4183,7 +4195,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/approve/leaveForm")]
         [HttpPost]
-        public IHttpActionResult ApproveLeaveForm(ActionLeaveFormDTO actionLeaveFormDTO)
+        public IHttpActionResult ApproveLeaveForm(ApproveLeaveRequestDTO approveLeaveRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -4201,24 +4213,44 @@ namespace TUFTManagement.Controllers
             AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
             try
             {
-                string json = JsonConvert.SerializeObject(actionLeaveFormDTO);
+                var obj = new object();
+                string json = JsonConvert.SerializeObject(approveLeaveRequestDTO);
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "ApproveLeaveForm", json, timestampNow.ToString(), headersDTO,
                    data.userID, fromProject.ToLower());
 
-                if (actionLeaveFormDTO.leaveID.Equals(null) || actionLeaveFormDTO.leaveID.Equals(0))
+                #region msgCheck
+                string checkMissingOptional = "";
+
+                string strApprovrListLeaveID = JsonConvert.SerializeObject(approveLeaveRequestDTO.approveListLeaveID);
+                strApprovrListLeaveID = string.Join(",", approveLeaveRequestDTO.approveListLeaveID);
+                approveLeaveRequestDTO.prepairApproveListLeaveID = strApprovrListLeaveID;
+
+                if (string.IsNullOrEmpty(approveLeaveRequestDTO.prepairApproveListLeaveID))
                 {
-                    throw new Exception("leaveID ");
+                    checkMissingOptional += "approveListLeaveID[] ";
                 }
 
-                int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
-                int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID, shareCode);
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+                else
+                {
+                    UpdateService srv = new UpdateService();
+                    obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, approveLeaveRequestDTO, data.userID, shareCode);
+                }
+                #endregion
 
-                int remainDay = allLeaveDays - useDay;
 
-               
+                //int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
+                //int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID, shareCode);
 
-                UpdateService srv = new UpdateService();
-                var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, remainDay, data.userID, shareCode);
+                //int remainDay = allLeaveDays - useDay;
+
+
+
+                //UpdateService srv = new UpdateService();
+                //var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, remainDay, data.userID, shareCode);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -4226,6 +4258,65 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        //[Route("1.0/Approve/leaveForm")]
+        //[HttpPost]
+        //public IHttpActionResult ApproveLeave(ApproveLeaveRequestDTO approveLeaveRequestDTO)
+        //{
+        //    var request = HttpContext.Current.Request;
+        //    string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+        //    string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+        //    string fromProject = request.Headers["Fromproject"];
+        //    string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+        //    AuthenticationController _auth = AuthenticationController.Instance;
+        //    AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+        //    try
+        //    {
+        //        var obj = new object();
+        //        string json = JsonConvert.SerializeObject(approveLeaveRequestDTO);
+        //        int logID = _sql.InsertLogReceiveData("ApproveLeave", json, timestampNow.ToString(), authHeader,
+        //            data.userID, fromProject.ToLower());
+
+        //        string checkMissingOptional = "";
+
+        //        string strApproveListLeaveID = JsonConvert.SerializeObject(approveLeaveRequestDTO.approveListLeaveID);
+        //        strApproveListLeaveID = string.Join(",", approveLeaveRequestDTO.approveListLeaveID);
+        //        approveLeaveRequestDTO.prepairApproveListLeaveID = strApproveListLeaveID;
+
+        //        string strRejectListLeaveID = JsonConvert.SerializeObject(approveLeaveRequestDTO.rejectListLeaveID);
+        //        strRejectListLeaveID = string.Join(",", approveLeaveRequestDTO.rejectListLeaveID);
+        //        approveLeaveRequestDTO.prepairRejectListLeaveID = strRejectListLeaveID;
+
+        //        if (string.IsNullOrEmpty(approveLeaveRequestDTO.prepairApproveListLeaveID))
+        //        {
+        //            checkMissingOptional += "approveListLeaveID[] ";
+        //        }
+
+        //        if (string.IsNullOrEmpty(approveLeaveRequestDTO.prepairRejectListLeaveID))
+        //        {
+        //            checkMissingOptional += "rejectListLeaveID[] ";
+        //        }
+
+        //        if (checkMissingOptional != "")
+        //        {
+        //            throw new Exception("Missing Parameter : " + checkMissingOptional);
+        //        }
+        //        else
+        //        {
+        //            InsertService srv = new InsertService();
+        //            obj = srv.ApproveEmpWorkShiftTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, approveChangeWorkShiftTimeRequestDTO, data.userID);
+        //        }
+
+        //        return Ok(obj);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+        //    }
+        //}
+
 
         #endregion
 

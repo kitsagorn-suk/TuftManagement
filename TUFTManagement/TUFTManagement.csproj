@@ -188,6 +188,7 @@
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\ValidationManager.cs" />
     <Compile Include="DTO\ActionLeaveFormDTO.cs" />
+    <Compile Include="DTO\ApproveLeaveRequestDTO.cs" />
     <Compile Include="DTO\FeedbackDTO.cs" />
     <Compile Include="DTO\GetHistoryWorkShiftTimeDTO.cs" />
     <Compile Include="DTO\GetLeaveDetailRequestDTO.cs" />

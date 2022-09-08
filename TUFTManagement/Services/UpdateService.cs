@@ -450,7 +450,7 @@ namespace TUFTManagement.Services
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "start_date", saveLeaveDetailDTO.startdate, userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "end_date", saveLeaveDetailDTO.enddate, userID);
                     //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "numbers_of_days", saveLeaveDetailDTO.numdays.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "leave_reason00", saveLeaveDetailDTO.leavereason.ToString(), userID);
+                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveLeaveDetailDTO.leaveId, TableName, "leave_reason", saveLeaveDetailDTO.leavereason.ToString(), userID);
 
                     value.data = _sql.UpdateLeaveDetail(saveLeaveDetailDTO, userID, shareCode);
                 }
@@ -525,7 +525,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID, string shareCode)
+        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ApproveLeaveRequestDTO approveLeaveRequestDTO, int userID, string shareCode)
         {
             if (_sql == null)
             {
@@ -542,7 +542,11 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    value.data = _sql.RejectLeaveForm(actionLeaveFormDTO.leaveID, userID, actionLeaveFormDTO.rejectReason, shareCode);
+                    foreach (int leaveID in approveLeaveRequestDTO.rejectListLeaveID)
+                    {
+                        value.data = _sql.RejectLeaveForm(leaveID, userID, shareCode);
+                    }
+                    
 
                     //MailService srv = new MailService();
                     //if (_sql.CheckleaveIsEdit(value.data.id))
@@ -579,7 +583,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel ApproveLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int remainDay, int userID,string shareCode)
+        public ReturnIdModel ApproveLeaveFormService(string authorization, string lang, string platform, int logID, ApproveLeaveRequestDTO approveLeaveRequestDTO, int userID,string shareCode)
         {
             if (_sql == null)
             {
@@ -595,7 +599,13 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    value.data = _sql.ApproveLeaveForm(actionLeaveFormDTO.leaveID, remainDay, userID, shareCode);
+                    foreach (int leaveID in approveLeaveRequestDTO.approveListLeaveID)
+                    {
+                        value.data = _sql.ApproveLeaveForm(leaveID, userID, shareCode);
+
+                    }
+
+
 
                     //MailService srv = new MailService();
                     //if (_sql.CheckleaveIsEdit(value.data.id))

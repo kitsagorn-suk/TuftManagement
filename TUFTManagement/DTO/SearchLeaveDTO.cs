@@ -13,6 +13,8 @@ namespace TUFTManagement.DTO
         public string prepairDepartmentSearch { set; get; } = "";
         public string[] positionSearch { set; get; } = { "" };
         public string prepairPositionSearch { set; get; } = "";
+        public string[] empTypeSearch { set; get; } = { "" };
+        public string prepairEmpTypeSearch { set; get; } = "";
         public string leaveFrom { set; get; } = "";
         public string leaveTo { set; get; } = "";
         public string lang { set; get; } = "";
