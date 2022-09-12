@@ -6695,7 +6695,7 @@ namespace TUFTManagement.Core
             return listData;
         }
 
-        public List<EmployeeDetails.ImageGallary> GetImgGallary(string shareCode, int userID)
+        public List<EmployeeDetails.ImageGallery> GetImgGallary(string shareCode, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_image_gallary " +
@@ -6709,13 +6709,13 @@ namespace TUFTManagement.Core
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
-            List<EmployeeDetails.ImageGallary> listData = new List<EmployeeDetails.ImageGallary>();
+            List<EmployeeDetails.ImageGallery> listData = new List<EmployeeDetails.ImageGallery>();
 
             if (table != null && table.Rows.Count > 0)
             {
                 foreach (DataRow row in table.Rows)
                 {
-                    EmployeeDetails.ImageGallary data = new EmployeeDetails.ImageGallary();
+                    EmployeeDetails.ImageGallery data = new EmployeeDetails.ImageGallery();
                     data.loadData(row);
                     listData.Add(data);
                 }

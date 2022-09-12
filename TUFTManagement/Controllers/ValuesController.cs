@@ -183,6 +183,13 @@ namespace TUFTManagement.Controllers
                         value = Utility.Base64ForUrlDecode(strText)
                     };
                 }
+                if (type == "decodeMD5")
+                {
+                    obj = new
+                    {
+                        value = Utility.MD5decrypt(strText)
+                    };
+                }
 
                 return Ok(obj);
             }
