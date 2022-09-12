@@ -3082,7 +3082,7 @@ namespace TUFTManagement.Services
             SearchAllLeaveModel value = new SearchAllLeaveModel();
             value.data = new SearchAllLeaveDetail();
             value.data.dataSearch = new Pagination<SearchAllLeave>();
-            value.data.dataShift = new List<AllLeaveShift>();
+            //value.data.dataShift = new List<AllLeaveShift>();
             value.data.dataLeave = new List<AllLeave>();
             try
             {
@@ -3103,19 +3103,20 @@ namespace TUFTManagement.Services
                     {
                         termsList.Add(item.empID);
                     }
-                    int[] terms = termsList.ToArray();
-                    string theString = string.Join(",", terms);
 
-                    List<GetWorkShift> allWS = new List<GetWorkShift>();
-                    allWS = _sql.GetAllWorkShiftList(shareCode);
+                    //int[] terms = termsList.ToArray();
+                    //string theString = string.Join(",", terms);
 
-                    foreach (GetWorkShift item in allWS)
-                    {
-                        AllLeaveShift sss = new AllLeaveShift();
-                        sss = _sql.GetWorkShiftLeave(shareCode, theString, item.workShiftID, searchLeavetDTO.paramSearch);
+                    //List<GetWorkShift> allWS = new List<GetWorkShift>();
+                    //allWS = _sql.GetAllWorkShiftList(shareCode);
 
-                        dataShift.Add(sss);
-                    }
+                    //foreach (GetWorkShift item in allWS)
+                    //{
+                    //    AllLeaveShift sss = new AllLeaveShift();
+                    //    sss = _sql.GetWorkShiftLeave(shareCode, theString, item.workShiftID, searchLeavetDTO.paramSearch);
+
+                    //    dataShift.Add(sss);
+                    //}
 
                     List<SearchAllLeave> totalLeave = dataSearch.data;
 
@@ -3147,7 +3148,7 @@ namespace TUFTManagement.Services
 
                 value.success = validation.Success;
                 value.data.dataSearch = dataSearch;
-                value.data.dataShift = dataShift;
+                //value.data.dataShift = dataShift;
                 value.data.dataLeave = dataLeave;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }
@@ -3166,6 +3167,88 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+
+        public SearchAllPendingLeaveModel SearchAllPendingLeave(string authorization, string lang, string platform, int logID, SearchPendingLeaveDTO searchPendingLeaveDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllPendingLeaveModel value = new SearchAllPendingLeaveModel();
+            value.data = new SearchAllPendingLeaveDetail();
+            value.data.dataSearch = new Pagination<SearchAllLeave>();
+            value.data.dataLeave = new List<AllLeave>();
+            try
+            {
+                Pagination<SearchAllLeave> dataSearch = new Pagination<SearchAllLeave>();
+                List<AllLeaveShift> dataShift = new List<AllLeaveShift>();
+                List<AllLeave> dataLeave = new List<AllLeave>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    dataSearch = _sql.SearchAllPendingLeaves(lang, shareCode, searchPendingLeaveDTO);
+
+                    List<SearchAllLeave> total = dataSearch.data;
+
+                    List<int> termsList = new List<int>();
+                    foreach (SearchAllLeave item in total)
+                    {
+                        termsList.Add(item.empID);
+                    }
+                    
+                    List<SearchAllLeave> totalLeave = dataSearch.data;
+
+                    List<int> _termsList = new List<int>();
+                    foreach (SearchAllLeave item in totalLeave)
+                    {
+                        _termsList.Add(item.empID);
+                    }
+                    int[] _terms = _termsList.ToArray();
+                    string _theString = string.Join(",", _terms);
+
+                    List<GetLeave> _allWS = new List<GetLeave>();
+                    _allWS = _sql.GetAllLeaveList();
+
+                    foreach (GetLeave item in _allWS)
+                    {
+                        AllLeave listLeave = new AllLeave();
+                        listLeave = _sql.GetLeave(shareCode, _theString, item.leaveTypeID, searchPendingLeaveDTO.paramSearch);
+
+                        dataLeave.Add(listLeave);
+                    }
+
+                    //dataLeave = _sql.;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data.dataSearch = dataSearch;
+                //value.data.dataShift = dataShift;
+                value.data.dataLeave = dataLeave;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllEmployee:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
 
         #endregion
 

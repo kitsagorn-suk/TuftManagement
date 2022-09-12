@@ -16,7 +16,7 @@ namespace TUFTManagement.Models
     public class SearchAllLeaveDetail
     {
 
-        public List<AllLeaveShift> dataShift { get; set; }
+        //public List<AllLeaveShift> dataShift { get; set; }
         public List<AllLeave> dataLeave { get; set; }
         public Pagination<SearchAllLeave> dataSearch { get; set; }
     }

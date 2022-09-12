@@ -84,7 +84,7 @@ namespace TUFTManagement.Models
         public string imageIdentityUrl { set; get; } = "";
         
 
-        public List<ImageGallary> imageGallary { set; get; }
+        public List<ImageGallery> imageGallery { set; get; }
 
         public class EmergencyContact
         {
@@ -102,7 +102,7 @@ namespace TUFTManagement.Models
             }
         }
 
-        public class ImageGallary
+        public class ImageGallery
         {
             public int id { set; get; } = 0;
             public string imgUrl { set; get; } = "";

@@ -297,7 +297,7 @@ namespace TUFTManagement.Services
                 {
                     data = _sql.GetEmpProfile(shareCode, userID, lang, requestDTO);
                     data.emergencyContact = _sql.GetEmerContact(shareCode, requestDTO.userID);
-                    data.imageGallary = _sql.GetImgGallary(shareCode, requestDTO.userID);
+                    data.imageGallery = _sql.GetImgGallary(shareCode, requestDTO.userID);
                     value.data = data;
                     value.success = validation.Success;
                 }

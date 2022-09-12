@@ -10,14 +10,12 @@ namespace TUFTManagement.Models
     {
         public int userID { set; get; } = 0;
         public int positionID { set; get; } = 0;
-        public string roleIDList { set; get; } = "";
         public string shareCodeList { set; get; } = "";
 
         public void loadData(DataRow dr)
         {
             userID = int.Parse(dr["id"].ToString());
             positionID = int.Parse(dr["position_id"].ToString());
-            roleIDList = dr["role_id_list"].ToString();
             shareCodeList = dr["share_code_list"].ToString();
         }
     }

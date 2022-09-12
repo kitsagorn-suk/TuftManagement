@@ -207,6 +207,7 @@
     <Compile Include="DTO\SaveChangeWorkShiftTimeRequestDTO.cs" />
     <Compile Include="DTO\SaveSystemRoleAssignDTO.cs" />
     <Compile Include="DTO\SaveSystemRoleTempDTO.cs" />
+    <Compile Include="DTO\SearchPendingLeaveDTO.cs" />
     <Compile Include="DTO\SearchSystemRoleAssignDTO.cs" />
     <Compile Include="DTO\SearchSystemRoleTempDTO.cs" />
     <Compile Include="DTO\SearchWorkShiftTimeAllTotalDTO.cs" />
@@ -285,6 +286,7 @@
     <Compile Include="Models\ReturnIdModel.cs" />
     <Compile Include="Models\ReturnVerifyModel.cs" />
     <Compile Include="Models\SearchAllEmployeeModel.cs" />
+    <Compile Include="Models\SearchAllPendingLeaveModel.cs" />
     <Compile Include="Models\SearchAllLeaveModel.cs" />
     <Compile Include="Models\SearchAllSystemRoleAssignModel.cs" />
     <Compile Include="Models\SearchAllSystemRoleTempModel.cs" />
