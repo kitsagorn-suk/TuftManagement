@@ -7640,27 +7640,27 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public Pagination<SearchSystemMaster> SearchSystemMaster(SearchSystemMasterDTO searchSystemMasterDTO)
+        public Pagination<SearchSystemMaster> SearchSystemMaster(SearchSystemMasterDTO searchSystemMasterDTO,string lang)
         {
             DataTable table = new DataTable();
 
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_master_page " +
-                "@pNameEN, " +
-                "@pNameTH, " +
+                "@pName, " +
+                "@pStatus, " +
                 "@pPage, " +
                 "@pPerPage, " +
                 "@pSortField, " +
                 "@pSortType");
 
-            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar, 255);
-            pNameEN.Direction = ParameterDirection.Input;
-            pNameEN.Value = searchSystemMasterDTO.nameEN;
-            sql.Parameters.Add(pNameEN);
+            SqlParameter pName = new SqlParameter(@"pName", SqlDbType.VarChar, 255);
+            pName.Direction = ParameterDirection.Input;
+            pName.Value = searchSystemMasterDTO.name;
+            sql.Parameters.Add(pName);
 
-            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar, 255);
-            pNameTH.Direction = ParameterDirection.Input;
-            pNameTH.Value = searchSystemMasterDTO.nameTH;
-            sql.Parameters.Add(pNameTH);
+            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.Int);
+            pStatus.Direction = ParameterDirection.Input;
+            pStatus.Value = searchSystemMasterDTO.status;
+            sql.Parameters.Add(pStatus);
 
             SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
             pPage.Direction = ParameterDirection.Input;
@@ -7693,6 +7693,10 @@ namespace TUFTManagement.Core
                 {
                     SearchSystemMaster data = new SearchSystemMaster();
                     data.loadData(row);
+
+                    data.allMasterInKey = new List<AllMasterInKey>();
+                    data.allMasterInKey = GetAllMasterInKey(data.id,lang);
+
                     pagination.data.Add(data);
                 }
             }
@@ -7704,24 +7708,59 @@ namespace TUFTManagement.Core
             return pagination;
         }
 
+        public List<AllMasterInKey> GetAllMasterInKey(int keyID, string lang)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_master_in_key " +
+                "@pKeyID, " +
+                "@pLang");
+
+            SqlParameter pKeyID = new SqlParameter(@"pKeyID", SqlDbType.Int);
+            pKeyID.Direction = ParameterDirection.Input;
+            pKeyID.Value = keyID;
+            sql.Parameters.Add(pKeyID);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar,10);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = lang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<AllMasterInKey> listData = new List<AllMasterInKey>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    AllMasterInKey data = new AllMasterInKey();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+
         public int GetTotalSearchSystemMaster(SearchSystemMasterDTO searchSystemMasterDTO)
         {
             int total = 0;
 
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_master_total " +
-                "@pNameEN, " +
-                "@pNameTH");
+                "@pName, " +
+                "@pStatus");
 
-            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar, 255);
-            pNameEN.Direction = ParameterDirection.Input;
-            pNameEN.Value = searchSystemMasterDTO.nameEN;
-            sql.Parameters.Add(pNameEN);
+            SqlParameter pName = new SqlParameter(@"pName", SqlDbType.VarChar, 255);
+            pName.Direction = ParameterDirection.Input;
+            pName.Value = searchSystemMasterDTO.name;
+            sql.Parameters.Add(pName);
 
-            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar, 255);
-            pNameTH.Direction = ParameterDirection.Input;
-            pNameTH.Value = searchSystemMasterDTO.nameTH;
-            sql.Parameters.Add(pNameTH);
+            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.VarChar, 255);
+            pStatus.Direction = ParameterDirection.Input;
+            pStatus.Value = searchSystemMasterDTO.status;
+            sql.Parameters.Add(pStatus);
 
             table = sql.executeQueryWithReturnTable();
 

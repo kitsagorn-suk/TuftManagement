@@ -728,7 +728,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    data = _sql.SearchSystemMaster(searchSystemMasterDTO);
+                    data = _sql.SearchSystemMaster(searchSystemMasterDTO,lang);
                 }
                 else
                 {
@@ -741,7 +741,7 @@ namespace TUFTManagement.Services
             }
             catch (Exception ex)
             {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterKeyService:");
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchMasterService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
