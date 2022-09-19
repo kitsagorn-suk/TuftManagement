@@ -207,6 +207,7 @@
     <Compile Include="DTO\SaveChangeWorkShiftTimeRequestDTO.cs" />
     <Compile Include="DTO\SaveSystemRoleAssignDTO.cs" />
     <Compile Include="DTO\SaveSystemRoleTempDTO.cs" />
+    <Compile Include="DTO\SearchMasterDepartmentPositionDTO.cs" />
     <Compile Include="DTO\SearchPendingLeaveDTO.cs" />
     <Compile Include="DTO\SearchSystemRoleAssignDTO.cs" />
     <Compile Include="DTO\SearchSystemRoleTempDTO.cs" />
@@ -253,10 +254,12 @@
       <DependentUpon>EmpWorkTime.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetAllDropdownModel.cs" />
+    <Compile Include="Models\GetAllEmployeeByPositionModel.cs" />
     <Compile Include="Models\GetBodySetModel.cs" />
     <Compile Include="Models\GetDepartmentModel.cs" />
     <Compile Include="Models\GetDetailSystemRoleAssignModel.cs" />
     <Compile Include="Models\GetDetailSystemRoleTempModel.cs" />
+    <Compile Include="Models\GetAllEmployeePrettyModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
     <Compile Include="Models\GetEmpWorkShiftTimeModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeUploadModel.cs" />
@@ -286,6 +289,7 @@
     <Compile Include="Models\ReturnIdModel.cs" />
     <Compile Include="Models\ReturnVerifyModel.cs" />
     <Compile Include="Models\SearchAllEmployeeModel.cs" />
+    <Compile Include="Models\SearchAllMasterDepartmentPositionModel.cs" />
     <Compile Include="Models\SearchAllPendingLeaveModel.cs" />
     <Compile Include="Models\SearchAllLeaveModel.cs" />
     <Compile Include="Models\SearchAllSystemRoleAssignModel.cs" />

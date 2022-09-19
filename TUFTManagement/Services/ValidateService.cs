@@ -368,7 +368,7 @@ namespace TUFTManagement.Services
                         {
                             foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                             {
-                                int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emergencyContactID);
+                                int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emerContactID);
                                 if (isDupName > 0)
                                 {
                                     throw new Exception("emergency fullname : " + item.emerFullName + " is already");

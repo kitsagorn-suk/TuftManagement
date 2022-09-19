@@ -3250,6 +3250,55 @@ namespace TUFTManagement.Services
         }
 
 
+        public SearchAllMasterDepartmentPositionModel SearchAllDepartmentPosition(string authorization, string lang, string platform, int logID, SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllMasterDepartmentPositionModel value = new SearchAllMasterDepartmentPositionModel();
+            value.data = new Pagination<SearchAllMasterDepartmentPosition>();
+            try
+            {
+                Pagination<SearchAllMasterDepartmentPosition> dataSearch = new Pagination<SearchAllMasterDepartmentPosition>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    dataSearch = _sql.SearchAllDepartmentPosition(searchMasterDepartmentPositionDTO);
+                    
+                    
+
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = dataSearch;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllDepartmentPosition:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
+
         #endregion
 
     }

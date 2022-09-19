@@ -1476,6 +1476,117 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        [Route("1.0/get/employee/pretty")]
+        [HttpPost]
+        public IHttpActionResult GetAllEmployeePretty()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeePretty", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = srv.GetEmployeePrettyService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/employee/hairStylist")]
+        [HttpPost]
+        public IHttpActionResult GetAllEmployeeHairStylist()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeeHairStylist", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 42);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/employee/makeUp")]
+        [HttpPost]
+        public IHttpActionResult GetAllEmployeeMakeUp()
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeeMakeUp", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+
+                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 41);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
         [Route("1.0/save/empRate")]
         [HttpPost]
         public IHttpActionResult SaveEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO)
@@ -3824,6 +3935,78 @@ namespace TUFTManagement.Controllers
         }
         #endregion
 
+
+        #endregion
+
+        #region Master 1.1
+
+        [Route("1.1/search/master/position")]
+        [HttpPost]
+        public IHttpActionResult GetSearchAllMasterDepartmentPosition(SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO);
+                int logID = _sql.InsertLogReceiveData("GetSearchAllMasterDepartmentPosition", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchMasterDepartmentPositionDTO.departmentSearch);
+                searchMasterDepartmentPositionDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchMasterDepartmentPositionDTO.positionSearch);
+                searchMasterDepartmentPositionDTO.prepairPositionSearch = strPositionSearch;
+
+                string strIsActiveSearch = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO.isActiveSearch);
+                strIsActiveSearch = string.Join(",", searchMasterDepartmentPositionDTO.isActiveSearch);
+                searchMasterDepartmentPositionDTO.prepairIsActiveSearch = strIsActiveSearch;
+
+                if (searchMasterDepartmentPositionDTO.pageInt.Equals(null) || searchMasterDepartmentPositionDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchMasterDepartmentPositionDTO.perPage.Equals(null) || searchMasterDepartmentPositionDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchMasterDepartmentPositionDTO.sortField > 4)
+                {
+                    throw new Exception("invalid : sortField " + searchMasterDepartmentPositionDTO.sortField);
+                }
+                if (!(searchMasterDepartmentPositionDTO.sortType == "a" || searchMasterDepartmentPositionDTO.sortType == "d" || searchMasterDepartmentPositionDTO.sortType == "A" || searchMasterDepartmentPositionDTO.sortType == "D" || searchMasterDepartmentPositionDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllDepartmentPosition(authHeader, lang, fromProject.ToLower(), logID, searchMasterDepartmentPositionDTO);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         #endregion
 

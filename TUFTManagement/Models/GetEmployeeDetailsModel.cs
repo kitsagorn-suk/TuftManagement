@@ -80,6 +80,8 @@ namespace TUFTManagement.Models
         public float rateOwner { set; get; } = 0;
         public float rateConfirm { set; get; } = 0;
 
+        public string imageProfileCode { set; get; } = "";
+        public string imageGalleryCode { set; get; } = "";
         public string imageProfileUrl { set; get; } = "";
         public string imageIdentityUrl { set; get; } = "";
         
@@ -177,6 +179,8 @@ namespace TUFTManagement.Models
             rateOwner = float.Parse(dr["rate_owner"].ToString());
             rateConfirm = float.Parse(dr["rate_confirm"].ToString());
 
+            imageProfileCode = dr["image_profile_code"].ToString();
+            imageGalleryCode = dr["image_gallery_code"].ToString();
             imageProfileUrl = dr["image_profile_url"].ToString();
             imageIdentityUrl = dr["image_iden_url"].ToString();
 

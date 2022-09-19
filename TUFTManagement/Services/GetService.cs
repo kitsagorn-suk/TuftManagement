@@ -324,6 +324,94 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public GetAllEmployeePrettyModel GetEmployeePrettyService(string shareCode, string authorization, string lang, string platform,
+            int logID, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetAllEmployeePrettyModel value = new GetAllEmployeePrettyModel();
+            try
+            {
+                List<GetAllEmployee> data = new List<GetAllEmployee>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetAllEmployeePretty(shareCode, userID, lang);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmployeePrettyService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetAllEmployeeByPositionModel GetEmployeeByPositionService(string shareCode, string authorization, string lang, string platform,
+            int logID, int userID, int position)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetAllEmployeeByPositionModel value = new GetAllEmployeeByPositionModel();
+            try
+            {
+                List<GetAllEmployeeNormal> data = new List<GetAllEmployeeNormal>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetAllEmployeeNormal(shareCode, userID, lang, position);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmployeeByPositionService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
         public GetfileByCodeModel GetFileByCodeService(string shareCode, string authorization, string lang, string platform, int logID, int userID, string fileCode)
         {
             if (_sql == null)

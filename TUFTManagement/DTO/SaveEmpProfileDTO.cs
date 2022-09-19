@@ -91,7 +91,7 @@ namespace TUFTManagement.DTO
     
     public class SaveEmergencyContact
     {
-        public int emergencyContactID { set; get; } = 0;
+        public int emerContactID { set; get; } = 0;
         public string emerFullName { set; get; } = "";
         public int emerRelationShipID { set; get; } = 0;
         public string emerContact { set; get; } = "";

@@ -98,7 +98,7 @@ namespace TUFTManagement.Services
                     {
                         foreach(SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                         {
-                            if (item.emergencyContactID != 0)
+                            if (item.emerContactID != 0)
                             {
                                 //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_full_name", item.emerFullName.ToString(), userID);
                                 //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_relationship_id", item.emerRelationShipID.ToString(), userID);
