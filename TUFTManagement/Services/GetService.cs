@@ -581,7 +581,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetEmpWorkShiftModel GetEmpWorkShiftService(string authorization, string lang, string platform, int logID, int empWorkShiftID)
+        public GetEmpWorkShiftModel GetEmpWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, int empWorkShiftID)
         {
             if (_sql == null)
             {
@@ -593,11 +593,11 @@ namespace TUFTManagement.Services
             {
                 GetEmpWorkShift data = new GetEmpWorkShift();
 
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetEmpWorkShift(empWorkShiftID);
+                    data = _sql.GetEmpWorkShift(shareCode, empWorkShiftID);
                     value.data = data;
                     value.success = validation.Success;
                 }

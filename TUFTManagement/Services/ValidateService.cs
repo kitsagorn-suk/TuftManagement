@@ -475,6 +475,11 @@ namespace TUFTManagement.Services
             {
                 string checkMissingOptional = "";
 
+                if (saveEmpWorkShiftRequestDTO.workShiftID == 0 && saveEmpWorkShiftRequestDTO.mode == "update")
+                {
+                    checkMissingOptional += "workShiftID ";
+                }
+
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.wsCode))
                 {
                     checkMissingOptional += "wsCode ";
@@ -490,6 +495,14 @@ namespace TUFTManagement.Services
                 if (saveEmpWorkShiftRequestDTO.workTypeID.Equals(0) || saveEmpWorkShiftRequestDTO.workTypeID.Equals(null))
                 {
                     checkMissingOptional += "workTypeID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.remark))
+                {
+                    checkMissingOptional += "remark ";
+                }
+                if (saveEmpWorkShiftRequestDTO.status.Equals(0) || saveEmpWorkShiftRequestDTO.status.Equals(null))
+                {
+                    checkMissingOptional += "status ";
                 }
 
                 if (checkMissingOptional != "")

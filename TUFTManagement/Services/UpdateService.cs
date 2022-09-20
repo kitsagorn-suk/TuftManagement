@@ -176,11 +176,11 @@ namespace TUFTManagement.Services
                 if (validation.Success == true)
                 {
                     string TableName = "emp_rate";
-                    _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "service_no", saveEmpRateDTO.serviceNo.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "rate_staff", saveEmpRateDTO.rateStaff.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "rate_manager", saveEmpRateDTO.rateManager.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "rate_owner", saveEmpRateDTO.rateOwner.ToString(), userID);
-                    _sql.InsertSystemLogChange(saveEmpRateDTO.empRateID, TableName, "rate_confirm", saveEmpRateDTO.rateConfirm.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpRateDTO.empRateID, TableName, "service_no", saveEmpRateDTO.serviceNo.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpRateDTO.empRateID, TableName, "rate_staff", saveEmpRateDTO.rateStaff.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpRateDTO.empRateID, TableName, "rate_manager", saveEmpRateDTO.rateManager.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpRateDTO.empRateID, TableName, "rate_owner", saveEmpRateDTO.rateOwner.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpRateDTO.empRateID, TableName, "rate_confirm", saveEmpRateDTO.rateConfirm.ToString(), userID);
 
                     value.data = _sql.UpdateEmpRate(shareCode, saveEmpRateDTO, userID);
                 }
@@ -208,53 +208,8 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateEmpWorkShiftService(string authorization, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
-
-            ReturnIdModel value = new ReturnIdModel();
-            try
-            {
-                value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
-
-                if (validation.Success == true)
-                {
-                    string TableName = "emp_rate";
-                    _sql.InsertSystemLogChange(saveEmpWorkShiftRequestDTO.empWorkShiftID, TableName, "ws_code", saveEmpWorkShiftRequestDTO.wsCode, userID);
-                    _sql.InsertSystemLogChange(saveEmpWorkShiftRequestDTO.empWorkShiftID, TableName, "time_start", saveEmpWorkShiftRequestDTO.timeStart, userID);
-                    _sql.InsertSystemLogChange(saveEmpWorkShiftRequestDTO.empWorkShiftID, TableName, "time_end", saveEmpWorkShiftRequestDTO.timeEnd, userID);
-                    _sql.InsertSystemLogChange(saveEmpWorkShiftRequestDTO.workTypeID, TableName, "work_type_id", saveEmpWorkShiftRequestDTO.workTypeID.ToString(), userID);
-
-                    value.data = _sql.UpdateEmpWorkShift(saveEmpWorkShiftRequestDTO, userID);
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                }
-
-                value.success = validation.Success;
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateEmpWorkShiftService:");
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
-        public ReturnIdModel UpdateEmpWorkTimeService(string authorization, string lang, string platform, int logID, SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int userID)
+       
+        public ReturnIdModel UpdateEmpWorkTimeService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO, int userID)
         {
             if (_sql == null)
             {
@@ -276,31 +231,31 @@ namespace TUFTManagement.Services
                         if (saveEmpWorkTimeRequestDTO.empWorkShiftID > 0)
                         {
                             string TableName = "emp_work_time";
-                            _sql.InsertSystemLogChange(saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_shift_id", saveEmpWorkTimeRequestDTO.empWorkShiftID.ToString(), userID);
+                            _sql.InsertSystemLogChange(shareCode, saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_shift_id", saveEmpWorkTimeRequestDTO.empWorkShiftID.ToString(), userID);
                             value.data = _sql.UpdateEmpWorkTime(saveEmpWorkTimeRequestDTO, userID);
                         }
                         else if (!string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.workIn))
                         {
                             string TableName = "emp_work_time";
-                            _sql.InsertSystemLogChange(saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_in", saveEmpWorkTimeRequestDTO.workIn.ToString(), userID);
+                            _sql.InsertSystemLogChange(shareCode, saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_in", saveEmpWorkTimeRequestDTO.workIn.ToString(), userID);
                             value.data = _sql.UpdateEmpWorkTime_WorkIn(saveEmpWorkTimeRequestDTO, userID);
                         }
                         else if (!string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.workOut))
                         {
                             string TableName = "emp_work_time";
-                            _sql.InsertSystemLogChange(saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_out", saveEmpWorkTimeRequestDTO.workOut.ToString(), userID);
+                            _sql.InsertSystemLogChange(shareCode, saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "work_out", saveEmpWorkTimeRequestDTO.workOut.ToString(), userID);
                             value.data = _sql.UpdateEmpWorkTime_WorkOut(saveEmpWorkTimeRequestDTO, userID);
                         }
                         else if (!string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.floorIn))
                         {
                             string TableName = "emp_work_time";
-                            _sql.InsertSystemLogChange(saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "floor_in", saveEmpWorkTimeRequestDTO.floorIn.ToString(), userID);
+                            _sql.InsertSystemLogChange(shareCode, saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "floor_in", saveEmpWorkTimeRequestDTO.floorIn.ToString(), userID);
                             value.data = _sql.UpdateEmpWorkTime_FloorIn(saveEmpWorkTimeRequestDTO, userID);
                         }
                         else if (!string.IsNullOrEmpty(saveEmpWorkTimeRequestDTO.floorOut))
                         {
                             string TableName = "emp_work_time";
-                            _sql.InsertSystemLogChange(saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "floor_out", saveEmpWorkTimeRequestDTO.floorOut.ToString(), userID);
+                            _sql.InsertSystemLogChange(shareCode, saveEmpWorkTimeRequestDTO.empWorkTimeID, TableName, "floor_out", saveEmpWorkTimeRequestDTO.floorOut.ToString(), userID);
                             value.data = _sql.UpdateEmpWorkTime_FloorOut(saveEmpWorkTimeRequestDTO, userID);
                         }
                     }
@@ -334,7 +289,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel ApproveWorkTimeTransChangeService(string authorization, string lang, string platform, int logID, SaveWorkTimeTransChangeRequestDTO transChangeRequest, int userID)
+        public ReturnIdModel ApproveWorkTimeTransChangeService(string shareCode, string authorization, string lang, string platform, int logID, SaveWorkTimeTransChangeRequestDTO transChangeRequest, int userID)
         {
             if (_sql == null)
             {
@@ -354,8 +309,8 @@ namespace TUFTManagement.Services
                     if (validation.Success == true)
                     {
                         string TableName = "tran_change_work_shift";
-                        _sql.InsertSystemLogChange(transChangeRequest.transChangeID, TableName, "status_approve", transChangeRequest.statusApprove.ToString(), userID);
-                        _sql.InsertSystemLogChange(transChangeRequest.transChangeID, TableName, "remark", transChangeRequest.remark.ToString(), userID);
+                        _sql.InsertSystemLogChange(shareCode, transChangeRequest.transChangeID, TableName, "status_approve", transChangeRequest.statusApprove.ToString(), userID);
+                        _sql.InsertSystemLogChange(shareCode, transChangeRequest.transChangeID, TableName, "remark", transChangeRequest.remark.ToString(), userID);
                         value.data = _sql.ApproveTransChange_WorkShift(transChangeRequest, userID);
                     }
                     else

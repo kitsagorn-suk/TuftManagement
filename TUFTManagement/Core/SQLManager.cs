@@ -1770,7 +1770,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel InsertEmpWorkShift(SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        public _ReturnIdModel InsertEmpWorkShift(string shareCode, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_emp_work_shift " +
@@ -1778,6 +1778,8 @@ namespace TUFTManagement.Core
                 "@pTimeStart, " +
                 "@pTimeEnd, " +
                 "@pWorkTypeID," +
+                "@pRemark," +
+                "@pStatus," +
                 "@pCreateBy");
 
             SqlParameter paramWsCode = new SqlParameter(@"pWsCode", SqlDbType.VarChar, 50);
@@ -1800,12 +1802,22 @@ namespace TUFTManagement.Core
             paramWorkTypeID.Value = saveEmpWorkShiftRequestDTO.workTypeID;
             sql.Parameters.Add(paramWorkTypeID);
 
+            SqlParameter paramRemark = new SqlParameter(@"pRemark", SqlDbType.VarChar, 200);
+            paramRemark.Direction = ParameterDirection.Input;
+            paramRemark.Value = saveEmpWorkShiftRequestDTO.remark;
+            sql.Parameters.Add(paramRemark);
+
+            SqlParameter paramStatus = new SqlParameter(@"pStatus", SqlDbType.Int);
+            paramStatus.Direction = ParameterDirection.Input;
+            paramStatus.Value = saveEmpWorkShiftRequestDTO.status;
+            sql.Parameters.Add(paramStatus);
+
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
             pCreateBy.Value = userID;
             sql.Parameters.Add(pCreateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -3524,7 +3536,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel UpdateEmpWorkShift(SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        public _ReturnIdModel UpdateEmpWorkShift(string shareCode, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_work_shift " +
@@ -3533,11 +3545,13 @@ namespace TUFTManagement.Core
                 "@pTimeStart, " +
                 "@pTimeEnd, " +
                 "@pWorkTypeID," +
+                "@pRemark," +
+                "@pStatus," +
                 "@pUpdateBy");
 
             SqlParameter paramID = new SqlParameter(@"pId", SqlDbType.Int);
             paramID.Direction = ParameterDirection.Input;
-            paramID.Value = saveEmpWorkShiftRequestDTO.empWorkShiftID;
+            paramID.Value = saveEmpWorkShiftRequestDTO.workShiftID;
             sql.Parameters.Add(paramID);
 
             SqlParameter paramWsCode = new SqlParameter(@"pWsCode", SqlDbType.VarChar, 50);
@@ -3560,12 +3574,22 @@ namespace TUFTManagement.Core
             paramWorkTypeID.Value = saveEmpWorkShiftRequestDTO.workTypeID;
             sql.Parameters.Add(paramWorkTypeID);
 
+            SqlParameter paramRemark = new SqlParameter(@"pRemark", SqlDbType.VarChar, 200);
+            paramRemark.Direction = ParameterDirection.Input;
+            paramRemark.Value = saveEmpWorkShiftRequestDTO.remark;
+            sql.Parameters.Add(paramRemark);
+
+            SqlParameter paramStatus = new SqlParameter(@"pStatus", SqlDbType.Int);
+            paramStatus.Direction = ParameterDirection.Input;
+            paramStatus.Value = saveEmpWorkShiftRequestDTO.status;
+            sql.Parameters.Add(paramStatus);
+
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
@@ -4030,7 +4054,7 @@ namespace TUFTManagement.Core
 
             SqlParameter paramId = new SqlParameter(@"pId", SqlDbType.Int);
             paramId.Direction = ParameterDirection.Input;
-            paramId.Value = requestDTO.empWorkShiftID;
+            paramId.Value = requestDTO.workShiftID;
             sql.Parameters.Add(paramId);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
@@ -4375,7 +4399,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public GetEmpWorkShift GetEmpWorkShift(int empWorkShiftID)
+        public GetEmpWorkShift GetEmpWorkShift(string shareCode, int empWorkShiftID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_emp_work_shift " +
@@ -4386,7 +4410,7 @@ namespace TUFTManagement.Core
             paramID.Value = empWorkShiftID;
             sql.Parameters.Add(paramID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             GetEmpWorkShift data = new GetEmpWorkShift();
 
@@ -6185,7 +6209,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public _ReturnIdModel InsertSystemLogChange(int actionID, string tableName, string fieldName, string newData, int userID)
+        public _ReturnIdModel InsertSystemLogChange(string shareCode, int actionID, string tableName, string fieldName, string newData, int userID)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_system_log_change " +
@@ -6220,7 +6244,7 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             _ReturnIdModel data = new _ReturnIdModel();
 
