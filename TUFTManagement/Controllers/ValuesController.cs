@@ -3551,10 +3551,10 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "value ";
                     }
-                    if (string.IsNullOrEmpty(systemMasterDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
+                    //if (string.IsNullOrEmpty(systemMasterDTO.nameEN))
+                    //{
+                    //    checkMissingOptional += "nameEN ";
+                    //}
                     if (string.IsNullOrEmpty(systemMasterDTO.nameTH))
                     {
                         checkMissingOptional += "nameTH ";
@@ -3579,10 +3579,10 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "value ";
                     }
-                    if (string.IsNullOrEmpty(systemMasterDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
+                    //if (string.IsNullOrEmpty(systemMasterDTO.nameEN))
+                    //{
+                    //    checkMissingOptional += "nameEN ";
+                    //}
                     if (string.IsNullOrEmpty(systemMasterDTO.nameTH))
                     {
                         checkMissingOptional += "nameTH ";
@@ -3651,9 +3651,9 @@ namespace TUFTManagement.Controllers
 
                 var obj = new object();
 
-                if (systemMasterDTO.masterID != 0)
+                if (systemMasterDTO.keyID != 0)
                 {
-                    obj = srv.GetSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, systemMasterDTO.masterID, shareCode);
+                    obj = srv.GetSystemMasterService(authHeader, lang, fromProject.ToLower(), logID, systemMasterDTO.keyID, shareCode);
                 }
                 else
                 {
@@ -4393,6 +4393,225 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+
+        #endregion
+
+        [Route("1.0/search/allreportsalary")]
+        [HttpPost]
+        public IHttpActionResult GetSearchAllReportSalary(SearchReportDTO searchReportSalaryDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject("");
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchAllReportSalary", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+                var obj = new object();
+
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchReportSalaryDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchReportSalaryDTO.departmentSearch);
+                searchReportSalaryDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchReportSalaryDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchReportSalaryDTO.positionSearch);
+                searchReportSalaryDTO.prepairPositionSearch = strPositionSearch;
+
+                string strEmpTypeSearch = JsonConvert.SerializeObject(searchReportSalaryDTO.empTypeSearch);
+                strEmpTypeSearch = string.Join(",", searchReportSalaryDTO.empTypeSearch);
+                searchReportSalaryDTO.prepairEmpTypeSearch = strEmpTypeSearch;
+
+                string strEmpStatusSearch = JsonConvert.SerializeObject(searchReportSalaryDTO.empStatusSearch);
+                strEmpStatusSearch = string.Join(",", searchReportSalaryDTO.empStatusSearch);
+                searchReportSalaryDTO.prepairEmpStatusSearch = strEmpStatusSearch;
+
+                if (searchReportSalaryDTO.pageInt.Equals(null) || searchReportSalaryDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchReportSalaryDTO.perPage.Equals(null) || searchReportSalaryDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchReportSalaryDTO.sortField > 3)
+                {
+                    throw new Exception("invalid : sortField " + searchReportSalaryDTO.sortField);
+                }
+                if (!(searchReportSalaryDTO.sortType == "a" || searchReportSalaryDTO.sortType == "d" || searchReportSalaryDTO.sortType == "A" || searchReportSalaryDTO.sortType == "D" || searchReportSalaryDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllSalaryReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportSalaryDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/search/allreportemployee")]
+        [HttpPost]
+        public IHttpActionResult GetSearchAllReportEmployee(SearchReportDTO searchReportEmployeeDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject("");
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchAllReportEmployee", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+                var obj = new object();
+
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchReportEmployeeDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchReportEmployeeDTO.departmentSearch);
+                searchReportEmployeeDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchReportEmployeeDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchReportEmployeeDTO.positionSearch);
+                searchReportEmployeeDTO.prepairPositionSearch = strPositionSearch;
+
+                string strEmpTypeSearch = JsonConvert.SerializeObject(searchReportEmployeeDTO.empTypeSearch);
+                strEmpTypeSearch = string.Join(",", searchReportEmployeeDTO.empTypeSearch);
+                searchReportEmployeeDTO.prepairEmpTypeSearch = strEmpTypeSearch;
+
+                string strEmpStatusSearch = JsonConvert.SerializeObject(searchReportEmployeeDTO.empStatusSearch);
+                strEmpStatusSearch = string.Join(",", searchReportEmployeeDTO.empStatusSearch);
+                searchReportEmployeeDTO.prepairEmpStatusSearch = strEmpStatusSearch;
+
+                if (searchReportEmployeeDTO.pageInt.Equals(null) || searchReportEmployeeDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchReportEmployeeDTO.perPage.Equals(null) || searchReportEmployeeDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchReportEmployeeDTO.sortField > 3)
+                {
+                    throw new Exception("invalid : sortField " + searchReportEmployeeDTO.sortField);
+                }
+                if (!(searchReportEmployeeDTO.sortType == "a" || searchReportEmployeeDTO.sortType == "d" || searchReportEmployeeDTO.sortType == "A" || searchReportEmployeeDTO.sortType == "D" || searchReportEmployeeDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllEmployeeReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportEmployeeDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+        [Route("1.0/search/allreportworktime")]
+        [HttpPost]
+        public IHttpActionResult GetSearchAllReportWorkTime(SearchReportDTO searchReportWorkTimeDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject("");
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchAllReportWorkTime", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                GetService srv = new GetService();
+                var obj = new object();
+
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchReportWorkTimeDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchReportWorkTimeDTO.departmentSearch);
+                searchReportWorkTimeDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchReportWorkTimeDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchReportWorkTimeDTO.positionSearch);
+                searchReportWorkTimeDTO.prepairPositionSearch = strPositionSearch;
+
+                string strEmpTypeSearch = JsonConvert.SerializeObject(searchReportWorkTimeDTO.empTypeSearch);
+                strEmpTypeSearch = string.Join(",", searchReportWorkTimeDTO.empTypeSearch);
+                searchReportWorkTimeDTO.prepairEmpTypeSearch = strEmpTypeSearch;
+
+                if (searchReportWorkTimeDTO.pageInt.Equals(null) || searchReportWorkTimeDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchReportWorkTimeDTO.perPage.Equals(null) || searchReportWorkTimeDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchReportWorkTimeDTO.sortField > 3)
+                {
+                    throw new Exception("invalid : sortField " + searchReportWorkTimeDTO.sortField);
+                }
+                if (!(searchReportWorkTimeDTO.sortType == "a" || searchReportWorkTimeDTO.sortType == "d" || searchReportWorkTimeDTO.sortType == "A" || searchReportWorkTimeDTO.sortType == "D" || searchReportWorkTimeDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllWorkTimeReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportWorkTimeDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+        #region Report
 
 
         #endregion

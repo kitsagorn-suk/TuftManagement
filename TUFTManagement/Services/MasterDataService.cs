@@ -674,7 +674,7 @@ namespace TUFTManagement.Services
                         {
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "key_id", systemMasterDTO.keyID.ToString(), userID);
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "value", systemMasterDTO.value.ToString(), userID);
-                            _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "name_en", systemMasterDTO.nameEN, userID);
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "name_en", systemMasterDTO.nameEN, userID);
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "name_th", systemMasterDTO.nameTH, userID);
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, systemMasterDTO.masterID, TableName, "order", systemMasterDTO.order.ToString(), userID);
 
@@ -755,7 +755,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetSystemMasterModel GetSystemMasterService(string authorization, string lang, string platform, int logID, int masterID, string shareCode)
+        public GetSystemMasterModel GetSystemMasterService(string authorization, string lang, string platform, int logID, int keyID, string shareCode)
         {
             if (_sql == null)
             {
@@ -771,7 +771,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetSystemMaster(masterID);
+                    data = _sql.GetSystemMaster(keyID,lang);
                     value.data = data;
                     value.success = validation.Success;
                 }
