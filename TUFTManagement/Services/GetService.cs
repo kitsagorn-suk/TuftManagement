@@ -1080,5 +1080,144 @@ namespace TUFTManagement.Services
 
         #endregion
 
+        #region Report
+
+        public SearchAllSalaryReportModel SearchAllSalaryReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportSalaryDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllSalaryReportModel value = new SearchAllSalaryReportModel();
+            try
+            {
+                Pagination<SearchAllSalaryReport> data = new Pagination<SearchAllSalaryReport>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchAllSalaryReport(shareCode, searchReportSalaryDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllSalaryReportService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public SearchAllEmployeeReportModel SearchAllEmployeeReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportEmployeeDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllEmployeeReportModel value = new SearchAllEmployeeReportModel();
+            value.data = new SearchAllEmployeeReport();
+            value.data.header = new EmployeeReportHeader();
+            value.data.body = new Pagination<SearchAllEmployeeReportBody>();
+            try
+            {
+                EmployeeReportHeader dataHeader = new EmployeeReportHeader();
+                Pagination<SearchAllEmployeeReportBody> dataBody = new Pagination<SearchAllEmployeeReportBody>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    dataHeader = _sql.GetEmployeeReportHeader(shareCode);
+                    dataBody = _sql.SearchAllEmployeeReport(shareCode, searchReportEmployeeDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data.header = dataHeader;
+                value.data.body = dataBody;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllEmployeeReportService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public SearchAllWorkTimeReportModel SearchAllWorkTimeReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportWorkTimeDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllWorkTimeReportModel value = new SearchAllWorkTimeReportModel();
+            try
+            {
+                Pagination<SearchAllWorkTimeReport> data = new Pagination<SearchAllWorkTimeReport>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchAllWorkTimeReport(shareCode, searchReportWorkTimeDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllWorkTimeReportService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        #endregion
+
     }
 }

@@ -7947,27 +7947,27 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public Pagination<SearchSystemMaster> SearchSystemMaster(SearchSystemMasterDTO searchSystemMasterDTO)
+        public Pagination<SearchSystemMaster> SearchSystemMaster(SearchSystemMasterDTO searchSystemMasterDTO,string lang)
         {
             DataTable table = new DataTable();
 
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_master_page " +
-                "@pNameEN, " +
-                "@pNameTH, " +
+                "@pName, " +
+                "@pStatus, " +
                 "@pPage, " +
                 "@pPerPage, " +
                 "@pSortField, " +
                 "@pSortType");
 
-            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar, 255);
-            pNameEN.Direction = ParameterDirection.Input;
-            pNameEN.Value = searchSystemMasterDTO.nameEN;
-            sql.Parameters.Add(pNameEN);
+            SqlParameter pName = new SqlParameter(@"pName", SqlDbType.VarChar, 255);
+            pName.Direction = ParameterDirection.Input;
+            pName.Value = searchSystemMasterDTO.name;
+            sql.Parameters.Add(pName);
 
-            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar, 255);
-            pNameTH.Direction = ParameterDirection.Input;
-            pNameTH.Value = searchSystemMasterDTO.nameTH;
-            sql.Parameters.Add(pNameTH);
+            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.Int);
+            pStatus.Direction = ParameterDirection.Input;
+            pStatus.Value = searchSystemMasterDTO.status;
+            sql.Parameters.Add(pStatus);
 
             SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
             pPage.Direction = ParameterDirection.Input;
@@ -8000,6 +8000,10 @@ namespace TUFTManagement.Core
                 {
                     SearchSystemMaster data = new SearchSystemMaster();
                     data.loadData(row);
+
+                    data.allMasterInKey = new List<AllMasterInKey>();
+                    data.allMasterInKey = GetAllMasterInKey(data.id,lang);
+
                     pagination.data.Add(data);
                 }
             }
@@ -8011,24 +8015,59 @@ namespace TUFTManagement.Core
             return pagination;
         }
 
+        public List<AllMasterInKey> GetAllMasterInKey(int keyID, string lang)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_all_master_in_key " +
+                "@pKeyID, " +
+                "@pLang");
+
+            SqlParameter pKeyID = new SqlParameter(@"pKeyID", SqlDbType.Int);
+            pKeyID.Direction = ParameterDirection.Input;
+            pKeyID.Value = keyID;
+            sql.Parameters.Add(pKeyID);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar,10);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = lang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<AllMasterInKey> listData = new List<AllMasterInKey>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    AllMasterInKey data = new AllMasterInKey();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+
         public int GetTotalSearchSystemMaster(SearchSystemMasterDTO searchSystemMasterDTO)
         {
             int total = 0;
 
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_system_master_total " +
-                "@pNameEN, " +
-                "@pNameTH");
+                "@pName, " +
+                "@pStatus");
 
-            SqlParameter pNameEN = new SqlParameter(@"pNameEN", SqlDbType.VarChar, 255);
-            pNameEN.Direction = ParameterDirection.Input;
-            pNameEN.Value = searchSystemMasterDTO.nameEN;
-            sql.Parameters.Add(pNameEN);
+            SqlParameter pName = new SqlParameter(@"pName", SqlDbType.VarChar, 255);
+            pName.Direction = ParameterDirection.Input;
+            pName.Value = searchSystemMasterDTO.name;
+            sql.Parameters.Add(pName);
 
-            SqlParameter pNameTH = new SqlParameter(@"pNameTH", SqlDbType.VarChar, 255);
-            pNameTH.Direction = ParameterDirection.Input;
-            pNameTH.Value = searchSystemMasterDTO.nameTH;
-            sql.Parameters.Add(pNameTH);
+            SqlParameter pStatus = new SqlParameter(@"pStatus", SqlDbType.VarChar, 255);
+            pStatus.Direction = ParameterDirection.Input;
+            pStatus.Value = searchSystemMasterDTO.status;
+            sql.Parameters.Add(pStatus);
 
             table = sql.executeQueryWithReturnTable();
 
@@ -8044,16 +8083,16 @@ namespace TUFTManagement.Core
             return total;
         }
 
-        public SystemMaster GetSystemMaster(int id)
+        public SystemMaster GetSystemMaster(int id, string lang)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_system_master_detail " +
-                "@pId");
+                "@pKeyID");
 
-            SqlParameter pId = new SqlParameter(@"pId", SqlDbType.Int);
-            pId.Direction = ParameterDirection.Input;
-            pId.Value = id;
-            sql.Parameters.Add(pId);
+            SqlParameter pKeyID = new SqlParameter(@"pKeyID", SqlDbType.Int);
+            pKeyID.Direction = ParameterDirection.Input;
+            pKeyID.Value = id;
+            sql.Parameters.Add(pKeyID);
 
             table = sql.executeQueryWithReturnTable();
 
@@ -8064,10 +8103,45 @@ namespace TUFTManagement.Core
                 foreach (DataRow row in table.Rows)
                 {
                     data.loadData(row);
+                    data.masterList = GetMasterDetail(id,lang);
                 }
             }
 
             return data;
+        }
+
+        public List<MasterDetail> GetMasterDetail(int keyID, string lang)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_system_master_detail_body " +
+                "@pKeyID, " +
+                "@pLang");
+
+            SqlParameter pKeyID = new SqlParameter(@"pKeyID", SqlDbType.Int);
+            pKeyID.Direction = ParameterDirection.Input;
+            pKeyID.Value = keyID;
+            sql.Parameters.Add(pKeyID);
+
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 10);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = lang;
+            sql.Parameters.Add(pLang);
+
+            table = sql.executeQueryWithReturnTable();
+
+            List<MasterDetail> listData = new List<MasterDetail>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    MasterDetail data = new MasterDetail();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
         }
 
         public Pagination<EmpWorkShiftTimeSearch> GetWorkShiftTime(GetHistoryWorkShiftTimeDTO getHistoryWorkShiftTimeDTO, string Lang, string shareCode)
@@ -9032,6 +9106,509 @@ namespace TUFTManagement.Core
             return total;
         }
 
+
+
+        #endregion
+
+        #region Report
+        public Pagination<SearchAllSalaryReport> SearchAllSalaryReport(string shareCode, SearchReportDTO searchReportSalaryDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_salary_report_page " +
+                "@pParamSearch, " +
+                "@pDepartmentList, " +
+                "@pPositionList, " +
+                "@pEmptypeList, " +
+                "@pEmpStatusList, " +
+                "@pSalaryFrom, " +
+                "@pSalaryTo, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchReportSalaryDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter pDepartmentList = new SqlParameter(@"pDepartmentList", SqlDbType.VarChar, 255);
+            pDepartmentList.Direction = ParameterDirection.Input;
+            pDepartmentList.Value = searchReportSalaryDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentList);
+
+            SqlParameter pPositionList = new SqlParameter(@"pPositionList", SqlDbType.VarChar, 255);
+            pPositionList.Direction = ParameterDirection.Input;
+            pPositionList.Value = searchReportSalaryDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionList);
+
+            SqlParameter pEmptypeList = new SqlParameter(@"pEmptypeList", SqlDbType.VarChar, 255);
+            pEmptypeList.Direction = ParameterDirection.Input;
+            pEmptypeList.Value = searchReportSalaryDTO.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmptypeList);
+
+            SqlParameter pEmpStatusList = new SqlParameter(@"pEmpStatusList", SqlDbType.VarChar, 255);
+            pEmpStatusList.Direction = ParameterDirection.Input;
+            pEmpStatusList.Value = searchReportSalaryDTO.prepairEmpStatusSearch;
+            sql.Parameters.Add(pEmpStatusList);
+
+            SqlParameter pSalaryFrom = new SqlParameter(@"pSalaryFrom", SqlDbType.Int);
+            pSalaryFrom.Direction = ParameterDirection.Input;
+            pSalaryFrom.Value = searchReportSalaryDTO.salaryFrom;
+            sql.Parameters.Add(pSalaryFrom);
+
+            SqlParameter pSalaryTo = new SqlParameter(@"pSalaryTo", SqlDbType.Int);
+            pSalaryTo.Direction = ParameterDirection.Input;
+            pSalaryTo.Value = searchReportSalaryDTO.salaryTo;
+            sql.Parameters.Add(pSalaryTo);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchReportSalaryDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchReportSalaryDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchReportSalaryDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchReportSalaryDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllSalaryReport> pagination = new Pagination<SearchAllSalaryReport>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllSalaryReport data = new SearchAllSalaryReport();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllSalaryReport(shareCode, searchReportSalaryDTO);
+
+            pagination.SetPagination(total, searchReportSalaryDTO.perPage, searchReportSalaryDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchAllSalaryReport(string shareCode, SearchReportDTO searchReportSalaryDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_salary_report_total " +
+                "@pParamSearch, " +
+                "@pDepartmentList, " +
+                "@pPositionList, " +
+                "@pEmptypeList, " +
+                "@pEmpStatusList, " +
+                "@pSalaryFrom, " +
+                "@pSalaryTo");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchReportSalaryDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter pDepartmentList = new SqlParameter(@"pDepartmentList", SqlDbType.VarChar, 255);
+            pDepartmentList.Direction = ParameterDirection.Input;
+            pDepartmentList.Value = searchReportSalaryDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentList);
+
+            SqlParameter pPositionList = new SqlParameter(@"pPositionList", SqlDbType.VarChar, 255);
+            pPositionList.Direction = ParameterDirection.Input;
+            pPositionList.Value = searchReportSalaryDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionList);
+
+            SqlParameter pEmptypeList = new SqlParameter(@"pEmptypeList", SqlDbType.VarChar, 255);
+            pEmptypeList.Direction = ParameterDirection.Input;
+            pEmptypeList.Value = searchReportSalaryDTO.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmptypeList);
+
+            SqlParameter pEmpStatusList = new SqlParameter(@"pEmpStatusList", SqlDbType.VarChar, 255);
+            pEmpStatusList.Direction = ParameterDirection.Input;
+            pEmpStatusList.Value = searchReportSalaryDTO.prepairEmpStatusSearch;
+            sql.Parameters.Add(pEmpStatusList);
+
+            SqlParameter pSalaryFrom = new SqlParameter(@"pSalaryFrom", SqlDbType.Int);
+            pSalaryFrom.Direction = ParameterDirection.Input;
+            pSalaryFrom.Value = searchReportSalaryDTO.salaryFrom;
+            sql.Parameters.Add(pSalaryFrom);
+
+            SqlParameter pSalaryTo = new SqlParameter(@"pSalaryTo", SqlDbType.Int);
+            pSalaryTo.Direction = ParameterDirection.Input;
+            pSalaryTo.Value = searchReportSalaryDTO.salaryTo;
+            sql.Parameters.Add(pSalaryTo);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public Pagination<SearchAllEmployeeReportBody> SearchAllEmployeeReport(string shareCode, SearchReportDTO searchReportEmployeeDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_employment_report_page " +
+                "@pParamSearch, " +
+                "@pDepartmentList, " +
+                "@pPositionList, " +
+                "@pEmptypeList, " +
+                "@pEmpStatusList, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchReportEmployeeDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter pDepartmentList = new SqlParameter(@"pDepartmentList", SqlDbType.VarChar, 255);
+            pDepartmentList.Direction = ParameterDirection.Input;
+            pDepartmentList.Value = searchReportEmployeeDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentList);
+
+            SqlParameter pPositionList = new SqlParameter(@"pPositionList", SqlDbType.VarChar, 255);
+            pPositionList.Direction = ParameterDirection.Input;
+            pPositionList.Value = searchReportEmployeeDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionList);
+
+            SqlParameter pEmptypeList = new SqlParameter(@"pEmptypeList", SqlDbType.VarChar, 255);
+            pEmptypeList.Direction = ParameterDirection.Input;
+            pEmptypeList.Value = searchReportEmployeeDTO.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmptypeList);
+
+            SqlParameter pEmpStatusList = new SqlParameter(@"pEmpStatusList", SqlDbType.VarChar, 255);
+            pEmpStatusList.Direction = ParameterDirection.Input;
+            pEmpStatusList.Value = searchReportEmployeeDTO.prepairEmpStatusSearch;
+            sql.Parameters.Add(pEmpStatusList);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchReportEmployeeDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchReportEmployeeDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchReportEmployeeDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchReportEmployeeDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllEmployeeReportBody> pagination = new Pagination<SearchAllEmployeeReportBody>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllEmployeeReportBody data = new SearchAllEmployeeReportBody();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllEmployeeReport(shareCode, searchReportEmployeeDTO);
+
+            pagination.SetPagination(total, searchReportEmployeeDTO.perPage, searchReportEmployeeDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchAllEmployeeReport(string shareCode, SearchReportDTO searchReportEmployeeDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_employment_report_total " +
+                "@pParamSearch, " +
+                "@pDepartmentList, " +
+                "@pPositionList, " +
+                "@pEmptypeList, " +
+                "@pEmpStatusList");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchReportEmployeeDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter pDepartmentList = new SqlParameter(@"pDepartmentList", SqlDbType.VarChar, 255);
+            pDepartmentList.Direction = ParameterDirection.Input;
+            pDepartmentList.Value = searchReportEmployeeDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentList);
+
+            SqlParameter pPositionList = new SqlParameter(@"pPositionList", SqlDbType.VarChar, 255);
+            pPositionList.Direction = ParameterDirection.Input;
+            pPositionList.Value = searchReportEmployeeDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionList);
+
+            SqlParameter pEmptypeList = new SqlParameter(@"pEmptypeList", SqlDbType.VarChar, 255);
+            pEmptypeList.Direction = ParameterDirection.Input;
+            pEmptypeList.Value = searchReportEmployeeDTO.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmptypeList);
+
+            SqlParameter pEmpStatusList = new SqlParameter(@"pEmpStatusList", SqlDbType.VarChar, 255);
+            pEmpStatusList.Direction = ParameterDirection.Input;
+            pEmpStatusList.Value = searchReportEmployeeDTO.prepairEmpStatusSearch;
+            sql.Parameters.Add(pEmpStatusList);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public EmployeeReportHeader GetEmployeeReportHeader(string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_employment_report_header ");
+
+           
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            EmployeeReportHeader data = new EmployeeReportHeader();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+        public Pagination<SearchAllWorkTimeReport> SearchAllWorkTimeReport(string shareCode, SearchReportDTO searchReportWorkTimeDTO)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_header_report_page " +
+                "@pParamSearch, " +
+                "@pFromDate, " +
+                "@pToDate, " +
+                "@pDepartmentList, " +
+                "@pPositionList, " +
+                "@pEmptypeList, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchReportWorkTimeDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
+            pFromDate.Direction = ParameterDirection.Input;
+            pFromDate.Value = searchReportWorkTimeDTO.dateFrom;
+            sql.Parameters.Add(pFromDate);
+
+            SqlParameter pToDate = new SqlParameter(@"pToDate", SqlDbType.VarChar, 255);
+            pToDate.Direction = ParameterDirection.Input;
+            pToDate.Value = searchReportWorkTimeDTO.dateTo;
+            sql.Parameters.Add(pToDate);
+
+            SqlParameter pDepartmentList = new SqlParameter(@"pDepartmentList", SqlDbType.VarChar, 255);
+            pDepartmentList.Direction = ParameterDirection.Input;
+            pDepartmentList.Value = searchReportWorkTimeDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentList);
+
+            SqlParameter pPositionList = new SqlParameter(@"pPositionList", SqlDbType.VarChar, 255);
+            pPositionList.Direction = ParameterDirection.Input;
+            pPositionList.Value = searchReportWorkTimeDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionList);
+
+            SqlParameter pEmptypeList = new SqlParameter(@"pEmptypeList", SqlDbType.VarChar, 255);
+            pEmptypeList.Direction = ParameterDirection.Input;
+            pEmptypeList.Value = searchReportWorkTimeDTO.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmptypeList);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = searchReportWorkTimeDTO.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = searchReportWorkTimeDTO.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = searchReportWorkTimeDTO.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = searchReportWorkTimeDTO.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllWorkTimeReport> pagination = new Pagination<SearchAllWorkTimeReport>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllWorkTimeReport data = new SearchAllWorkTimeReport();
+                    data.loadData(row);
+
+                    data.detailList = new List<WorkTimeDetail>();
+                    data.detailList = GetAllWorkTimeDetailList(data.empUserID, searchReportWorkTimeDTO.dateFrom, searchReportWorkTimeDTO.dateTo, shareCode);
+
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchAllWorkTimeReport(shareCode, searchReportWorkTimeDTO);
+
+            pagination.SetPagination(total, searchReportWorkTimeDTO.perPage, searchReportWorkTimeDTO.pageInt);
+
+            return pagination;
+        }
+
+        public int GetTotalSearchAllWorkTimeReport(string shareCode, SearchReportDTO searchReportWorkTimeDTO)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_header_report_total " +
+                "@pParamSearch, " +
+                "@pFromDate, " +
+                "@pToDate, " +
+                "@pDepartmentList, " +
+                "@pPositionList, " +
+                "@pEmptypeList");
+
+            SqlParameter pParamSearch = new SqlParameter(@"pParamSearch", SqlDbType.VarChar, 255);
+            pParamSearch.Direction = ParameterDirection.Input;
+            pParamSearch.Value = searchReportWorkTimeDTO.paramSearch;
+            sql.Parameters.Add(pParamSearch);
+
+            SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
+            pFromDate.Direction = ParameterDirection.Input;
+            pFromDate.Value = searchReportWorkTimeDTO.dateFrom;
+            sql.Parameters.Add(pFromDate);
+
+            SqlParameter pToDate = new SqlParameter(@"pToDate", SqlDbType.VarChar, 255);
+            pToDate.Direction = ParameterDirection.Input;
+            pToDate.Value = searchReportWorkTimeDTO.dateTo;
+            sql.Parameters.Add(pToDate);
+
+            SqlParameter pDepartmentList = new SqlParameter(@"pDepartmentList", SqlDbType.VarChar, 255);
+            pDepartmentList.Direction = ParameterDirection.Input;
+            pDepartmentList.Value = searchReportWorkTimeDTO.prepairDepartmentSearch;
+            sql.Parameters.Add(pDepartmentList);
+
+            SqlParameter pPositionList = new SqlParameter(@"pPositionList", SqlDbType.VarChar, 255);
+            pPositionList.Direction = ParameterDirection.Input;
+            pPositionList.Value = searchReportWorkTimeDTO.prepairPositionSearch;
+            sql.Parameters.Add(pPositionList);
+
+            SqlParameter pEmptypeList = new SqlParameter(@"pEmptypeList", SqlDbType.VarChar, 255);
+            pEmptypeList.Direction = ParameterDirection.Input;
+            pEmptypeList.Value = searchReportWorkTimeDTO.prepairEmpTypeSearch;
+            sql.Parameters.Add(pEmptypeList);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
+
+        public List<WorkTimeDetail> GetAllWorkTimeDetailList(int userID,string dateFrom, string dateTo, string shareCode)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_report_page " +
+                "@pUserID, " +
+                "@pFromDate, " +
+                "@pToDate");
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            SqlParameter pFromDate = new SqlParameter(@"pFromDate", SqlDbType.VarChar, 255);
+            pFromDate.Direction = ParameterDirection.Input;
+            pFromDate.Value = dateFrom;
+            sql.Parameters.Add(pFromDate);
+
+            SqlParameter pToDate = new SqlParameter(@"pToDate", SqlDbType.VarChar, 255);
+            pToDate.Direction = ParameterDirection.Input;
+            pToDate.Value = dateTo;
+            sql.Parameters.Add(pToDate);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<WorkTimeDetail> listData = new List<WorkTimeDetail>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    WorkTimeDetail data = new WorkTimeDetail();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
 
 
         #endregion

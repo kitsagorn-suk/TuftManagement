@@ -15,22 +15,31 @@ namespace TUFTManagement.Models
 
     public class SystemMaster
     {
-        public int masterID { set; get; } = 0;
+        public int keyID { set; get; } = 0;
         public string keyName { set; get; } = "";
-        public int value { set; get; } = 0;
-        public string nameEN { set; get; } = "";
-        public string nameTH { set; get; } = "";
-        public int order { set; get; } = 0;
+        public int isActive { set; get; } = 0;
+        public List<MasterDetail> masterList { set; get; }
+
+        public void loadData(DataRow dr)
+        {
+            keyID = int.Parse(dr["id"].ToString());
+            keyName = dr["key_name"].ToString();
+            isActive = int.Parse(dr["is_active"].ToString().ToLower().Equals("true") ? "1" : "0");
+        }
+    }
+
+    public class MasterDetail
+    {
+        public int masterID { set; get; } = 0;
+        public string masterName { set; get; } = "";
+        public int masterOrder { set; get; } = 0;
         public int isActive { set; get; } = 0;
 
         public void loadData(DataRow dr)
         {
             masterID = int.Parse(dr["id"].ToString());
-            keyName = dr["key_name"].ToString();
-            value = int.Parse(dr["value"].ToString());
-            nameEN = dr["name_en"].ToString(); ;
-            nameTH = dr["name_th"].ToString(); ;
-            order = int.Parse(dr["order"].ToString());
+            masterName = dr["name"].ToString();
+            masterOrder = int.Parse(dr["order"].ToString());
             isActive = int.Parse(dr["is_active"].ToString().ToLower().Equals("true") ? "1" : "0");
         }
     }
