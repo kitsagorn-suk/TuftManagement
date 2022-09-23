@@ -261,6 +261,9 @@
     <Compile Include="Models\GetDetailSystemRoleTempModel.cs" />
     <Compile Include="Models\GetAllEmployeePrettyModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
+    <Compile Include="Models\NewMenuList.cs" />
+    <Compile Include="Models\SearchMasterWorkShiftModel.cs" />
+    <Compile Include="Models\UpdateSwitchWorkShiftModel.cs" />
     <Compile Include="Models\GetEmpWorkShiftTimeModel.cs" />
     <Compile Include="Models\GetEmpWorkTimeUploadModel.cs" />
     <Compile Include="Models\GetfileByCodeModel.cs" />

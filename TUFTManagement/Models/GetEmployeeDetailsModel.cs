@@ -88,6 +88,8 @@ namespace TUFTManagement.Models
 
         public List<ImageGallery> imageGallery { set; get; }
 
+        public List<NewMenuList> menuList { get; set; }
+
         public class EmergencyContact
         {
             public int emerContactID { set; get; } = 0;
