@@ -209,6 +209,7 @@
     <Compile Include="DTO\SaveSystemRoleTempDTO.cs" />
     <Compile Include="DTO\SearchMasterDepartmentPositionDTO.cs" />
     <Compile Include="DTO\SearchPendingLeaveDTO.cs" />
+    <Compile Include="DTO\SearchReportDTO.cs" />
     <Compile Include="DTO\SearchSystemRoleAssignDTO.cs" />
     <Compile Include="DTO\SearchSystemRoleTempDTO.cs" />
     <Compile Include="DTO\SearchWorkShiftTimeAllTotalDTO.cs" />
@@ -262,6 +263,9 @@
     <Compile Include="Models\GetAllEmployeePrettyModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
     <Compile Include="Models\NewMenuList.cs" />
+    <Compile Include="Models\SearchAllEmployeeReportModel.cs" />
+    <Compile Include="Models\SearchAllSalaryReportModel.cs" />
+    <Compile Include="Models\SearchAllWorkTimeReportModel.cs" />
     <Compile Include="Models\SearchMasterWorkShiftModel.cs" />
     <Compile Include="Models\UpdateSwitchWorkShiftModel.cs" />
     <Compile Include="Models\GetEmpWorkShiftTimeModel.cs" />
