@@ -3392,6 +3392,96 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public GetEmpWorkShiftModel GetMasterWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, int empWorkShiftID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
 
+            GetEmpWorkShiftModel value = new GetEmpWorkShiftModel();
+            try
+            {
+                GetEmpWorkShift data = new GetEmpWorkShift();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetEmpWorkShift(shareCode, empWorkShiftID);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpWorkShiftService:");
+
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public UpdateSwitchWorkShiftModel UpdateSwitchWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, int workShiftID, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            UpdateSwitchWorkShiftModel value = new UpdateSwitchWorkShiftModel();
+            try
+            {
+                value.data = new SwitchWorkShift();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    GetEmpWorkShift data = new GetEmpWorkShift();
+                    data = _sql.GetEmpWorkShift(shareCode, workShiftID);
+
+                    string TableName = "emp_work_shift";
+                    _sql.InsertSystemLogChange(shareCode, workShiftID, TableName, "status", data.status.ToString(), userID);
+
+                    value.data = _sql.UpdateSwitchStatusWorkShift(shareCode, workShiftID, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateSwitchWorkShiftService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace TUFTManagement.Services
         #region Insert Employees
 
         public InsertLoginModel InsertEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID,
-            SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+            SaveEmpProfileDTO saveEmpProfileDTO, int userID, string projectName)
         {
             if (_sql == null)
             {
@@ -34,7 +34,8 @@ namespace TUFTManagement.Services
                     //รอเรื่องสิทธิ์
                     //List<string> listobjectID = new List<string>();
                     //listobjectID.Add("100301001");
-                    //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
+                    string objectID = "2040000";
+                    ValidationModel checkRoleAssignment = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, 0, userID);
 
                     saveEmpProfileDTO.userID = _sql.insertUserLogin(saveEmpProfileDTO, userID);
                     

@@ -11,7 +11,7 @@ namespace TUFTManagement.Models
     {
         public bool success { get; set; }
         public MsgModel msg { get; set; }
-        public List<GetAllEmployeeNormal> data { get; set; }
+        public Pagination<GetAllEmployeeNormal> data { get; set; }
     }
 
     public class GetAllEmployeeNormal

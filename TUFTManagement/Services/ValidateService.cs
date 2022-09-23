@@ -240,7 +240,7 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "identityCard ";
                 }
-                if (saveEmpProfileDTO.identityCard.Count() != 13)
+                if (saveEmpProfileDTO.identityCard.Count() != 13 && saveEmpProfileDTO.citizenshipID == 20)
                 {
                     checkMissingOptional += "identityCard is incomplete ";
                 }
@@ -271,7 +271,7 @@ namespace TUFTManagement.Services
 
                 if (saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็น 2 คือพนักงานพาร์ททาม ไม่ต้องเช็คข้อ 2 3 4 นี้
                 {
-                    if (saveEmpProfileDTO.pCountryID.Equals(0) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    if (saveEmpProfileDTO.pCountryID.Equals(0) && saveEmpProfileDTO.citizenshipID == 20) //ต่างชาติไม่ต้องกรอกก็ได้
                     {
                         checkMissingOptional += "pCountryID ";
                     }
@@ -295,11 +295,11 @@ namespace TUFTManagement.Services
                         }
                     }
 
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact) && saveEmpProfileDTO.citizenshipID == 20) //ต่างชาติไม่ต้องกรอกก็ได้
                     {
                         checkMissingOptional += "pPhoneContact ";
                     }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress) && saveEmpProfileDTO.citizenshipID == 20) //ต่างชาติไม่ต้องกรอกก็ได้
                     {
                         checkMissingOptional += "pAddress ";
                     }

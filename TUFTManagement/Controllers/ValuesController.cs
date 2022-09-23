@@ -1269,7 +1269,7 @@ namespace TUFTManagement.Controllers
                     if (saveEmpProfileDTO.empProfileID.Equals(0) && saveEmpProfileDTO.mode.ToLower() == "insert")
                     {
                         InsertService srv = new InsertService();
-                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
+                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID, fromProject);
                     }
                     else if (saveEmpProfileDTO.empProfileID > 0 && saveEmpProfileDTO.mode.ToLower() == "update")
                     {
@@ -1314,7 +1314,7 @@ namespace TUFTManagement.Controllers
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, requestDTO);
+                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, requestDTO, fromProject);
 
                 return Ok(obj);
             }
@@ -1478,7 +1478,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/get/employee/pretty")]
         [HttpPost]
-        public IHttpActionResult GetAllEmployeePretty()
+        public IHttpActionResult GetAllEmployeePretty(PageRequestDTO pageRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -1492,8 +1492,9 @@ namespace TUFTManagement.Controllers
             headersDTO.fromProject = fromProject;
             headersDTO.shareCode = shareCode;
 
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            //AuthenticationController _auth = AuthenticationController.Instance;
+            //AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            AuthorizationModel data = new AuthorizationModel();
 
             try
             {
@@ -1501,9 +1502,25 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeePretty", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
-                GetService srv = new GetService();
+                string checkMissingOptional = "";
 
-                var obj = srv.GetEmployeePrettyService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
+                if (pageRequestDTO.pageInt.Equals(0))
+                {
+                    checkMissingOptional += "pageInt ";
+                }
+                if (pageRequestDTO.perPage.Equals(0))
+                {
+                    checkMissingOptional += "perPage ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                GetService srv = new GetService();
+                
+                var obj = srv.GetEmployeePrettyService(shareCode, authHeader, lang, fromProject.ToLower(), logID, pageRequestDTO, data.userID);
 
                 return Ok(obj);
             }
@@ -1515,7 +1532,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/get/employee/hairStylist")]
         [HttpPost]
-        public IHttpActionResult GetAllEmployeeHairStylist()
+        public IHttpActionResult GetAllEmployeeHairStylist(PageRequestDTO pageRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -1529,8 +1546,9 @@ namespace TUFTManagement.Controllers
             headersDTO.fromProject = fromProject;
             headersDTO.shareCode = shareCode;
 
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            //AuthenticationController _auth = AuthenticationController.Instance;
+            //AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            AuthorizationModel data = new AuthorizationModel();
 
             try
             {
@@ -1538,9 +1556,24 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeeHairStylist", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
+                string checkMissingOptional = "";
+                if (pageRequestDTO.pageInt.Equals(0))
+                {
+                    checkMissingOptional += "pageInt ";
+                }
+                if (pageRequestDTO.perPage.Equals(0))
+                {
+                    checkMissingOptional += "perPage ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 42);
+                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 42, pageRequestDTO);
 
                 return Ok(obj);
             }
@@ -1552,7 +1585,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/get/employee/makeUp")]
         [HttpPost]
-        public IHttpActionResult GetAllEmployeeMakeUp()
+        public IHttpActionResult GetAllEmployeeMakeUp(PageRequestDTO pageRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -1566,8 +1599,9 @@ namespace TUFTManagement.Controllers
             headersDTO.fromProject = fromProject;
             headersDTO.shareCode = shareCode;
 
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            //AuthenticationController _auth = AuthenticationController.Instance;
+            //AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            AuthorizationModel data = new AuthorizationModel();
 
             try
             {
@@ -1575,9 +1609,24 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeeMakeUp", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
+                string checkMissingOptional = "";
+                if (pageRequestDTO.pageInt.Equals(0))
+                {
+                    checkMissingOptional += "pageInt ";
+                }
+                if (pageRequestDTO.perPage.Equals(0))
+                {
+                    checkMissingOptional += "perPage ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 41);
+                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 41, pageRequestDTO);
 
                 return Ok(obj);
             }
@@ -1825,7 +1874,7 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.1/get/master/empWorkShift")]
+        [Route("1.1/get/master/workShift")]
         [HttpPost]
         public IHttpActionResult GetMasterWorkShift(SaveEmpWorkShiftRequestDTO requestDTO)
         {
@@ -1844,14 +1893,14 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveData("GetEmpWorkShift", json, timestampNow.ToString(), authHeader,
                     data.userID, fromProject.ToLower());
 
-                GetService srv = new GetService();
+                MasterDataService srv = new MasterDataService();
 
                 if (requestDTO.workShiftID.Equals(0) || requestDTO.workShiftID.Equals(null))
                 {
                     throw new Exception("Missing Parameter : empWorkShiftID");
                 }
 
-                var obj = srv.GetEmpWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), 1, requestDTO.workShiftID);
+                var obj = srv.GetMasterWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), 1, requestDTO.workShiftID);
 
                 return Ok(obj);
             }
@@ -1860,6 +1909,43 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.1/switch/master/workShift")]
+        [HttpPost]
+        public IHttpActionResult SwitchMasterWorkShift(SaveEmpWorkShiftRequestDTO requestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(requestDTO);
+                int logID = _sql.InsertLogReceiveData("GetEmpWorkShift", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                if (requestDTO.workShiftID.Equals(0) || requestDTO.workShiftID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : empWorkShiftID");
+                }
+
+                var obj = srv.UpdateSwitchWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), 1, requestDTO.workShiftID, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
 
         [Route("1.0/delete/empWorkShift")]
         [HttpPost]

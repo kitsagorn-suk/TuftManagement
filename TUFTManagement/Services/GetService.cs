@@ -278,7 +278,7 @@ namespace TUFTManagement.Services
         }
 
         public GetEmployeeDetailsModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, 
-            int logID, int userID, RequestDTO requestDTO)
+            int logID, int userID, RequestDTO requestDTO, string projectName)
         {
             if (_sql == null)
             {
@@ -291,7 +291,23 @@ namespace TUFTManagement.Services
                 EmployeeDetails data = new EmployeeDetails();
                 data.emergencyContact = new List<EmergencyContact>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Agent > View
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2072000"); 
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, 0, userID);
+
+                //คืนเลข objectID ที่มีสิทธิใช้
+                //int selectUserID = requestDTO.userID;
+                //if (userID != selectUserID)
+                //{
+                //    value.data.menuList = _sql.GetMenuNoHimSelf(userID, lang);
+                //}
+                //else
+                //{
+                //    value.data.menuList = _sql.GetMenuHimSelf(userID, lang);
+                //}
 
                 if (validation.Success == true)
                 {
@@ -325,7 +341,7 @@ namespace TUFTManagement.Services
         }
 
         public GetAllEmployeePrettyModel GetEmployeePrettyService(string shareCode, string authorization, string lang, string platform,
-            int logID, int userID)
+            int logID, PageRequestDTO pageRequestDTO, int userID)
         {
             if (_sql == null)
             {
@@ -335,14 +351,13 @@ namespace TUFTManagement.Services
             GetAllEmployeePrettyModel value = new GetAllEmployeePrettyModel();
             try
             {
-                List<GetAllEmployee> data = new List<GetAllEmployee>();
+                value.data = new Pagination<GetAllEmployee>();
 
                 ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetAllEmployeePretty(shareCode, userID, lang);
-                    value.data = data;
+                    value.data = _sql.GetAllEmployeePretty(shareCode, userID, lang, pageRequestDTO);
                     value.success = validation.Success;
                 }
                 else
@@ -369,7 +384,7 @@ namespace TUFTManagement.Services
         }
 
         public GetAllEmployeeByPositionModel GetEmployeeByPositionService(string shareCode, string authorization, string lang, string platform,
-            int logID, int userID, int position)
+            int logID, int userID, int position, PageRequestDTO pageRequestDTO)
         {
             if (_sql == null)
             {
@@ -379,13 +394,13 @@ namespace TUFTManagement.Services
             GetAllEmployeeByPositionModel value = new GetAllEmployeeByPositionModel();
             try
             {
-                List<GetAllEmployeeNormal> data = new List<GetAllEmployeeNormal>();
+                Pagination<GetAllEmployeeNormal> data = new Pagination<GetAllEmployeeNormal>();
 
                 ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetAllEmployeeNormal(shareCode, userID, lang, position);
+                    data = _sql.GetAllEmployeeNormal(shareCode, userID, lang, position, pageRequestDTO);
                     value.data = data;
                     value.success = validation.Success;
                 }
@@ -581,50 +596,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetEmpWorkShiftModel GetEmpWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, int empWorkShiftID)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
-
-            GetEmpWorkShiftModel value = new GetEmpWorkShiftModel();
-            try
-            {
-                GetEmpWorkShift data = new GetEmpWorkShift();
-
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-
-                if (validation.Success == true)
-                {
-                    data = _sql.GetEmpWorkShift(shareCode, empWorkShiftID);
-                    value.data = data;
-                    value.success = validation.Success;
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                }
-
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-
-                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpWorkShiftService:");
-
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
+        
 
         public GetEmpWorkTimeModel GetEmpWorkTimeService(string authorization, string lang, string platform, int logID, int empWorkTimeID)
         {
