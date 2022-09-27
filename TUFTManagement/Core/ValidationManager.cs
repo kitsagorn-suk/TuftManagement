@@ -688,6 +688,31 @@ namespace TUFTManagement.Core
             return value;
         }
 
+        public static List<NewMenuList> ReturnObjectID(string shareCode, string lang, string projectName, string objectID, int selectUserID, int tokenUserID)
+        {
+            List<NewMenuList> menuList = new List<NewMenuList>();
+            try
+            {
+                objectID = "2072100";
+                int status = _sql.CheckRoleValidation(shareCode, projectName, objectID, tokenUserID);
+                if (tokenUserID != selectUserID && status == 0)
+                {
+                    //ตัดปุ่ม
+                    menuList = _sql.GetMenuNoHimSelf(shareCode, tokenUserID, lang, projectName);
+                }
+                else
+                {
+                    // เป็นตัวเอง
+                    menuList = _sql.GetMenuHimSelf(shareCode, tokenUserID, lang, projectName);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return menuList;
+        }
+
 
     }
 }

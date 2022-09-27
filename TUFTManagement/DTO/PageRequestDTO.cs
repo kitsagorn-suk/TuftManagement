@@ -20,7 +20,13 @@ namespace TUFTManagement.DTO
 
         public string[] empStatusSearch { set; get; } = { "" };
         public string prepairEmpStatusSearch { set; get; } = "";
-        
+
+        public string[] workTypeSearch { set; get; } = { "" };
+        public string prepairWorkTypeSearch { set; get; } = "";
+
+        public string[] isActiveSearch { set; get; } = { "" };
+        public string prepairIsActiveSearch { set; get; } = "";
+
         public string lang { set; get; } = "";
         public int perPage { set; get; } = 0;
         public int pageInt { set; get; } = 0;

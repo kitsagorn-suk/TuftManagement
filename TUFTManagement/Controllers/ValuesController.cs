@@ -1308,7 +1308,7 @@ namespace TUFTManagement.Controllers
 
             try
             {
-                string json = JsonConvert.SerializeObject(data.userID);
+                string json = JsonConvert.SerializeObject(requestDTO.userID);
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
@@ -1945,6 +1945,74 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+        [Route("1.1/search/master/workShift")]
+        [HttpPost]
+        public IHttpActionResult GetSearchMasterWorkShift(PageRequestDTO pageRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject("");
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetSearchMasterWorkShift", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+
+                string strWorkTypeSearch = JsonConvert.SerializeObject(pageRequestDTO.workTypeSearch);
+                strWorkTypeSearch = string.Join(",", pageRequestDTO.workTypeSearch);
+                pageRequestDTO.prepairWorkTypeSearch = strWorkTypeSearch;
+
+                string strIsActiveSearch = JsonConvert.SerializeObject(pageRequestDTO.isActiveSearch);
+                strIsActiveSearch = string.Join(",", pageRequestDTO.isActiveSearch);
+                pageRequestDTO.prepairIsActiveSearch = strIsActiveSearch;
+
+
+                if (pageRequestDTO.pageInt.Equals(null) || pageRequestDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (pageRequestDTO.perPage.Equals(null) || pageRequestDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (pageRequestDTO.sortField > 3)
+                {
+                    throw new Exception("invalid : sortField " + pageRequestDTO.sortField);
+                }
+                if (!(pageRequestDTO.sortType == "a" || pageRequestDTO.sortType == "d" || pageRequestDTO.sortType == "A" || pageRequestDTO.sortType == "D" || pageRequestDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, pageRequestDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+
+
 
 
         [Route("1.0/delete/empWorkShift")]

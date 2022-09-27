@@ -263,6 +263,7 @@
     <Compile Include="Models\GetAllEmployeePrettyModel.cs" />
     <Compile Include="Models\GetEmployeeDetailsModel.cs" />
     <Compile Include="Models\NewMenuList.cs" />
+    <Compile Include="Models\SearchAllMasterWorkShiftModel.cs" />
     <Compile Include="Models\SearchAllEmployeeReportModel.cs" />
     <Compile Include="Models\SearchAllSalaryReportModel.cs" />
     <Compile Include="Models\SearchAllWorkTimeReportModel.cs" />

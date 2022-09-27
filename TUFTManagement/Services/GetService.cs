@@ -294,20 +294,13 @@ namespace TUFTManagement.Services
                 //เช็คสิทธิในการเข้าใช้
                 //Employee > All Agent > View
                 List<string> listobjectID = new List<string>();
-                listobjectID.Add("2072000"); 
+                listobjectID.Add("2082000");
                 string objectID = string.Join(",", listobjectID.ToArray());
                 ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, 0, userID);
 
-                //คืนเลข objectID ที่มีสิทธิใช้
-                //int selectUserID = requestDTO.userID;
-                //if (userID != selectUserID)
-                //{
-                //    value.data.menuList = _sql.GetMenuNoHimSelf(userID, lang);
-                //}
-                //else
-                //{
-                //    value.data.menuList = _sql.GetMenuHimSelf(userID, lang);
-                //}
+                string cutObjectID = "2072100";
+                List<NewMenuList> menuList = ValidationManager.ReturnObjectID(shareCode, lang, projectName, cutObjectID, requestDTO.userID, userID);
+                
 
                 if (validation.Success == true)
                 {
@@ -315,7 +308,9 @@ namespace TUFTManagement.Services
                     data.emergencyContact = _sql.GetEmerContact(shareCode, requestDTO.userID);
                     data.imageGallery = _sql.GetImgGallary(shareCode, requestDTO.userID);
                     value.data = data;
+                    value.data.menuList = menuList;
                     value.success = validation.Success;
+                    
                 }
                 else
                 {

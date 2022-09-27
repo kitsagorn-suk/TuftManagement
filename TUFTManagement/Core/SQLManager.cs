@@ -157,6 +157,89 @@ namespace TUFTManagement.Core
             return status;
         }
 
+        public List<NewMenuList> GetMenuHimSelf(string shareCode, int userID, string lang, string projectName)
+        {
+            List<NewMenuList> list = new List<NewMenuList>();
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_menu_himself @pUserID, @pLang ");
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = userID;
+            sql.Parameters.Add(paramUserID);
+
+            SqlParameter paramProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 20);
+            paramProjectName.Direction = ParameterDirection.Input;
+            paramProjectName.Value = projectName;
+            sql.Parameters.Add(paramProjectName);
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            //List<NewMenuList> fieldValidate = GetMenuByParentID(302110002);
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    int is_assign = 1;
+                    NewMenuList data = new NewMenuList();
+                    data.loadDataMenu(row);
+
+                    list.Add(data);
+
+                }
+
+
+
+            }
+            return list;
+        }
+
+        public List<NewMenuList> GetMenuNoHimSelf(string shareCode, int pUserID, string lang, string projectName)
+        {
+            List<NewMenuList> list = new List<NewMenuList>();
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_menu_no_himself @pUserID, @pProjectName, @pLang ");
+
+            SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            paramUserID.Direction = ParameterDirection.Input;
+            paramUserID.Value = pUserID;
+            sql.Parameters.Add(paramUserID);
+
+            SqlParameter paramProjectName = new SqlParameter(@"pProjectName", SqlDbType.VarChar, 20);
+            paramProjectName.Direction = ParameterDirection.Input;
+            paramProjectName.Value = projectName;
+            sql.Parameters.Add(paramProjectName);
+
+            SqlParameter paramLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 5);
+            paramLang.Direction = ParameterDirection.Input;
+            paramLang.Value = lang;
+            sql.Parameters.Add(paramLang);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+
+                foreach (DataRow row in table.Rows)
+                {
+                    NewMenuList data = new NewMenuList();
+                    data.loadDataMenu(row);
+
+                    list.Add(data);
+                }
+
+            }
+            return list;
+        }
+
         public int InsertLogReceiveDataWithShareCode(string shareCode, string pServiceName, string pReceiveData, string pTimeStampNow, HeadersDTO headersDTO, int pUserID, string pType)
         {
             string json_header = JsonConvert.SerializeObject(headersDTO);
@@ -4638,6 +4721,44 @@ namespace TUFTManagement.Core
 
             return total;
         }
+        public int GetTotalSearchWorkShiftTotal(string shareCode, PageRequestDTO pageRequest)
+        {
+            int total = 0;
+
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_shift_total " +
+                "@pTextSearch, " +
+                "@pWorkType, " +
+                "@pStatusList ");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = pageRequest.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pWorkType = new SqlParameter(@"pWorkType", SqlDbType.VarChar, 100);
+            pWorkType.Direction = ParameterDirection.Input;
+            pWorkType.Value = pageRequest.prepairWorkTypeSearch;
+            sql.Parameters.Add(pWorkType);
+
+            SqlParameter pStatusList = new SqlParameter(@"pStatusList", SqlDbType.VarChar, 100);
+            pStatusList.Direction = ParameterDirection.Input;
+            pStatusList.Value = pageRequest.prepairIsActiveSearch;
+            sql.Parameters.Add(pStatusList);
+            
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    DataRow dr = table.Rows[0];
+                    total = int.Parse(dr["total"].ToString());
+                }
+            }
+
+            return total;
+        }
 
 
 
@@ -7271,6 +7392,81 @@ namespace TUFTManagement.Core
             }
 
             return data;
+        }
+        public Pagination<SearchAllMasterWorkShift> SearchAllWorkShiftPage(string shareCode, PageRequestDTO pageRequest)
+        {
+            DataTable table = new DataTable();
+
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_shift_page " +
+                "@pTextSearch, " +
+                "@pWorkType, " +
+                "@pStatusList, " +
+                "@pLang, " +
+                "@pPage, " +
+                "@pPerPage, " +
+                "@pSortField, " +
+                "@pSortType");
+
+            SqlParameter pTextSearch = new SqlParameter(@"pTextSearch", SqlDbType.VarChar, 255);
+            pTextSearch.Direction = ParameterDirection.Input;
+            pTextSearch.Value = pageRequest.paramSearch;
+            sql.Parameters.Add(pTextSearch);
+
+            SqlParameter pWorkType = new SqlParameter(@"pWorkType", SqlDbType.VarChar, 100);
+            pWorkType.Direction = ParameterDirection.Input;
+            pWorkType.Value = pageRequest.prepairWorkTypeSearch;
+            sql.Parameters.Add(pWorkType);
+
+            SqlParameter pStatusList = new SqlParameter(@"pStatusList", SqlDbType.VarChar, 100);
+            pStatusList.Direction = ParameterDirection.Input;
+            pStatusList.Value = pageRequest.prepairIsActiveSearch;
+            sql.Parameters.Add(pStatusList);
+            
+            SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
+            pLang.Direction = ParameterDirection.Input;
+            pLang.Value = pageRequest.lang;
+            sql.Parameters.Add(pLang);
+
+            SqlParameter pPage = new SqlParameter(@"pPage", SqlDbType.Int);
+            pPage.Direction = ParameterDirection.Input;
+            pPage.Value = pageRequest.pageInt;
+            sql.Parameters.Add(pPage);
+
+            SqlParameter pPerPage = new SqlParameter(@"pPerPage", SqlDbType.Int);
+            pPerPage.Direction = ParameterDirection.Input;
+            pPerPage.Value = pageRequest.perPage;
+            sql.Parameters.Add(pPerPage);
+
+            SqlParameter pSortField = new SqlParameter(@"pSortField", SqlDbType.Int);
+            pSortField.Direction = ParameterDirection.Input;
+            pSortField.Value = pageRequest.sortField;
+            sql.Parameters.Add(pSortField);
+
+            SqlParameter pSortType = new SqlParameter(@"pSortType", SqlDbType.VarChar, 1);
+            pSortType.Direction = ParameterDirection.Input;
+            pSortType.Value = pageRequest.sortType;
+            sql.Parameters.Add(pSortType);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            Pagination<SearchAllMasterWorkShift> pagination = new Pagination<SearchAllMasterWorkShift>();
+
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    SearchAllMasterWorkShift data = new SearchAllMasterWorkShift();
+                    data.loadData(row);
+                    pagination.data.Add(data);
+                }
+            }
+
+            int total = GetTotalSearchWorkShiftTotal(shareCode, pageRequest);
+
+            pagination.SetPagination(total, pageRequest.perPage, pageRequest.pageInt);
+
+            return pagination;
         }
 
         public Pagination<SearchAllEmployee> SearchAllEmployee(string shareCode, PageRequestDTO pageRequest)
