@@ -28,52 +28,59 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new InsertLogin();
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO); 
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Agent > View
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2040000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
                 if (validation.Success == true)
                 {
-                    //รอเรื่องสิทธิ์
-                    //List<string> listobjectID = new List<string>();
-                    //listobjectID.Add("100301001");
-                    string objectID = "2040000";
-                    ValidationModel checkRoleAssignment = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, 0, userID);
-
-                    saveEmpProfileDTO.userID = _sql.insertUserLogin(saveEmpProfileDTO, userID);
-                    
-                    if (saveEmpProfileDTO.userID != 0)
+                    validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO);
+                    if (validation.Success == true)
                     {
+                        saveEmpProfileDTO.userID = _sql.insertUserLogin(saveEmpProfileDTO, userID);
 
-                        value.data = _sql.InsertEmpProfile(shareCode, saveEmpProfileDTO, userID);
-                                    _sql.InsertEmpAddress(shareCode, saveEmpProfileDTO, userID);
-                                    _sql.InsertEmpBankAccount(shareCode, saveEmpProfileDTO, userID);
-
-                        SaveEmergencyContact emergencyContact = new SaveEmergencyContact();
-
-                        if (saveEmpProfileDTO.emergencyContact.Count > 0)
+                        if (saveEmpProfileDTO.userID != 0)
                         {
-                            foreach(SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
+                            value.data = _sql.InsertEmpProfile(shareCode, saveEmpProfileDTO, userID);
+                            _sql.InsertEmpAddress(shareCode, saveEmpProfileDTO, userID);
+                            _sql.InsertEmpBankAccount(shareCode, saveEmpProfileDTO, userID);
+
+                            SaveEmergencyContact emergencyContact = new SaveEmergencyContact();
+
+                            if (saveEmpProfileDTO.emergencyContact.Count > 0)
                             {
-                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.userID, userID);
+                                foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
+                                {
+                                    _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.userID, userID);
+                                }
                             }
-                        }
 
-                        if (saveEmpProfileDTO.positionID == 14) // ถ้าเป็นพริตตี้ เพิ่ม ข้อ 6/7/8
-                        {
-                            SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
-                            saveEmpRateRequestDTO.empID = saveEmpProfileDTO.userID;
-                            saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
-                            saveEmpRateRequestDTO.productGrade = saveEmpProfileDTO.productGrade;
-                            saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
-                            saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
-                            saveEmpRateRequestDTO.rateStaff = float.Parse(saveEmpProfileDTO.rateStaff);
-                            saveEmpRateRequestDTO.rateManager = float.Parse(saveEmpProfileDTO.rateManager);
-                            saveEmpRateRequestDTO.rateOwner = float.Parse(saveEmpProfileDTO.rateOwner);
-                            saveEmpRateRequestDTO.rateConfirm = float.Parse(saveEmpProfileDTO.rateConfirm);
+                            if (saveEmpProfileDTO.positionID == 14) // ถ้าเป็นพริตตี้ เพิ่ม ข้อ 6/7/8
+                            {
+                                SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
+                                saveEmpRateRequestDTO.empID = saveEmpProfileDTO.userID;
+                                saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
+                                saveEmpRateRequestDTO.productGrade = saveEmpProfileDTO.productGrade;
+                                saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
+                                saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
+                                saveEmpRateRequestDTO.rateStaff = float.Parse(saveEmpProfileDTO.rateStaff);
+                                saveEmpRateRequestDTO.rateManager = float.Parse(saveEmpProfileDTO.rateManager);
+                                saveEmpRateRequestDTO.rateOwner = float.Parse(saveEmpProfileDTO.rateOwner);
+                                saveEmpRateRequestDTO.rateConfirm = float.Parse(saveEmpProfileDTO.rateConfirm);
 
-                            _sql.InsertEmpRate(shareCode, saveEmpRateRequestDTO, userID);
+                                _sql.InsertEmpRate(shareCode, saveEmpRateRequestDTO, userID);
+                            }
+
                         }
-                        
-                    }
                         else
+                        {
+                            _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                        }
+                    }
+                    else
                     {
                         _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
                     }
@@ -82,7 +89,7 @@ namespace TUFTManagement.Services
                 {
                     _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
                 }
-
+                
                 value.success = validation.Success;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }

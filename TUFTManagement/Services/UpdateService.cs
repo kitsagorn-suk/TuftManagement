@@ -12,7 +12,7 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public ReturnIdModel UpdateEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+        public ReturnIdModel UpdateEmpProfileService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpProfileDTO saveEmpProfileDTO, int userID, string projectName)
         {
             if (_sql == null)
             {
@@ -24,117 +24,124 @@ namespace TUFTManagement.Services
             {
                 value.data = new _ReturnIdModel();
 
-                //รอเรื่องสิทธิ์
-                //ValidationModel validation = new ValidationModel();
-                //List<string> listobjectID = new List<string>();
-                //listobjectID.Add("100201001");
-                //listobjectID.Add("100301003");
-                //validation = ValidationManager.CheckValidationUpdate(insertEmpProfileDTO.empProfileID, "emp_profile", lang, listobjectID, roleID);
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO);
-
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Employee > View > Edit
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2082100");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, saveEmpProfileDTO.userID, userID);
                 if (validation.Success == true)
                 {
-                    saveEmpProfileDTO.userID = _sql.getUserIdByEmpProfileID(shareCode, saveEmpProfileDTO.empProfileID);
+                    validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO);
 
-                    string TableName = "emp_profile";
-                    saveEmpProfileDTO.empProfileID = _sql.GetIdUpdateByUserID(shareCode, TableName, saveEmpProfileDTO.userID.ToString());
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "join_date", saveEmpProfileDTO.joinDate, userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "daily_salary", saveEmpProfileDTO.dailySalary.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "department_id", saveEmpProfileDTO.departmentID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "position_id", saveEmpProfileDTO.positionID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "employment_type_id", saveEmpProfileDTO.employmentTypeID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "title_id", saveEmpProfileDTO.titleID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_th", saveEmpProfileDTO.firstNameTH, userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_th", saveEmpProfileDTO.lastNameTH, userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nickname_th", saveEmpProfileDTO.nickNameTH.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_en", saveEmpProfileDTO.firstNameEN.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_en", saveEmpProfileDTO.lastNameEN, userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nickname_en", saveEmpProfileDTO.nickNameEN, userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nationality_id", saveEmpProfileDTO.nationalityID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "citizenship_id", saveEmpProfileDTO.citizenshipID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "religion_id", saveEmpProfileDTO.religionID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "date_of_birth", saveEmpProfileDTO.dateOfBirth.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card", saveEmpProfileDTO.identityCard.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card_expiry", saveEmpProfileDTO.identityCardExpiry.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "height", saveEmpProfileDTO.height.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "weight", saveEmpProfileDTO.weight.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "shirt_size_id", saveEmpProfileDTO.shirtSizeID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "blood_type_id", saveEmpProfileDTO.bloodTypeID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "phone_number", saveEmpProfileDTO.phoneNumber.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "image_profile_code", saveEmpProfileDTO.imageProfileCode.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "image_gallery_code", saveEmpProfileDTO.imageGalleryCode.ToString(), userID);
-                    value.data = _sql.UpdateEmpProfile(shareCode, saveEmpProfileDTO, userID);
-
-                    string TableName2 = "emp_profile_address";
-                    int empAdressID = _sql.GetIdUpdateByUserID(shareCode, TableName2, saveEmpProfileDTO.userID.ToString());
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_country_id", saveEmpProfileDTO.cCountryID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_address", saveEmpProfileDTO.cAddress.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_sub_district_id", saveEmpProfileDTO.cSubDistrictID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_district_id", saveEmpProfileDTO.cDistrictID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_province_id", saveEmpProfileDTO.cProvinceID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_zipcode", saveEmpProfileDTO.cZipcode.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_phone_contact", saveEmpProfileDTO.cPhoneContact, userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "is_same_permanent_address", saveEmpProfileDTO.isSamePermanentAddress.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_country_id", saveEmpProfileDTO.pCountryID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_address", saveEmpProfileDTO.pAddress.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_sub_district_id", saveEmpProfileDTO.pSubDistrictID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_district_id", saveEmpProfileDTO.pDistrictID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_province_id", saveEmpProfileDTO.pProvinceID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_zipcode", saveEmpProfileDTO.pZipcode.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_phone_contact", saveEmpProfileDTO.pPhoneContact.ToString(), userID);
-                    _sql.UpdateEmpAddress(shareCode, saveEmpProfileDTO, userID);
-
-                    string TableName3 = "emp_bank_account";
-                    int empBankAccountID = _sql.GetIdUpdateByUserID(shareCode, TableName3, saveEmpProfileDTO.userID.ToString());
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "bank_id", saveEmpProfileDTO.bankID.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "account_no", saveEmpProfileDTO.bankAccountNumber.ToString(), userID);
-                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "account_name", saveEmpProfileDTO.bankAccountName.ToString(), userID);
-                    _sql.UpdateEmpBankAccount(shareCode, saveEmpProfileDTO, userID);
-                    
-
-                    string TableName4 = "emp_emergency_contact";
-                    if (saveEmpProfileDTO.emergencyContact.Count > 0)
+                    if (validation.Success == true)
                     {
-                        foreach(SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
+                        saveEmpProfileDTO.userID = _sql.getUserIdByEmpProfileID(shareCode, saveEmpProfileDTO.empProfileID);
+
+                        string TableName = "emp_profile";
+                        saveEmpProfileDTO.empProfileID = _sql.GetIdUpdateByUserID(shareCode, TableName, saveEmpProfileDTO.userID.ToString());
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "join_date", saveEmpProfileDTO.joinDate, userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "monthly_salary", saveEmpProfileDTO.monthlySalary.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "daily_salary", saveEmpProfileDTO.dailySalary.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "department_id", saveEmpProfileDTO.departmentID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "position_id", saveEmpProfileDTO.positionID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "employment_type_id", saveEmpProfileDTO.employmentTypeID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "title_id", saveEmpProfileDTO.titleID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_th", saveEmpProfileDTO.firstNameTH, userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_th", saveEmpProfileDTO.lastNameTH, userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nickname_th", saveEmpProfileDTO.nickNameTH.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "firstname_en", saveEmpProfileDTO.firstNameEN.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "lastname_en", saveEmpProfileDTO.lastNameEN, userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nickname_en", saveEmpProfileDTO.nickNameEN, userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "nationality_id", saveEmpProfileDTO.nationalityID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "citizenship_id", saveEmpProfileDTO.citizenshipID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "religion_id", saveEmpProfileDTO.religionID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "date_of_birth", saveEmpProfileDTO.dateOfBirth.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card", saveEmpProfileDTO.identityCard.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "identity_card_expiry", saveEmpProfileDTO.identityCardExpiry.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "height", saveEmpProfileDTO.height.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "weight", saveEmpProfileDTO.weight.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "shirt_size_id", saveEmpProfileDTO.shirtSizeID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "blood_type_id", saveEmpProfileDTO.bloodTypeID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "phone_number", saveEmpProfileDTO.phoneNumber.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "image_profile_code", saveEmpProfileDTO.imageProfileCode.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, saveEmpProfileDTO.empProfileID, TableName, "image_gallery_code", saveEmpProfileDTO.imageGalleryCode.ToString(), userID);
+                        value.data = _sql.UpdateEmpProfile(shareCode, saveEmpProfileDTO, userID);
+
+                        string TableName2 = "emp_profile_address";
+                        int empAdressID = _sql.GetIdUpdateByUserID(shareCode, TableName2, saveEmpProfileDTO.userID.ToString());
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_country_id", saveEmpProfileDTO.cCountryID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_address", saveEmpProfileDTO.cAddress.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_sub_district_id", saveEmpProfileDTO.cSubDistrictID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_district_id", saveEmpProfileDTO.cDistrictID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_province_id", saveEmpProfileDTO.cProvinceID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_zipcode", saveEmpProfileDTO.cZipcode.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "c_phone_contact", saveEmpProfileDTO.cPhoneContact, userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "is_same_permanent_address", saveEmpProfileDTO.isSamePermanentAddress.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_country_id", saveEmpProfileDTO.pCountryID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_address", saveEmpProfileDTO.pAddress.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_sub_district_id", saveEmpProfileDTO.pSubDistrictID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_district_id", saveEmpProfileDTO.pDistrictID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_province_id", saveEmpProfileDTO.pProvinceID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_zipcode", saveEmpProfileDTO.pZipcode.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empAdressID, TableName2, "p_phone_contact", saveEmpProfileDTO.pPhoneContact.ToString(), userID);
+                        _sql.UpdateEmpAddress(shareCode, saveEmpProfileDTO, userID);
+
+                        string TableName3 = "emp_bank_account";
+                        int empBankAccountID = _sql.GetIdUpdateByUserID(shareCode, TableName3, saveEmpProfileDTO.userID.ToString());
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "bank_id", saveEmpProfileDTO.bankID.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "account_no", saveEmpProfileDTO.bankAccountNumber.ToString(), userID);
+                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empBankAccountID, TableName3, "account_name", saveEmpProfileDTO.bankAccountName.ToString(), userID);
+                        _sql.UpdateEmpBankAccount(shareCode, saveEmpProfileDTO, userID);
+
+
+                        string TableName4 = "emp_emergency_contact";
+                        if (saveEmpProfileDTO.emergencyContact.Count > 0)
                         {
-                            if (item.emerContactID != 0)
+                            foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                             {
-                                //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_full_name", item.emerFullName.ToString(), userID);
-                                //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_relationship_id", item.emerRelationShipID.ToString(), userID);
-                                //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_contact", item.emerContact.ToString(), userID);
-                                _sql.UpdateEmpEmergencyContact(shareCode, item, userID);
-                            }
-                            else
-                            {
-                                _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.userID, userID);
+                                if (item.emerContactID != 0)
+                                {
+                                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_full_name", item.emerFullName.ToString(), userID);
+                                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_relationship_id", item.emerRelationShipID.ToString(), userID);
+                                    //_sql.InsertSystemLogChangeWithShareCode(shareCode, item.emergencyContactID, TableName4, "emer_contact", item.emerContact.ToString(), userID);
+                                    _sql.UpdateEmpEmergencyContact(shareCode, item, userID);
+                                }
+                                else
+                                {
+                                    _sql.InsertEmpEmergencyContact(shareCode, item, saveEmpProfileDTO.userID, userID);
+                                }
                             }
                         }
-                    }
 
-                    if (saveEmpProfileDTO.positionID == 14) //ถ้าเป็นพริตตีถึงอัพเดตได้
+                        if (saveEmpProfileDTO.positionID == 14) //ถ้าเป็นพริตตีถึงอัพเดตได้
+                        {
+                            string TableName6 = "emp_rate";
+                            int empRateID = _sql.GetIdUpdateByUserID(shareCode, TableName6, saveEmpProfileDTO.userID.ToString());
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "product_code", saveEmpProfileDTO.productCode.ToString(), userID);
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_staff", saveEmpProfileDTO.rateStaff.ToString(), userID);
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_manager", saveEmpProfileDTO.rateManager.ToString(), userID);
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_owner", saveEmpProfileDTO.rateOwner.ToString(), userID);
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_confirm", saveEmpProfileDTO.rateConfirm.ToString(), userID);
+
+                            SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
+                            saveEmpRateRequestDTO.empRateID = empRateID;
+                            saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
+                            saveEmpRateRequestDTO.productGrade = saveEmpProfileDTO.productGrade;
+                            saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
+                            saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
+                            saveEmpRateRequestDTO.rateStaff = float.Parse(saveEmpProfileDTO.rateStaff);
+                            saveEmpRateRequestDTO.rateManager = float.Parse(saveEmpProfileDTO.rateManager);
+                            saveEmpRateRequestDTO.rateOwner = float.Parse(saveEmpProfileDTO.rateOwner);
+                            saveEmpRateRequestDTO.rateConfirm = float.Parse(saveEmpProfileDTO.rateConfirm);
+                            _sql.UpdateEmpRate(shareCode, saveEmpRateRequestDTO, userID);
+                        }
+
+                    }
+                    else
                     {
-                        string TableName6 = "emp_rate";
-                        int empRateID = _sql.GetIdUpdateByUserID(shareCode, TableName6, saveEmpProfileDTO.userID.ToString());
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "product_code", saveEmpProfileDTO.productCode.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_staff", saveEmpProfileDTO.rateStaff.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_manager", saveEmpProfileDTO.rateManager.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_owner", saveEmpProfileDTO.rateOwner.ToString(), userID);
-                        //_sql.InsertSystemLogChangeWithShareCode(shareCode, empRateID, TableName6, "rate_confirm", saveEmpProfileDTO.rateConfirm.ToString(), userID);
-
-                        SaveEmpRateRequestDTO saveEmpRateRequestDTO = new SaveEmpRateRequestDTO();
-                        saveEmpRateRequestDTO.empRateID = empRateID;
-                        saveEmpRateRequestDTO.serviceNo = saveEmpProfileDTO.serviceNo;
-                        saveEmpRateRequestDTO.productGrade = saveEmpProfileDTO.productGrade;
-                        saveEmpRateRequestDTO.startDrink = saveEmpProfileDTO.startDrink;
-                        saveEmpRateRequestDTO.fullDrink = saveEmpProfileDTO.fullDrink;
-                        saveEmpRateRequestDTO.rateStaff = float.Parse(saveEmpProfileDTO.rateStaff);
-                        saveEmpRateRequestDTO.rateManager = float.Parse(saveEmpProfileDTO.rateManager);
-                        saveEmpRateRequestDTO.rateOwner = float.Parse(saveEmpProfileDTO.rateOwner);
-                        saveEmpRateRequestDTO.rateConfirm = float.Parse(saveEmpProfileDTO.rateConfirm);
-                        _sql.UpdateEmpRate(shareCode, saveEmpRateRequestDTO, userID);
+                        _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                     }
-                    
                 }
                 else
                 {

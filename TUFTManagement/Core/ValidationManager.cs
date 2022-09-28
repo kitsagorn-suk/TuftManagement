@@ -22,9 +22,9 @@ namespace TUFTManagement.Core
 
                 int status = _sql.CheckRoleValidation(shareCode, projectName, objectID, userID);
 
-                if (userID != selectUserID)
+                if (status == 0)
                 {
-                    if (status == 0)
+                    if (userID != selectUserID)
                     {
                         #region check role permission
                         //_sql.UpdateIsLockPasswordByUserID(userID);
@@ -48,6 +48,40 @@ namespace TUFTManagement.Core
             }
             return value;
         }
+        public static ValidationModel CheckValidationWithProjectName(string shareCode, string lang, string objectID, string projectName, int userID)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                int status = _sql.CheckRoleValidation(shareCode, projectName, objectID, userID);
+
+                    if (status == 0)
+                    {
+                        #region check role permission
+                        //_sql.UpdateIsLockPasswordByUserID(userID);
+
+                        state = ValidationModel.InvalidState.E301007; //คุณไม่มีสิทธิ์ในการทำงานนี้
+                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                        #endregion
+                    }
+
+                getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(state);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+
 
         public static ValidationModel CheckValidation(int chkID, string lang, string platform)
         {

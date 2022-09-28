@@ -296,7 +296,7 @@ namespace TUFTManagement.Services
                 List<string> listobjectID = new List<string>();
                 listobjectID.Add("2082000");
                 string objectID = string.Join(",", listobjectID.ToArray());
-                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, 0, userID);
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, requestDTO.userID, userID);
 
                 string cutObjectID = "2072100";
                 List<NewMenuList> menuList = ValidationManager.ReturnObjectID(shareCode, lang, projectName, cutObjectID, requestDTO.userID, userID);

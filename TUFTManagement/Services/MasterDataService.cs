@@ -14,7 +14,7 @@ namespace TUFTManagement.Services
         private SQLManager _sql = SQLManager.Instance;
 
         public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, 
-            string TableName, int userID, string shareCode)
+            string TableName, int userID, string shareCode, string projectName)
         {
             if (_sql == null)
             {
@@ -26,58 +26,42 @@ namespace TUFTManagement.Services
             {
                 _ReturnIdModel data = new _ReturnIdModel();
 
-                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, TableName, masterDataDTO);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Agent > View
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2082000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
                 if (validation.Success == true)
                 {
-                    if (masterDataDTO.mode.ToLower() == "insert")
+                    validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, TableName, masterDataDTO);
+                    if (validation.Success == true)
                     {
-                        //List<string> listobjectID = new List<string>();
-                        //listobjectID.Add("100401001");
-                        //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-                        value.data = _sql.InsertMasterData(shareCode, masterDataDTO, TableName, userID);
-                    }
-                    else if (masterDataDTO.mode.ToLower() == "update")
-                    {
-                        //ValidationModel validation = new ValidationModel();
-                        //List<string> listobjectID = new List<string>();
-                        //listobjectID.Add("100401002");
-                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-                        if (validation.Success == true)
+                        if (masterDataDTO.mode.ToLower() == "insert")
+                        {
+                            value.data = _sql.InsertMasterData(shareCode, masterDataDTO, TableName, userID);
+                        }
+                        else if (masterDataDTO.mode.ToLower() == "update")
                         {
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                             value.data = _sql.UpdateMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
-                        else
-                        {
-                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
-                        }
-                    }
-                    else if (masterDataDTO.mode.ToLower() == "delete")
-                    {
-                        //ValidationModel validation = new ValidationModel();
-                        //List<string> listobjectID = new List<string>();
-                        //listobjectID.Add("100401002");
-                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-                        if (validation.Success == true)
+                        else if (masterDataDTO.mode.ToLower() == "delete")
                         {
                             value.data = _sql.CancelSystemDepartment(masterDataDTO, userID);
-                            //value.data = _sql.DeleteMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
-                        else
-                        {
-                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
-                        }
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                     }
                 }
                 else
                 {
                     _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
-
+                
                 value.success = validation.Success;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }
