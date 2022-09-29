@@ -508,7 +508,20 @@ namespace TUFTManagement.Services
                             _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                         }
                     }
-                    
+                    else if (masterDataDTO.mode.ToLower() == "delete")
+                    {
+                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                        if (validation.Success == true)
+                        {
+                           
+                            value.data = _sql.DeleteMasterKey(shareCode, masterDataDTO, TableName, userID);
+                        }
+                        else
+                        {
+                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                        }
+                    }
+
                 }
                 else
                 {

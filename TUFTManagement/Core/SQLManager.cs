@@ -8239,6 +8239,45 @@ namespace TUFTManagement.Core
             return data;
         }
 
+        public _ReturnIdModel DeleteMasterKey(string shareCode, MasterDataDTO masterDataDTO, string TableName, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec cancel_master_key " +
+                "@pMasterID," +
+                "@pUserID, " +
+                "@pIsCancel");
+
+            SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
+            pMasterID.Direction = ParameterDirection.Input;
+            pMasterID.Value = masterDataDTO.masterID;
+            sql.Parameters.Add(pMasterID);
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            SqlParameter pIsCancel = new SqlParameter(@"pIsCancel", SqlDbType.Int);
+            pIsCancel.Direction = ParameterDirection.Input;
+            pIsCancel.Value = masterDataDTO.IsCancel;
+            sql.Parameters.Add(pIsCancel);
+
+            table = sql.executeQueryWithReturnTable();
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
         public Pagination<SearchMasterKey> SearchMasterKey(SearchMasterDataDTO searchMasterDataDTO)
         {
             DataTable table = new DataTable();

@@ -13,6 +13,7 @@ namespace TUFTManagement.DTO
         public string nameTH { set; get; } = "";
         public int deptID { set; get; } = 0;
         public string isActive { set; get; } = "";
+        public int IsCancel { set; get; } = 0;
         public string keyName { set; get; } = "";
     }
 }
