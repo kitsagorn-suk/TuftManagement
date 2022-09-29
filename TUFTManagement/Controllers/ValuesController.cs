@@ -183,6 +183,13 @@ namespace TUFTManagement.Controllers
                         value = Utility.Base64ForUrlDecode(strText)
                     };
                 }
+                if (type == "decodeMD5")
+                {
+                    obj = new
+                    {
+                        value = Utility.MD5decrypt(strText)
+                    };
+                }
 
                 return Ok(obj);
             }
@@ -1098,96 +1105,10 @@ namespace TUFTManagement.Controllers
 
 
         #endregion
-
-        //[Route("1.0/save/systemrole")]
-        //[HttpPost]
-        //public IHttpActionResult SaveSystemRole(SaveSystemRoleAssignDTO saveSystemRoleAssignDTO)
-        //{
-        //    var request = HttpContext.Current.Request;
-        //    string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-        //    string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-        //    string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
-        //    string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-        //    HeadersDTO headersDTO = new HeadersDTO();
-        //    headersDTO.authHeader = authHeader;
-        //    headersDTO.lang = lang;
-        //    headersDTO.fromProject = fromProject;
-        //    headersDTO.shareCode = shareCode;
-
-        //    AuthenticationController _auth = AuthenticationController.Instance;
-        //    AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-        //    try
-        //    {
-        //        string json = JsonConvert.SerializeObject(saveSystemRoleAssignDTO);
-        //        int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveSystemRoleAssign", json, timestampNow.ToString(), headersDTO,
-        //            data.userID, fromProject.ToLower());
-
-        //        ValidateService validateService = new ValidateService();
-        //        ValidationModel chkRequestBody = validateService.RequireOptionalSaveSystemRole(shareCode, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO);
-
-        //        int _chkPosition = _sql.CheckPositionID(saveSystemRoleAssignDTO.positionID);
-
-        //        if(_chkPosition != 0)
-        //        {
-        //            InsertService srvInsert = new InsertService();
-        //            UpdateService srvUpdate = new UpdateService();
-        //            var obj = new object();
-
-        //            if (chkRequestBody.Success == true)
-        //            {
-        //                foreach (SaveSystemRoleTemp item in saveSystemRoleAssignDTO.listTemp)
-        //                {
-        //                    int _chkDup = _sql.CheckDuplicateObjID(item.objID, fromProject.ToLower(), shareCode);
-        //                    int _chkParent = _sql.CheckDuplicateObjID(item.parentID, fromProject.ToLower(), shareCode);
-
-        //                    int _chkDupPosition = _sql.CheckPositionIDAssignment(item.objID, saveSystemRoleAssignDTO.positionID, shareCode);
-
-        //                    if ((_chkDup == 0 && _chkParent > 0) || (_chkDup == 0 && item.parentID == "0"))
-        //                    {
-        //                        obj = srvInsert.InsertSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item,  data.userID, shareCode);
-
-        //                    }
-        //                    else if ((_chkDup > 0 && _chkParent > 0) || (_chkDup > 0 && item.parentID == "0"))
-        //                    {
-        //                        obj = srvUpdate.UpdateSystemRoleTempService(authHeader, lang, fromProject.ToLower(), logID, item, data.userID, shareCode);
-
-        //                    }
-
-        //                    if (_chkDupPosition == 0 )
-        //                    {
-        //                        obj = srvInsert.InsertSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
-
-        //                    }
-        //                    else
-        //                    {
-        //                        obj = srvUpdate.UpdateSystemRoleAssignService(authHeader, lang, fromProject.ToLower(), logID, saveSystemRoleAssignDTO, item,  data.userID, shareCode);
-
-        //                    }
-        //                }
-
-        //            }
-
-        //            return Ok(obj);
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("Don't have this position ID");
-        //        }
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-        //    }
-        //}
-
-
+        
         #endregion
 
-        #region Employees
+        #region Employees (role check : OK)
 
         [Route("1.0/save/empProfile")]
         [HttpPost]
@@ -1262,12 +1183,12 @@ namespace TUFTManagement.Controllers
                     if (saveEmpProfileDTO.empProfileID.Equals(0) && saveEmpProfileDTO.mode.ToLower() == "insert")
                     {
                         InsertService srv = new InsertService();
-                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
+                        obj = srv.InsertEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID, fromProject);
                     }
                     else if (saveEmpProfileDTO.empProfileID > 0 && saveEmpProfileDTO.mode.ToLower() == "update")
                     {
                         UpdateService srv = new UpdateService();
-                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
+                        obj = srv.UpdateEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID, fromProject);
                     }
                 }
                 
@@ -1301,13 +1222,13 @@ namespace TUFTManagement.Controllers
 
             try
             {
-                string json = JsonConvert.SerializeObject(data.userID);
+                string json = JsonConvert.SerializeObject(requestDTO.userID);
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetEmpProfile", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, requestDTO);
+                var obj = srv.GetEmpProfileService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, requestDTO, fromProject);
 
                 return Ok(obj);
             }
@@ -1342,7 +1263,7 @@ namespace TUFTManagement.Controllers
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchAllEmployee", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
-                MasterDataService srv = new MasterDataService();
+                GetService srv = new GetService();
                 var obj = new object();
                 
                 string strDepartmentSearch = JsonConvert.SerializeObject(pageRequestDTO.departmentSearch);
@@ -1380,7 +1301,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchAllEmployee(authHeader, lang, fromProject.ToLower(), logID, pageRequestDTO, shareCode);
+                obj = srv.SearchAllEmployee(authHeader, lang, fromProject.ToLower(), logID, pageRequestDTO, shareCode, fromProject, data.userID);
 
                 return Ok(obj);
             }
@@ -1417,7 +1338,7 @@ namespace TUFTManagement.Controllers
 
                 GetService srv = new GetService();
 
-                var obj = srv.GetEmpProfileV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID);
+                var obj = srv.GetEmpProfileV1_1Service(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, fromProject);
                 
                 return Ok(obj);
             }
@@ -1459,139 +1380,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("1.0/save/empRate")]
-        [HttpPost]
-        public IHttpActionResult SaveEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(saveEmpRateDTO);
-                int logID = _sql.InsertLogReceiveData("SaveEmpRate", json, timestampNow.ToString(), authHeader,
-                    data.userID, fromProject.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (saveEmpRateDTO.empID.Equals(0)|| saveEmpRateDTO.empID.Equals(null))
-                {
-                    checkMissingOptional += "empID ";
-                }
-                if (saveEmpRateDTO.serviceNo.Equals(0) || saveEmpRateDTO.serviceNo.Equals(null))
-                {
-                    checkMissingOptional += "serviceNo ";
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                InsertService srv = new InsertService();
-                UpdateService srv2 = new UpdateService();
-                var obj = new object();
-
-                if (saveEmpRateDTO.empRateID.Equals(0) || saveEmpRateDTO.empRateID.Equals(null))
-                {
-                    obj = srv.InsertEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO,  data.userID);
-                }
-                else
-                {
-                    obj = srv2.UpdateEmpRateService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO,  data.userID);
-                }
-                
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("1.0/get/empRate")]
-        [HttpPost]
-        public IHttpActionResult GetEmpRate(EmpRateRequestDTO empRateRequestDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-            try
-            {
-
-                GetService srv = new GetService();
-
-                if (empRateRequestDTO.empID.Equals(0)|| empRateRequestDTO.empID.Equals(null) )
-                {
-                    throw new Exception("Missing Parameter : empID");
-                }
-
-                var obj = srv.GetEmpRateService(authHeader, lang, fromProject.ToLower(), 1, empRateRequestDTO.empID);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("1.0/delete/empRate")]
-        [HttpPost]
-        public IHttpActionResult DeleteEmpRate(EmpRateRequestDTO empRateRequestDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(empRateRequestDTO);
-                int logID = _sql.InsertLogReceiveData("DeleteEmpRate", json, timestampNow.ToString(), authHeader,
-                    data.userID, fromProject.ToLower());
-
-                string checkMissingOptional = "";
-
-                if (empRateRequestDTO.empID.Equals(0)|| empRateRequestDTO.empID.Equals(null))
-                {
-                    checkMissingOptional += "empID ";
-                }
-
-                if (checkMissingOptional != "")
-                {
-                    throw new Exception("Missing Parameter : " + checkMissingOptional);
-                }
-
-                DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpRateService(authHeader, lang, fromProject.ToLower(), logID, empRateRequestDTO,  data.userID);
+                var obj = srv.DeleteEmpProfileService(authHeader, lang, fromProject.ToLower(), logID, saveEmpProfileDTO,  data.userID ,fromProject, shareCode);
 
                 return Ok(obj);
             }
@@ -1641,7 +1430,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 UpdateService srv = new UpdateService();
-                var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO,  data.userID);
+                var obj = srv.UpdateEmpStatusService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpStatusDTO, data.userID, fromProject);
 
                 return Ok(obj);
             }
@@ -1651,14 +1440,11 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        #region API ให้ฝั่ง นาย ไม่ authen
 
-        #endregion
-
-        #region Time Attendance
-
-        [Route("1.0/save/empWorkShift")]
+        [Route("1.0/get/employee/pretty")]
         [HttpPost]
-        public IHttpActionResult SaveEmpWorkShift(SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO)
+        public IHttpActionResult GetAllEmployeePretty(PageRequestDTO pageRequestDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -1672,108 +1458,268 @@ namespace TUFTManagement.Controllers
             headersDTO.fromProject = fromProject;
             headersDTO.shareCode = shareCode;
 
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            //AuthenticationController _auth = AuthenticationController.Instance;
+            //AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            AuthorizationModel data = new AuthorizationModel();
 
             try
             {
-                string json = JsonConvert.SerializeObject(saveEmpWorkShiftRequestDTO);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveEmpWorkShift", json, timestampNow.ToString(), headersDTO,
-                    data.userID, fromProject.ToLower());
-
-                ValidateService validateService = new ValidateService();
-                ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpWorkShift(shareCode, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO);
-                
-                
-                InsertService srvInsert = new InsertService();
-                UpdateService srvUpdate = new UpdateService();
-                DeleteService srvDelete = new DeleteService();
-                var obj = new object();
-
-                if(chkRequestBody.Success == true)
-                {
-                    if (saveEmpWorkShiftRequestDTO.empWorkShiftID.Equals(0) && saveEmpWorkShiftRequestDTO.mode.ToLower() == "insert")
-                    {
-                        obj = srvInsert.InsertEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
-                    }
-                    else if (saveEmpWorkShiftRequestDTO.empWorkShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "update")
-                    {
-                        obj = srvUpdate.UpdateEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
-                    }
-                    else if (saveEmpWorkShiftRequestDTO.empWorkShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "delete")
-                    {
-                        obj = srvDelete.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO,  data.userID);
-                    }
-                }
-                
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("1.0/get/empWorkShift")]
-        [HttpPost]
-        public IHttpActionResult GetEmpWorkShift(SaveEmpWorkShiftRequestDTO requestDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(requestDTO);
-                int logID = _sql.InsertLogReceiveData("GetEmpWorkShift", json, timestampNow.ToString(), authHeader,
-                    data.userID, fromProject.ToLower());
-
-                GetService srv = new GetService();
-
-                if (requestDTO.empWorkShiftID.Equals(0) || requestDTO.empWorkShiftID.Equals(null))
-                {
-                    throw new Exception("Missing Parameter : empWorkShiftID");
-                }
-
-                var obj = srv.GetEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), 1, requestDTO.empWorkShiftID);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-        [Route("1.0/delete/empWorkShift")]
-        [HttpPost]
-        public IHttpActionResult DeleteEmpWorkShift(SaveEmpWorkShiftRequestDTO requestDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = request.Headers["Fromproject"];
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject(requestDTO);
-                int logID = _sql.InsertLogReceiveData("DeleteEmpWorkShift", json, timestampNow.ToString(), authHeader,
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeePretty", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
-                if (requestDTO.empWorkShiftID.Equals(0) || requestDTO.empWorkShiftID.Equals(null))
+                if (pageRequestDTO.pageInt.Equals(0))
                 {
-                    checkMissingOptional += "empWorkShiftID ";
+                    checkMissingOptional += "pageInt ";
+                }
+                if (pageRequestDTO.perPage.Equals(0))
+                {
+                    checkMissingOptional += "perPage ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                GetService srv = new GetService();
+
+                var obj = srv.GetEmployeePrettyService(shareCode, authHeader, lang, fromProject.ToLower(), logID, pageRequestDTO, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/employee/hairStylist")]
+        [HttpPost]
+        public IHttpActionResult GetAllEmployeeHairStylist(PageRequestDTO pageRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            //AuthenticationController _auth = AuthenticationController.Instance;
+            //AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            AuthorizationModel data = new AuthorizationModel();
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeeHairStylist", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+                if (pageRequestDTO.pageInt.Equals(0))
+                {
+                    checkMissingOptional += "pageInt ";
+                }
+                if (pageRequestDTO.perPage.Equals(0))
+                {
+                    checkMissingOptional += "perPage ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                GetService srv = new GetService();
+
+                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 42, pageRequestDTO);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/employee/makeUp")]
+        [HttpPost]
+        public IHttpActionResult GetAllEmployeeMakeUp(PageRequestDTO pageRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            //AuthenticationController _auth = AuthenticationController.Instance;
+            //AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+            AuthorizationModel data = new AuthorizationModel();
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(data.userID);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetAllEmployeeMakeUp", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+                if (pageRequestDTO.pageInt.Equals(0))
+                {
+                    checkMissingOptional += "pageInt ";
+                }
+                if (pageRequestDTO.perPage.Equals(0))
+                {
+                    checkMissingOptional += "perPage ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                GetService srv = new GetService();
+
+                var obj = srv.GetEmployeeByPositionService(shareCode, authHeader, lang, fromProject.ToLower(), logID, data.userID, 41, pageRequestDTO);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        #endregion
+        
+        #region rate ไม่ใช้ api แยกเส้นแล้ว
+
+        [Route("1.0/save/empRate")]
+        [HttpPost]
+        public IHttpActionResult SaveEmpRate(SaveEmpRateRequestDTO saveEmpRateDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveEmpRateDTO);
+                int logID = _sql.InsertLogReceiveData("SaveEmpRate", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (saveEmpRateDTO.empID.Equals(0) || saveEmpRateDTO.empID.Equals(null))
+                {
+                    checkMissingOptional += "empID ";
+                }
+                if (saveEmpRateDTO.serviceNo.Equals(0) || saveEmpRateDTO.serviceNo.Equals(null))
+                {
+                    checkMissingOptional += "serviceNo ";
+                }
+
+                if (checkMissingOptional != "")
+                {
+                    throw new Exception("Missing Parameter : " + checkMissingOptional);
+                }
+
+                InsertService srv = new InsertService();
+                UpdateService srv2 = new UpdateService();
+                var obj = new object();
+
+                if (saveEmpRateDTO.empRateID.Equals(0) || saveEmpRateDTO.empRateID.Equals(null))
+                {
+                    obj = srv.InsertEmpRateService(authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.userID);
+                }
+                else
+                {
+                    obj = srv2.UpdateEmpRateService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpRateDTO, data.userID);
+                }
+
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/get/empRate")]
+        [HttpPost]
+        public IHttpActionResult GetEmpRate(EmpRateRequestDTO empRateRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+
+                GetService srv = new GetService();
+
+                if (empRateRequestDTO.empID.Equals(0) || empRateRequestDTO.empID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : empID");
+                }
+
+                var obj = srv.GetEmpRateService(authHeader, lang, fromProject.ToLower(), 1, empRateRequestDTO.empID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.0/delete/empRate")]
+        [HttpPost]
+        public IHttpActionResult DeleteEmpRate(EmpRateRequestDTO empRateRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(empRateRequestDTO);
+                int logID = _sql.InsertLogReceiveData("DeleteEmpRate", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                string checkMissingOptional = "";
+
+                if (empRateRequestDTO.empID.Equals(0) || empRateRequestDTO.empID.Equals(null))
+                {
+                    checkMissingOptional += "empID ";
                 }
 
                 if (checkMissingOptional != "")
@@ -1782,7 +1728,7 @@ namespace TUFTManagement.Controllers
                 }
 
                 DeleteService srv = new DeleteService();
-                var obj = srv.DeleteEmpWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, requestDTO,  data.userID);
+                var obj = srv.DeleteEmpRateService(authHeader, lang, fromProject.ToLower(), logID, empRateRequestDTO, data.userID);
 
                 return Ok(obj);
             }
@@ -1792,6 +1738,12 @@ namespace TUFTManagement.Controllers
             }
         }
 
+        #endregion
+
+        #endregion
+
+        #region Time Attendance (role check : OK)
+        
         [Route("1.0/upload/workshift")]
         [HttpPost]
         public async Task<HttpResponseMessage> UploadWorkShift()
@@ -2180,9 +2132,7 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
-
-
-
+        
         #endregion
 
 
@@ -2375,9 +2325,7 @@ namespace TUFTManagement.Controllers
         }
 
         #endregion
-
-
-
+        
         [Route("1.0/save/empWorkTime")]
         [HttpPost]
         public IHttpActionResult SaveEmpWorkTime(SaveEmpWorkTimeRequestDTO saveEmpWorkTimeRequestDTO)
@@ -2425,7 +2373,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2484,7 +2432,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2543,7 +2491,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2602,7 +2550,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2661,7 +2609,7 @@ namespace TUFTManagement.Controllers
 
                     if (saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(0) || saveEmpWorkTimeRequestDTO.empWorkTimeID.Equals(null))
                     {
-                        obj = srv.UpdateEmpWorkTimeService(authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
+                        obj = srv.UpdateEmpWorkTimeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkTimeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2747,7 +2695,7 @@ namespace TUFTManagement.Controllers
 
                     if (transChangeRequestDTO.transChangeID.Equals(0) || transChangeRequestDTO.transChangeID.Equals(null))
                     {
-                        obj = srv.ApproveWorkTimeTransChangeService(authHeader, lang, fromProject.ToLower(), logID, transChangeRequestDTO,  data.userID);
+                        obj = srv.ApproveWorkTimeTransChangeService(shareCode, authHeader, lang, fromProject.ToLower(), logID, transChangeRequestDTO,  data.userID);
                     }
                 }
 
@@ -2759,10 +2707,199 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
-        
+
         #endregion
 
         #region Master
+
+        [Route("1.1/save/master/workShift")]
+        [HttpPost]
+        public IHttpActionResult SaveMasterWorkShift(SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(saveEmpWorkShiftRequestDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveEmpWorkShift", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                ValidateService validateService = new ValidateService();
+                ValidationModel chkRequestBody = validateService.RequireOptionalSaveEmpWorkShift(shareCode, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO);
+
+                MasterDataService srvMaster = new MasterDataService();
+                var obj = new object();
+
+                if (chkRequestBody.Success == true)
+                {
+                    if (saveEmpWorkShiftRequestDTO.workShiftID.Equals(0) && saveEmpWorkShiftRequestDTO.mode.ToLower() == "insert")
+                    {
+                        obj = srvMaster.InsertMasterWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.userID);
+                    }
+                    else if (saveEmpWorkShiftRequestDTO.workShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "update")
+                    {
+                        obj = srvMaster.UpdateMasterWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.userID);
+                    }
+                }
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.1/get/master/workShift")]
+        [HttpPost]
+        public IHttpActionResult GetMasterWorkShift(SaveEmpWorkShiftRequestDTO requestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(requestDTO);
+                int logID = _sql.InsertLogReceiveData("GetEmpWorkShift", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                if (requestDTO.workShiftID.Equals(0) || requestDTO.workShiftID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : empWorkShiftID");
+                }
+
+                var obj = srv.GetMasterWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), 1, requestDTO.workShiftID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.1/switch/master/workShift")]
+        [HttpPost]
+        public IHttpActionResult SwitchMasterWorkShift(SaveEmpWorkShiftRequestDTO requestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = request.Headers["Fromproject"];
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(requestDTO);
+                int logID = _sql.InsertLogReceiveData("GetEmpWorkShift", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+
+                if (requestDTO.workShiftID.Equals(0) || requestDTO.workShiftID.Equals(null))
+                {
+                    throw new Exception("Missing Parameter : empWorkShiftID");
+                }
+
+                var obj = srv.UpdateSwitchWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), 1, requestDTO.workShiftID, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
+        [Route("1.1/search/master/workShift")]
+        [HttpPost]
+        public IHttpActionResult GetSearchMasterWorkShift(PageRequestDTO pageRequestDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject("");
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetSearchMasterWorkShift", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+
+                string strWorkTypeSearch = JsonConvert.SerializeObject(pageRequestDTO.workTypeSearch);
+                strWorkTypeSearch = string.Join(",", pageRequestDTO.workTypeSearch);
+                pageRequestDTO.prepairWorkTypeSearch = strWorkTypeSearch;
+
+                string strIsActiveSearch = JsonConvert.SerializeObject(pageRequestDTO.isActiveSearch);
+                strIsActiveSearch = string.Join(",", pageRequestDTO.isActiveSearch);
+                pageRequestDTO.prepairIsActiveSearch = strIsActiveSearch;
+
+
+                if (pageRequestDTO.pageInt.Equals(null) || pageRequestDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (pageRequestDTO.perPage.Equals(null) || pageRequestDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (pageRequestDTO.sortField > 3)
+                {
+                    throw new Exception("invalid : sortField " + pageRequestDTO.sortField);
+                }
+                if (!(pageRequestDTO.sortType == "a" || pageRequestDTO.sortType == "d" || pageRequestDTO.sortType == "A" || pageRequestDTO.sortType == "D" || pageRequestDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllWorkShiftService(authHeader, lang, fromProject.ToLower(), logID, pageRequestDTO, shareCode);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
+
         [Route("1.0/save/master/position")]
         [HttpPost]
         public IHttpActionResult SaveMasterPosition(MasterDataDTO masterDataDTO)
@@ -2794,6 +2931,10 @@ namespace TUFTManagement.Controllers
                 {
                     throw new Exception("Missing Parameter : mode ");
                 }
+                if (string.IsNullOrEmpty(masterDataDTO.isActive))
+                {
+                    throw new Exception("Missing Parameter : isActive ");
+                }
 
                 if (masterDataDTO.mode.ToLower().Equals("insert"))
                 {
@@ -2801,10 +2942,10 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "masterID Must 0 ";
                     }
-                    //if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    //{
-                    //    checkMissingOptional += "nameEN ";
-                    //}
+                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    {
+                        checkMissingOptional += "nameEN ";
+                    }
                     if (string.IsNullOrEmpty(masterDataDTO.nameTH))
                     {
                         checkMissingOptional += "nameTH ";
@@ -2820,10 +2961,10 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "masterID ";
                     }
-                    //if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    //{
-                    //    checkMissingOptional += "nameEN ";
-                    //}
+                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    {
+                        checkMissingOptional += "nameEN ";
+                    }
                     if (string.IsNullOrEmpty(masterDataDTO.nameTH))
                     {
                         checkMissingOptional += "nameTH ";
@@ -2852,7 +2993,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_position", data.userID, shareCode);
+                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_position", data.userID, shareCode, fromProject);
 
                 return Ok(obj);
             }
@@ -3206,7 +3347,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_department", data.userID, shareCode);
+                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_department", data.userID, shareCode, fromProject);
 
                 return Ok(obj);
             }
@@ -3788,7 +3929,7 @@ namespace TUFTManagement.Controllers
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
                 
-                if((tableName == "system_department" || tableName == "system_master_key") && masterDataDTO.IsActive == "0")
+                if((tableName == "system_department" || tableName == "system_master_key") && masterDataDTO.isActive == "0")
                 {
                     var checkUse = _sql.CheckIsActiveService(tableName, masterDataDTO.masterID);
                     if (checkUse == 0)
@@ -3817,6 +3958,78 @@ namespace TUFTManagement.Controllers
         }
         #endregion
 
+
+        #endregion
+
+        #region Master 1.1
+
+        [Route("1.1/search/master/position")]
+        [HttpPost]
+        public IHttpActionResult GetSearchAllMasterDepartmentPosition(SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO);
+                int logID = _sql.InsertLogReceiveData("GetSearchAllMasterDepartmentPosition", json, timestampNow.ToString(), authHeader,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+
+                string strDepartmentSearch = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO.departmentSearch);
+                strDepartmentSearch = string.Join(",", searchMasterDepartmentPositionDTO.departmentSearch);
+                searchMasterDepartmentPositionDTO.prepairDepartmentSearch = strDepartmentSearch;
+
+                string strPositionSearch = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO.positionSearch);
+                strPositionSearch = string.Join(",", searchMasterDepartmentPositionDTO.positionSearch);
+                searchMasterDepartmentPositionDTO.prepairPositionSearch = strPositionSearch;
+
+                string strIsActiveSearch = JsonConvert.SerializeObject(searchMasterDepartmentPositionDTO.isActiveSearch);
+                strIsActiveSearch = string.Join(",", searchMasterDepartmentPositionDTO.isActiveSearch);
+                searchMasterDepartmentPositionDTO.prepairIsActiveSearch = strIsActiveSearch;
+
+                if (searchMasterDepartmentPositionDTO.pageInt.Equals(null) || searchMasterDepartmentPositionDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchMasterDepartmentPositionDTO.perPage.Equals(null) || searchMasterDepartmentPositionDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchMasterDepartmentPositionDTO.sortField > 4)
+                {
+                    throw new Exception("invalid : sortField " + searchMasterDepartmentPositionDTO.sortField);
+                }
+                if (!(searchMasterDepartmentPositionDTO.sortType == "a" || searchMasterDepartmentPositionDTO.sortType == "d" || searchMasterDepartmentPositionDTO.sortType == "A" || searchMasterDepartmentPositionDTO.sortType == "D" || searchMasterDepartmentPositionDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv.SearchAllDepartmentPosition(authHeader, lang, fromProject.ToLower(), logID, searchMasterDepartmentPositionDTO);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         #endregion
 
@@ -3913,7 +4126,7 @@ namespace TUFTManagement.Controllers
         }
         #endregion
 
-        #region leave
+        #region leave (role check : OK)
         [Route("1.0/search/allleave")]
         [HttpPost]
         public IHttpActionResult GetSearchAllLeave(SearchLeaveDTO searchLeaveDTO)
@@ -3972,7 +4185,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchAllLeave(authHeader, lang, fromProject.ToLower(), logID, searchLeaveDTO, shareCode);
+                obj = srv.SearchAllLeave(authHeader, lang, fromProject.ToLower(), logID, searchLeaveDTO, shareCode, fromProject, data.userID);
 
                 return Ok(obj);
             }
@@ -4005,7 +4218,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("Missing Parameter : leaveID");
                 }
 
-                var obj = srv.GetLeaveDetailService(authHeader, lang, fromProject.ToLower(), 1, leaveDetailDTO, shareCode);
+                var obj = srv.GetLeaveDetailService(authHeader, lang, fromProject.ToLower(), 1, leaveDetailDTO, shareCode, fromProject, data.userID);
 
                 return Ok(obj);
             }
@@ -4043,7 +4256,9 @@ namespace TUFTManagement.Controllers
                 ValidateService validateService = new ValidateService();
                 ValidationModel chkRequestBody = validateService.RequireOptionalSaveLeaveDetail(shareCode, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO);
 
-                int allLeaveDays = _sql.GetTotalDayPerYearByLeaveType(saveLeaveDetailDTO.leavetypeId);
+
+                int allLeaveDays = _sql.GetTotalDayPerYear(saveLeaveDetailDTO.leavetypeId);
+
                 int useDay = _sql.GetTotalUseDayPerYear(saveLeaveDetailDTO.leaveId, shareCode);
 
                 int remainDay = allLeaveDays - useDay;
@@ -4059,11 +4274,11 @@ namespace TUFTManagement.Controllers
                     {
                         if (saveLeaveDetailDTO.leaveId.Equals(0) && saveLeaveDetailDTO.mode.ToLower() == "insert")
                         {
-                            obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, remainDay, data.userID, shareCode);
+                            obj = srvInsert.InsertLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, remainDay, data.userID, shareCode, fromProject);
                         }
                         else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "update")
                         {
-                            obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.userID, shareCode);
+                            obj = srvUpdate.UpdateLeaveDetailService(authHeader, lang, fromProject.ToLower(), logID, saveLeaveDetailDTO, data.userID, shareCode, fromProject);
                         }
                         //else if (saveLeaveDetailDTO.leaveId > 0 && saveLeaveDetailDTO.mode.ToLower() == "delete")
                         //{
@@ -4128,7 +4343,7 @@ namespace TUFTManagement.Controllers
                 #endregion
 
                 UpdateService srv = new UpdateService();
-                var obj = srv.CancelLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+                var obj = srv.CancelLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode, fromProject);
                 return Ok(obj);
             }
             catch(Exception ex)
@@ -4182,18 +4397,10 @@ namespace TUFTManagement.Controllers
                 else
                 {
                     UpdateService srv = new UpdateService();
-                    obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, approveLeaveRequestDTO, data.userID, shareCode);
+                    obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, approveLeaveRequestDTO, data.userID, shareCode, fromProject);
                 }
                 #endregion
-
-                //int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.l);
-                //int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID, shareCode);
-
-                //int remainDay = allLeaveDays - useDay;
-
-
-               // UpdateService srv = new UpdateService();
-                //var obj = srv.RejectLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, data.userID, shareCode);
+                
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -4246,20 +4453,10 @@ namespace TUFTManagement.Controllers
                 else
                 {
                     UpdateService srv = new UpdateService();
-                    obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, approveLeaveRequestDTO, data.userID, shareCode);
+                    obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, approveLeaveRequestDTO, data.userID, shareCode, fromProject);
                 }
                 #endregion
-
-
-                //int allLeaveDays = _sql.GetTotalDayPerYear(actionLeaveFormDTO.leaveID);
-                //int useDay = _sql.GetTotalUseDayPerYear(actionLeaveFormDTO.leaveID, shareCode);
-
-                //int remainDay = allLeaveDays - useDay;
-
-
-
-                //UpdateService srv = new UpdateService();
-                //var obj = srv.ApproveLeaveFormService(authHeader, lang, fromProject.ToLower(), logID, actionLeaveFormDTO, remainDay, data.userID, shareCode);
+                
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -4326,6 +4523,64 @@ namespace TUFTManagement.Controllers
         //    }
         //}
 
+
+        [Route("1.0/search/pending/leave")]
+        [HttpPost]
+        public IHttpActionResult GetSearchPendingLeave(SearchPendingLeaveDTO searchPendingLeaveDTO)
+        {
+            var request = HttpContext.Current.Request;
+            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+
+            HeadersDTO headersDTO = new HeadersDTO();
+            headersDTO.authHeader = authHeader;
+            headersDTO.lang = lang;
+            headersDTO.fromProject = fromProject;
+            headersDTO.shareCode = shareCode;
+
+            AuthenticationController _auth = AuthenticationController.Instance;
+            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(searchPendingLeaveDTO);
+                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "GetSearchPendingLeave", json, timestampNow.ToString(), headersDTO,
+                    data.userID, fromProject.ToLower());
+
+                MasterDataService srv = new MasterDataService();
+                var obj = new object();
+
+               
+
+                if (searchPendingLeaveDTO.pageInt.Equals(null) || searchPendingLeaveDTO.pageInt.Equals(0))
+                {
+                    throw new Exception("invalid : pageInt ");
+                }
+                if (searchPendingLeaveDTO.perPage.Equals(null) || searchPendingLeaveDTO.perPage.Equals(0))
+                {
+                    throw new Exception("invalid : perPage ");
+                }
+
+                if (searchPendingLeaveDTO.sortField > 7)
+                {
+                    throw new Exception("invalid : sortField " + searchPendingLeaveDTO.sortField);
+                }
+                if (!(searchPendingLeaveDTO.sortType == "a" || searchPendingLeaveDTO.sortType == "d" || searchPendingLeaveDTO.sortType == "A" || searchPendingLeaveDTO.sortType == "D" || searchPendingLeaveDTO.sortType == ""))
+                {
+                    throw new Exception("invalid sortType");
+                }
+
+                obj = srv. SearchAllPendingLeave(authHeader, lang, fromProject.ToLower(), logID, searchPendingLeaveDTO, shareCode, fromProject, data.userID);
+
+                return Ok(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+            }
+        }
 
         #endregion
 
@@ -4397,9 +4652,7 @@ namespace TUFTManagement.Controllers
 
         #endregion
 
-
-
-        #region Report
+        #region Report (role check : OK)
         [Route("1.0/search/allreportsalary")]
         [HttpPost]
         public IHttpActionResult GetSearchAllReportSalary(SearchReportDTO searchReportSalaryDTO)
@@ -4462,7 +4715,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchAllSalaryReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportSalaryDTO, shareCode);
+                obj = srv.SearchAllSalaryReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportSalaryDTO, shareCode, fromProject, data.userID);
 
                 return Ok(obj);
             }
@@ -4534,7 +4787,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchAllEmployeeReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportEmployeeDTO, shareCode);
+                obj = srv.SearchAllEmployeeReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportEmployeeDTO, shareCode, fromProject, data.userID);
 
                 return Ok(obj);
             }
@@ -4603,7 +4856,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchAllWorkTimeReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportWorkTimeDTO, shareCode);
+                obj = srv.SearchAllWorkTimeReportService(authHeader, lang, fromProject.ToLower(), logID, searchReportWorkTimeDTO, shareCode, fromProject, data.userID);
 
                 return Ok(obj);
             }
@@ -4612,71 +4865,6 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
-
-        #endregion
-
-        #region Payroll
-        [Route("1.0/search/allpayroll")]
-        [HttpPost]
-        public IHttpActionResult GetSearchAllPayRoll(SearchPayRollDTO searchPayRollDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
-
-            HeadersDTO headersDTO = new HeadersDTO();
-            headersDTO.authHeader = authHeader;
-            headersDTO.lang = lang;
-            headersDTO.fromProject = fromProject;
-            headersDTO.shareCode = shareCode;
-
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
-
-            try
-            {
-                string json = JsonConvert.SerializeObject("");
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchAllPayRoll", json, timestampNow.ToString(), headersDTO,
-                    data.userID, fromProject.ToLower());
-
-                GetService srv = new GetService();
-                var obj = new object();
-
-                string strInstallmentSearch = JsonConvert.SerializeObject(searchPayRollDTO.installmentSearch);
-                strInstallmentSearch = string.Join(",", searchPayRollDTO.installmentSearch);
-                searchPayRollDTO.prepairInstallmentSearch = strInstallmentSearch;
-
-                if (searchPayRollDTO.pageInt.Equals(null) || searchPayRollDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchPayRollDTO.perPage.Equals(null) || searchPayRollDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-
-                if (searchPayRollDTO.sortField > 3)
-                {
-                    throw new Exception("invalid : sortField " + searchPayRollDTO.sortField);
-                }
-                if (!(searchPayRollDTO.sortType == "a" || searchPayRollDTO.sortType == "d" || searchPayRollDTO.sortType == "A" || searchPayRollDTO.sortType == "D" || searchPayRollDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
-
-                obj = srv.SearchAllPayRollService(authHeader, lang, fromProject.ToLower(), logID, searchPayRollDTO, shareCode);
-
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
-
-
         #endregion
 
     }

@@ -15,7 +15,6 @@ namespace TUFTManagement.DTO
         #region param เจาะรูไว้ ตอนนี้ defaut 
         public int agentID { set; get; } = 0;
         public int shareID { set; get; } = 0;
-        public int roleID { set; get; } = 7;
         #endregion
 
 
@@ -92,7 +91,7 @@ namespace TUFTManagement.DTO
     
     public class SaveEmergencyContact
     {
-        public int emergencyContactID { set; get; } = 0;
+        public int emerContactID { set; get; } = 0;
         public string emerFullName { set; get; } = "";
         public int emerRelationShipID { set; get; } = 0;
         public string emerContact { set; get; } = "";

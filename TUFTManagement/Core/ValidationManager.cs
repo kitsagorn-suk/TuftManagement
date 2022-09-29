@@ -12,6 +12,77 @@ namespace TUFTManagement.Core
     {
         private static SQLManager _sql = SQLManager.Instance;
 
+        public static ValidationModel CheckValidationWithProjectName(string shareCode,string lang, string objectID, string projectName, int selectUserID, int userID)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                int status = _sql.CheckRoleValidation(shareCode, projectName, objectID, userID);
+
+                if (status == 0)
+                {
+                    if (userID != selectUserID)
+                    {
+                        #region check role permission
+                        //_sql.UpdateIsLockPasswordByUserID(userID);
+
+                        state = ValidationModel.InvalidState.E301007; //คุณไม่มีสิทธิ์ในการทำงานนี้
+                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                        #endregion
+                    }
+                }
+                
+                getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(state);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+        public static ValidationModel CheckValidationWithProjectName(string shareCode, string lang, string objectID, string projectName, int userID)
+        {
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                int status = _sql.CheckRoleValidation(shareCode, projectName, objectID, userID);
+
+                    if (status == 0)
+                    {
+                        #region check role permission
+                        //_sql.UpdateIsLockPasswordByUserID(userID);
+
+                        state = ValidationModel.InvalidState.E301007; //คุณไม่มีสิทธิ์ในการทำงานนี้
+                        getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                        #endregion
+                    }
+
+                getMessage = ValidationModel.GetInvalidMessage(state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(state);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+
+
         public static ValidationModel CheckValidation(int chkID, string lang, string platform)
         {
             ValidationModel value = new ValidationModel();
@@ -39,6 +110,7 @@ namespace TUFTManagement.Core
             {
                 GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
                 ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+                
 
                 getMessage = ValidationModel.GetInvalidMessage(state, lang);
                 value.Success = true;
@@ -648,6 +720,31 @@ namespace TUFTManagement.Core
                 throw ex;
             }
             return value;
+        }
+
+        public static List<NewMenuList> ReturnObjectID(string shareCode, string lang, string projectName, string objectID, int selectUserID, int tokenUserID)
+        {
+            List<NewMenuList> menuList = new List<NewMenuList>();
+            try
+            {
+                objectID = "2072100";
+                int status = _sql.CheckRoleValidation(shareCode, projectName, objectID, tokenUserID);
+                if (tokenUserID != selectUserID && status == 0)
+                {
+                    //ตัดปุ่ม
+                    menuList = _sql.GetMenuNoHimSelf(shareCode, tokenUserID, lang, projectName);
+                }
+                else
+                {
+                    // เป็นตัวเอง
+                    menuList = _sql.GetMenuHimSelf(shareCode, tokenUserID, lang, projectName);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return menuList;
         }
 
 

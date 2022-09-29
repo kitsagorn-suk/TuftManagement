@@ -14,7 +14,7 @@ namespace TUFTManagement.Services
         private SQLManager _sql = SQLManager.Instance;
 
         public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, 
-            string TableName, int userID, string shareCode)
+            string TableName, int userID, string shareCode, string projectName)
         {
             if (_sql == null)
             {
@@ -26,58 +26,42 @@ namespace TUFTManagement.Services
             {
                 _ReturnIdModel data = new _ReturnIdModel();
 
-                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, TableName, masterDataDTO);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Agent > View
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2082000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
                 if (validation.Success == true)
                 {
-                    if (masterDataDTO.mode.ToLower() == "insert")
+                    validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, TableName, masterDataDTO);
+                    if (validation.Success == true)
                     {
-                        //List<string> listobjectID = new List<string>();
-                        //listobjectID.Add("100401001");
-                        //ValidationModel validation = ValidationManager.CheckRoleValidation(lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-                        value.data = _sql.InsertMasterData(shareCode, masterDataDTO, TableName, userID);
-                    }
-                    else if (masterDataDTO.mode.ToLower() == "update")
-                    {
-                        //ValidationModel validation = new ValidationModel();
-                        //List<string> listobjectID = new List<string>();
-                        //listobjectID.Add("100401002");
-                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-                        if (validation.Success == true)
+                        if (masterDataDTO.mode.ToLower() == "insert")
+                        {
+                            value.data = _sql.InsertMasterData(shareCode, masterDataDTO, TableName, userID);
+                        }
+                        else if (masterDataDTO.mode.ToLower() == "update")
                         {
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                             value.data = _sql.UpdateMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
-                        else
-                        {
-                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
-                        }
-                    }
-                    else if (masterDataDTO.mode.ToLower() == "delete")
-                    {
-                        //ValidationModel validation = new ValidationModel();
-                        //List<string> listobjectID = new List<string>();
-                        //listobjectID.Add("100401002");
-                        //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                        validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-                        if (validation.Success == true)
+                        else if (masterDataDTO.mode.ToLower() == "delete")
                         {
                             value.data = _sql.CancelSystemDepartment(masterDataDTO, userID);
-                            //value.data = _sql.DeleteMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
-                        else
-                        {
-                            _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
-                        }
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                     }
                 }
                 else
                 {
                     _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
-
+                
                 value.success = validation.Success;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }
@@ -251,7 +235,7 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
-                        _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "is_active", masterDataDTO.IsActive, userID);
+                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, TableName, "is_active", masterDataDTO.isActive, userID);
                        // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateActiveMaster(shareCode, masterDataDTO,TableName, userID); ;
                     }
@@ -306,7 +290,7 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
-                        _sql.InsertSystemLogChange(masterDataDTO.masterID, "system_position", "is_active", masterDataDTO.IsActive, userID);
+                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_position", "is_active", masterDataDTO.isActive, userID);
                         // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.CancelSystemPosition(masterDataDTO, userID); ;
                     }
@@ -361,7 +345,7 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
-                        _sql.InsertSystemLogChange(masterDataDTO.masterID, "system_departrment", "is_active", masterDataDTO.IsActive, userID);
+                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_departrment", "is_active", masterDataDTO.isActive, userID);
                         // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.CancelSystemDepartment(masterDataDTO, userID); ;
                     }
@@ -3028,51 +3012,11 @@ namespace TUFTManagement.Services
             return value;
         }
 
+
+
         #region searchService
-        public SearchAllEmployeeModel SearchAllEmployee(string authorization, string lang, string platform, int logID, PageRequestDTO pageRequestDTO, string shareCode)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
-
-            SearchAllEmployeeModel value = new SearchAllEmployeeModel();
-            try
-            {
-                Pagination<SearchAllEmployee> data = new Pagination<SearchAllEmployee>();
-
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-
-                if (validation.Success == true)
-                {
-                    data = _sql.SearchAllEmployee(shareCode, pageRequestDTO);
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
-                }
-
-                value.success = validation.Success;
-                value.data = data;
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllEmployee:");
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
-
-        public SearchAllLeaveModel SearchAllLeave(string authorization, string lang, string platform, int logID, SearchLeaveDTO searchLeavetDTO, string shareCode)
+        
+        public SearchAllLeaveModel SearchAllLeave(string authorization, string lang, string platform, int logID, SearchLeaveDTO searchLeavetDTO, string shareCode, string projectName, int userID)
         {
             if (_sql == null)
             {
@@ -3082,7 +3026,6 @@ namespace TUFTManagement.Services
             SearchAllLeaveModel value = new SearchAllLeaveModel();
             value.data = new SearchAllLeaveDetail();
             value.data.dataSearch = new Pagination<SearchAllLeave>();
-            value.data.dataShift = new List<AllLeaveShift>();
             value.data.dataLeave = new List<AllLeave>();
             try
             {
@@ -3090,7 +3033,12 @@ namespace TUFTManagement.Services
                 List<AllLeaveShift> dataShift = new List<AllLeaveShift>();
                 List<AllLeave> dataLeave = new List<AllLeave>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2100000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -3102,19 +3050,6 @@ namespace TUFTManagement.Services
                     foreach (SearchAllLeave item in total)
                     {
                         termsList.Add(item.empID);
-                    }
-                    int[] terms = termsList.ToArray();
-                    string theString = string.Join(",", terms);
-
-                    List<GetWorkShift> allWS = new List<GetWorkShift>();
-                    allWS = _sql.GetAllWorkShiftList(shareCode);
-
-                    foreach (GetWorkShift item in allWS)
-                    {
-                        AllLeaveShift sss = new AllLeaveShift();
-                        sss = _sql.GetWorkShiftLeave(shareCode, theString, item.workShiftID, searchLeavetDTO.paramSearch);
-
-                        dataShift.Add(sss);
                     }
 
                     List<SearchAllLeave> totalLeave = dataSearch.data;
@@ -3147,7 +3082,7 @@ namespace TUFTManagement.Services
 
                 value.success = validation.Success;
                 value.data.dataSearch = dataSearch;
-                value.data.dataShift = dataShift;
+                //value.data.dataShift = dataShift;
                 value.data.dataLeave = dataLeave;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }
@@ -3167,7 +3102,369 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public SearchAllPendingLeaveModel SearchAllPendingLeave(string authorization, string lang, string platform, int logID, SearchPendingLeaveDTO searchPendingLeaveDTO, string shareCode, string projectName, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllPendingLeaveModel value = new SearchAllPendingLeaveModel();
+            value.data = new SearchAllPendingLeaveDetail();
+            value.data.dataSearch = new Pagination<SearchAllLeave>();
+            value.data.dataLeave = new List<AllLeave>();
+            try
+            {
+                Pagination<SearchAllLeave> dataSearch = new Pagination<SearchAllLeave>();
+                List<AllLeaveShift> dataShift = new List<AllLeaveShift>();
+                List<AllLeave> dataLeave = new List<AllLeave>();
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave > Search Pending
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2105000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
+
+                if (validation.Success == true)
+                {
+                    dataSearch = _sql.SearchAllPendingLeaves(lang, shareCode, searchPendingLeaveDTO);
+
+                    List<SearchAllLeave> total = dataSearch.data;
+
+                    List<int> termsList = new List<int>();
+                    foreach (SearchAllLeave item in total)
+                    {
+                        termsList.Add(item.empID);
+                    }
+                    
+                    List<SearchAllLeave> totalLeave = dataSearch.data;
+
+                    List<int> _termsList = new List<int>();
+                    foreach (SearchAllLeave item in totalLeave)
+                    {
+                        _termsList.Add(item.empID);
+                    }
+                    int[] _terms = _termsList.ToArray();
+                    string _theString = string.Join(",", _terms);
+
+                    List<GetLeave> _allWS = new List<GetLeave>();
+                    _allWS = _sql.GetAllLeaveList();
+
+                    foreach (GetLeave item in _allWS)
+                    {
+                        AllLeave listLeave = new AllLeave();
+                        listLeave = _sql.GetLeave(shareCode, _theString, item.leaveTypeID, searchPendingLeaveDTO.paramSearch);
+
+                        dataLeave.Add(listLeave);
+                    }
+
+                    //dataLeave = _sql.;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data.dataSearch = dataSearch;
+                //value.data.dataShift = dataShift;
+                value.data.dataLeave = dataLeave;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllEmployee:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
+        public SearchAllMasterDepartmentPositionModel SearchAllDepartmentPosition(string authorization, string lang, string platform, int logID, SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllMasterDepartmentPositionModel value = new SearchAllMasterDepartmentPositionModel();
+            value.data = new Pagination<SearchAllMasterDepartmentPosition>();
+            try
+            {
+                Pagination<SearchAllMasterDepartmentPosition> dataSearch = new Pagination<SearchAllMasterDepartmentPosition>();
+
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    dataSearch = _sql.SearchAllDepartmentPosition(searchMasterDepartmentPositionDTO);
+                    
+                    
+
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = dataSearch;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllDepartmentPosition:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
+
         #endregion
+
+        public ReturnIdModel InsertMasterWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID,
+            SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertEmpWorkShift(lang, saveEmpWorkShiftRequestDTO);
+                if (validation.Success == true)
+                {
+                    value.data = _sql.InsertEmpWorkShift(shareCode, saveEmpWorkShiftRequestDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "InsertMasterWorkShiftService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public ReturnIdModel UpdateMasterWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    string TableName = "emp_work_shift";
+                    _sql.InsertSystemLogChange(shareCode, saveEmpWorkShiftRequestDTO.workShiftID, TableName, "ws_code", saveEmpWorkShiftRequestDTO.wsCode, userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpWorkShiftRequestDTO.workShiftID, TableName, "time_start", saveEmpWorkShiftRequestDTO.timeStart, userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpWorkShiftRequestDTO.workShiftID, TableName, "time_end", saveEmpWorkShiftRequestDTO.timeEnd, userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpWorkShiftRequestDTO.workTypeID, TableName, "work_type_id", saveEmpWorkShiftRequestDTO.workTypeID.ToString(), userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpWorkShiftRequestDTO.workShiftID, TableName, "remark", saveEmpWorkShiftRequestDTO.remark, userID);
+                    _sql.InsertSystemLogChange(shareCode, saveEmpWorkShiftRequestDTO.workShiftID, TableName, "status", saveEmpWorkShiftRequestDTO.status.ToString(), userID);
+
+                    value.data = _sql.UpdateEmpWorkShift(shareCode, saveEmpWorkShiftRequestDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateMasterWorkShiftService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetEmpWorkShiftModel GetMasterWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, int empWorkShiftID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetEmpWorkShiftModel value = new GetEmpWorkShiftModel();
+            try
+            {
+                GetEmpWorkShift data = new GetEmpWorkShift();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetEmpWorkShift(shareCode, empWorkShiftID);
+                    value.data = data;
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpWorkShiftService:");
+
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public UpdateSwitchWorkShiftModel UpdateSwitchWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, int workShiftID, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            UpdateSwitchWorkShiftModel value = new UpdateSwitchWorkShiftModel();
+            try
+            {
+                value.data = new SwitchWorkShift();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    GetEmpWorkShift data = new GetEmpWorkShift();
+                    data = _sql.GetEmpWorkShift(shareCode, workShiftID);
+
+                    string TableName = "emp_work_shift";
+                    _sql.InsertSystemLogChange(shareCode, workShiftID, TableName, "status", data.status.ToString(), userID);
+
+                    value.data = _sql.UpdateSwitchStatusWorkShift(shareCode, workShiftID, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateSwitchWorkShiftService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public SearchAllMasterWorkShiftModel SearchAllWorkShiftService(string authorization, string lang, string platform, int logID, PageRequestDTO pageRequestDTO, string shareCode)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllMasterWorkShiftModel value = new SearchAllMasterWorkShiftModel();
+            try
+            {
+                Pagination<SearchAllMasterWorkShift> data = new Pagination<SearchAllMasterWorkShift>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchAllWorkShiftPage(shareCode, pageRequestDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllWorkShiftService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
 
     }
 }

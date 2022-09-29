@@ -225,7 +225,7 @@ namespace TUFTManagement.Services
 
 
         public GetEmpProfileModel GetEmpProfileV1_1Service(string shareCode, string authorization, string lang, string fromProject, 
-            int logID, int userID)
+            int logID, int userID, string projectName)
         {
             if (_sql == null)
             {
@@ -237,7 +237,12 @@ namespace TUFTManagement.Services
             {
                 EmpProfile data = new EmpProfile();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, fromProject);
+                //เช็คสิทธิในการเข้าใช้
+                //Dashboard > Profile Self
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("1004000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -278,7 +283,7 @@ namespace TUFTManagement.Services
         }
 
         public GetEmployeeDetailsModel GetEmpProfileService(string shareCode, string authorization, string lang, string platform, 
-            int logID, int userID, RequestDTO requestDTO)
+            int logID, int userID, RequestDTO requestDTO, string projectName)
         {
             if (_sql == null)
             {
@@ -291,13 +296,111 @@ namespace TUFTManagement.Services
                 EmployeeDetails data = new EmployeeDetails();
                 data.emergencyContact = new List<EmergencyContact>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Employee > View
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2082000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, requestDTO.userID, userID);
+
+                string cutObjectID = "2072100";
+                List<NewMenuList> menuList = ValidationManager.ReturnObjectID(shareCode, lang, projectName, cutObjectID, requestDTO.userID, userID);
+                
 
                 if (validation.Success == true)
                 {
                     data = _sql.GetEmpProfile(shareCode, userID, lang, requestDTO);
                     data.emergencyContact = _sql.GetEmerContact(shareCode, requestDTO.userID);
-                    data.imageGallary = _sql.GetImgGallary(shareCode, requestDTO.userID);
+                    data.imageGallery = _sql.GetImgGallary(shareCode, requestDTO.userID);
+                    value.data = data;
+                    value.data.menuList = menuList;
+                    value.success = validation.Success;
+                    
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpProfileService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetAllEmployeePrettyModel GetEmployeePrettyService(string shareCode, string authorization, string lang, string platform,
+            int logID, PageRequestDTO pageRequestDTO, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetAllEmployeePrettyModel value = new GetAllEmployeePrettyModel();
+            try
+            {
+                value.data = new Pagination<GetAllEmployee>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    value.data = _sql.GetAllEmployeePretty(shareCode, userID, lang, pageRequestDTO);
+                    value.success = validation.Success;
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmployeePrettyService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+        public GetAllEmployeeByPositionModel GetEmployeeByPositionService(string shareCode, string authorization, string lang, string platform,
+            int logID, int userID, int position, PageRequestDTO pageRequestDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            GetAllEmployeeByPositionModel value = new GetAllEmployeeByPositionModel();
+            try
+            {
+                Pagination<GetAllEmployeeNormal> data = new Pagination<GetAllEmployeeNormal>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.GetAllEmployeeNormal(shareCode, userID, lang, position, pageRequestDTO);
                     value.data = data;
                     value.success = validation.Success;
                 }
@@ -310,7 +413,7 @@ namespace TUFTManagement.Services
             }
             catch (Exception ex)
             {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpProfileService:");
+                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmployeeByPositionService:");
                 if (logID > 0)
                 {
                     _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
@@ -410,7 +513,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetLeaveDetailModel GetLeaveDetailService(string authorization, string lang, string platform, int logID, GetLeaveDetailRequestDTO leaveDetailDTO,string shareCode)
+        public GetLeaveDetailModel GetLeaveDetailService(string authorization, string lang, string platform, int logID, GetLeaveDetailRequestDTO leaveDetailDTO,string shareCode, string projectName, int userID)
         {
             if (_sql == null)
             {
@@ -422,7 +525,12 @@ namespace TUFTManagement.Services
             {
                 GetLeaveDetail data = new GetLeaveDetail();
 
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2100000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -493,50 +601,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public GetEmpWorkShiftModel GetEmpWorkShiftService(string authorization, string lang, string platform, int logID, int empWorkShiftID)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
-
-            GetEmpWorkShiftModel value = new GetEmpWorkShiftModel();
-            try
-            {
-                GetEmpWorkShift data = new GetEmpWorkShift();
-
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
-
-                if (validation.Success == true)
-                {
-                    data = _sql.GetEmpWorkShift(empWorkShiftID);
-                    value.data = data;
-                    value.success = validation.Success;
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                }
-
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-
-                LogManager.ServiceLog.WriteExceptionLog(ex, "GetEmpWorkShiftService:");
-
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
+        
 
         public GetEmpWorkTimeModel GetEmpWorkTimeService(string authorization, string lang, string platform, int logID, int empWorkTimeID)
         {
@@ -678,6 +743,54 @@ namespace TUFTManagement.Services
 
 
         #region search service
+        public SearchAllEmployeeModel SearchAllEmployee(string authorization, string lang, string platform, int logID, PageRequestDTO pageRequestDTO, string shareCode, string projectName, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllEmployeeModel value = new SearchAllEmployeeModel();
+            try
+            {
+                Pagination<SearchAllEmployee> data = new Pagination<SearchAllEmployee>();
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Employee > Search
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2081000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
+
+                if (validation.Success == true)
+                {
+                    data = _sql.SearchAllEmployee(shareCode, pageRequestDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllEmployee:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
         public SearchWorkTimeModel SearchWorkTimeService(string authorization, string lang, string platform, int logID, SearchWorkTimeDTO searchWorkTimeDTO, string shareCode)
         {
             if (_sql == null)
@@ -994,7 +1107,7 @@ namespace TUFTManagement.Services
 
         #region Report
 
-        public SearchAllSalaryReportModel SearchAllSalaryReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportSalaryDTO, string shareCode)
+        public SearchAllSalaryReportModel SearchAllSalaryReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportSalaryDTO, string shareCode, string projectName, int userID)
         {
             if (_sql == null)
             {
@@ -1006,7 +1119,12 @@ namespace TUFTManagement.Services
             {
                 Pagination<SearchAllSalaryReport> data = new Pagination<SearchAllSalaryReport>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Report > Salary
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("4020000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -1037,7 +1155,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchAllEmployeeReportModel SearchAllEmployeeReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportEmployeeDTO, string shareCode)
+        public SearchAllEmployeeReportModel SearchAllEmployeeReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportEmployeeDTO, string shareCode, string projectName, int userID)
         {
             if (_sql == null)
             {
@@ -1053,7 +1171,12 @@ namespace TUFTManagement.Services
                 EmployeeReportHeader dataHeader = new EmployeeReportHeader();
                 Pagination<SearchAllEmployeeReportBody> dataBody = new Pagination<SearchAllEmployeeReportBody>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Report > Employees
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("4010000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -1086,7 +1209,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchAllWorkTimeReportModel SearchAllWorkTimeReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportWorkTimeDTO, string shareCode)
+        public SearchAllWorkTimeReportModel SearchAllWorkTimeReportService(string authorization, string lang, string platform, int logID, SearchReportDTO searchReportWorkTimeDTO, string shareCode, string projectName, int userID)
         {
             if (_sql == null)
             {
@@ -1098,7 +1221,12 @@ namespace TUFTManagement.Services
             {
                 Pagination<SearchAllWorkTimeReport> data = new Pagination<SearchAllWorkTimeReport>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Report > Work time
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("4040000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {

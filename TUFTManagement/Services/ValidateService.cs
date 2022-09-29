@@ -240,7 +240,7 @@ namespace TUFTManagement.Services
                 {
                     checkMissingOptional += "identityCard ";
                 }
-                if (saveEmpProfileDTO.identityCard.Count() != 13)
+                if (saveEmpProfileDTO.identityCard.Count() != 13 && saveEmpProfileDTO.citizenshipID == 20)
                 {
                     checkMissingOptional += "identityCard is incomplete ";
                 }
@@ -271,7 +271,7 @@ namespace TUFTManagement.Services
 
                 if (saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็น 2 คือพนักงานพาร์ททาม ไม่ต้องเช็คข้อ 2 3 4 นี้
                 {
-                    if (saveEmpProfileDTO.pCountryID.Equals(0) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    if (saveEmpProfileDTO.pCountryID.Equals(0) && saveEmpProfileDTO.citizenshipID == 20) //ต่างชาติไม่ต้องกรอกก็ได้
                     {
                         checkMissingOptional += "pCountryID ";
                     }
@@ -295,11 +295,11 @@ namespace TUFTManagement.Services
                         }
                     }
 
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pPhoneContact) && saveEmpProfileDTO.citizenshipID == 20) //ต่างชาติไม่ต้องกรอกก็ได้
                     {
                         checkMissingOptional += "pPhoneContact ";
                     }
-                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress) && saveEmpProfileDTO.citizenshipID != 20) //ต่างชาติไม่ต้องกรอกก็ได้
+                    if (string.IsNullOrEmpty(saveEmpProfileDTO.pAddress) && saveEmpProfileDTO.citizenshipID == 20) //ต่างชาติไม่ต้องกรอกก็ได้
                     {
                         checkMissingOptional += "pAddress ";
                     }
@@ -368,7 +368,7 @@ namespace TUFTManagement.Services
                         {
                             foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                             {
-                                int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emergencyContactID);
+                                int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emerContactID);
                                 if (isDupName > 0)
                                 {
                                     throw new Exception("emergency fullname : " + item.emerFullName + " is already");
@@ -475,6 +475,11 @@ namespace TUFTManagement.Services
             {
                 string checkMissingOptional = "";
 
+                if (saveEmpWorkShiftRequestDTO.workShiftID == 0 && saveEmpWorkShiftRequestDTO.mode == "update")
+                {
+                    checkMissingOptional += "workShiftID ";
+                }
+
                 if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.wsCode))
                 {
                     checkMissingOptional += "wsCode ";
@@ -490,6 +495,14 @@ namespace TUFTManagement.Services
                 if (saveEmpWorkShiftRequestDTO.workTypeID.Equals(0) || saveEmpWorkShiftRequestDTO.workTypeID.Equals(null))
                 {
                     checkMissingOptional += "workTypeID ";
+                }
+                if (string.IsNullOrEmpty(saveEmpWorkShiftRequestDTO.remark))
+                {
+                    checkMissingOptional += "remark ";
+                }
+                if (saveEmpWorkShiftRequestDTO.status.Equals(0) || saveEmpWorkShiftRequestDTO.status.Equals(null))
+                {
+                    checkMissingOptional += "status ";
                 }
 
                 if (checkMissingOptional != "")
