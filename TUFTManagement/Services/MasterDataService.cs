@@ -43,7 +43,7 @@ namespace TUFTManagement.Services
                         }
                         else if (masterDataDTO.mode.ToLower() == "update")
                         {
-                            _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
                             _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                             value.data = _sql.UpdateMasterData(shareCode, masterDataDTO, TableName, userID);
                         }
@@ -494,6 +494,8 @@ namespace TUFTManagement.Services
                         //List<string> listobjectID = new List<string>();
                         //listobjectID.Add("100401002");
                         //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+
+                        
                         validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
                         if (validation.Success == true)
                         {
@@ -3328,6 +3330,49 @@ namespace TUFTManagement.Services
             }
             return value;
         }
+
+        public ReturnIdModel DeteteMasterWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                value.data = new _ReturnIdModel();
+                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                   
+                    value.data = _sql.DeleteEmpWorkShift(shareCode, saveEmpWorkShiftRequestDTO, userID);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "DeleteMasterWorkShiftService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
 
         public GetEmpWorkShiftModel GetMasterWorkShiftService(string shareCode, string authorization, string lang, string platform, int logID, int empWorkShiftID)
         {

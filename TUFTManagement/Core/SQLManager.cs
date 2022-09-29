@@ -1935,10 +1935,6 @@ namespace TUFTManagement.Core
             paramStatus.Value = saveEmpWorkShiftRequestDTO.status;
             sql.Parameters.Add(paramStatus);
 
-            SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
-            pCreateBy.Direction = ParameterDirection.Input;
-            pCreateBy.Value = userID;
-            sql.Parameters.Add(pCreateBy);
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
@@ -3711,6 +3707,45 @@ namespace TUFTManagement.Core
             pUpdateBy.Direction = ParameterDirection.Input;
             pUpdateBy.Value = userID;
             sql.Parameters.Add(pUpdateBy);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            _ReturnIdModel data = new _ReturnIdModel();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    data.loadData(row);
+                }
+            }
+
+            return data;
+        }
+
+
+        public _ReturnIdModel DeleteEmpWorkShift(string shareCode, SaveEmpWorkShiftRequestDTO saveEmpWorkShiftRequestDTO, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec update_emp_work_shift " +
+                "@pId, " +
+                "@pIsCancel," +
+                "@pCancelBy");
+
+            SqlParameter paramID = new SqlParameter(@"pId", SqlDbType.Int);
+            paramID.Direction = ParameterDirection.Input;
+            paramID.Value = saveEmpWorkShiftRequestDTO.workShiftID;
+            sql.Parameters.Add(paramID);
+
+            SqlParameter pIsCancel = new SqlParameter(@"pIsCancel", SqlDbType.Int);
+            pIsCancel.Direction = ParameterDirection.Input;
+            pIsCancel.Value = saveEmpWorkShiftRequestDTO.isCancel;
+            sql.Parameters.Add(pIsCancel);
+
+            SqlParameter pCancelBy = new SqlParameter(@"pCancelBy", SqlDbType.Int);
+            pCancelBy.Direction = ParameterDirection.Input;
+            pCancelBy.Value = userID;
+            sql.Parameters.Add(pCancelBy);
 
             table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
@@ -8127,7 +8162,8 @@ namespace TUFTManagement.Core
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec insert_master_key " +
                 "@pNameKey," +
-                "@pUserID ");
+                "@pUserID, " +
+                "@pIsActive");
 
             SqlParameter pNameKey = new SqlParameter(@"pNameKey", SqlDbType.VarChar);
             pNameKey.Direction = ParameterDirection.Input;
@@ -8138,6 +8174,11 @@ namespace TUFTManagement.Core
             pUserID.Direction = ParameterDirection.Input;
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = masterDataDTO.isActive;
+            sql.Parameters.Add(pIsActive);
 
             table = sql.executeQueryWithReturnTable();
 
@@ -8160,7 +8201,8 @@ namespace TUFTManagement.Core
             SQLCustomExecute sql = new SQLCustomExecute("exec update_master_key " +
                 "@pMasterID," +
                 "@pNameKey," +
-                "@pUserID ");
+                "@pUserID, " +
+                "@pIsActive");
 
             SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
             pMasterID.Direction = ParameterDirection.Input;
@@ -8176,6 +8218,11 @@ namespace TUFTManagement.Core
             pUserID.Direction = ParameterDirection.Input;
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = masterDataDTO.isActive;
+            sql.Parameters.Add(pIsActive);
 
             table = sql.executeQueryWithReturnTable();
 

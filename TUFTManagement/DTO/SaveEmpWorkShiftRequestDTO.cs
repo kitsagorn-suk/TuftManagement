@@ -16,6 +16,7 @@ namespace TUFTManagement.DTO
         public string remark { set; get; } = "";
         public string timeStart { set; get; } = "";
         public string timeEnd { set; get; } = "";
+        public int isCancel { set; get; } = 1;
         public int status { set; get; } = 1;
 
     }

@@ -2753,6 +2753,10 @@ namespace TUFTManagement.Controllers
                     {
                         obj = srvMaster.UpdateMasterWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.userID);
                     }
+                    else if (saveEmpWorkShiftRequestDTO.workShiftID > 0 && saveEmpWorkShiftRequestDTO.mode.ToLower() == "delete")
+                    {
+                        obj = srvMaster.DeteteMasterWorkShiftService(shareCode, authHeader, lang, fromProject.ToLower(), logID, saveEmpWorkShiftRequestDTO, data.userID);
+                    }
                 }
 
                 return Ok(obj);
@@ -2942,10 +2946,10 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "masterID Must 0 ";
                     }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    //{
+                    //    checkMissingOptional += "nameEN ";
+                    //}
                     if (string.IsNullOrEmpty(masterDataDTO.nameTH))
                     {
                         checkMissingOptional += "nameTH ";
@@ -2961,10 +2965,10 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "masterID ";
                     }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    //{
+                    //    checkMissingOptional += "nameEN ";
+                    //}
                     if (string.IsNullOrEmpty(masterDataDTO.nameTH))
                     {
                         checkMissingOptional += "nameTH ";
@@ -3501,7 +3505,11 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "keyName ";
                     }
-                    
+                    if (string.IsNullOrEmpty(masterDataDTO.isActive))
+                    {
+                        checkMissingOptional += "isActive ";
+                    }
+
                 }
                 else if (masterDataDTO.mode.ToLower().Equals("update"))
                 {
@@ -3513,15 +3521,19 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "keyName ";
                     }
-                    
+                    if (string.IsNullOrEmpty(masterDataDTO.isActive))
+                    {
+                        checkMissingOptional += "isActive ";
+                    }
+
                 }
-                //else if (masterDataDTO.mode.ToLower().Equals("delete"))
-                //{
-                //    if (masterDataDTO.masterID == 0)
-                //    {
-                //        checkMissingOptional += "masterID ";
-                //    }
-                //}
+                else if (masterDataDTO.mode.ToLower().Equals("delete"))
+                {
+                    if (masterDataDTO.masterID == 0)
+                    {
+                        checkMissingOptional += "masterID ";
+                    }
+                }
                 else
                 {
                     throw new Exception("Choose Mode Insert or Update");

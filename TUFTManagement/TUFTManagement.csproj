@@ -208,6 +208,7 @@
     <Compile Include="DTO\SaveSystemRoleAssignDTO.cs" />
     <Compile Include="DTO\SaveSystemRoleTempDTO.cs" />
     <Compile Include="DTO\SearchMasterDepartmentPositionDTO.cs" />
+    <Compile Include="DTO\SearchPayRollDTO.cs" />
     <Compile Include="DTO\SearchPendingLeaveDTO.cs" />
     <Compile Include="DTO\SearchReportDTO.cs" />
     <Compile Include="DTO\SearchSystemRoleAssignDTO.cs" />
