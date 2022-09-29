@@ -1129,6 +1129,50 @@ namespace TUFTManagement.Services
             return value;
         }
 
+        public SearchAllWorkTimeReportModel SearchAllPayRollService(string authorization, string lang, string platform, int logID, SearchPayRollDTO searchPayRollDTO, string shareCode)
+        { //เปลี่ยน model
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            SearchAllWorkTimeReportModel value = new SearchAllWorkTimeReportModel();
+            try
+            {
+                Pagination<SearchAllWorkTimeReport> data = new Pagination<SearchAllWorkTimeReport>();
+
+                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+
+                if (validation.Success == true)
+                {
+                    //data = _sql.SearchAllWorkTimeReport(shareCode, searchPayRollDTO);
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
+                value.success = validation.Success;
+                value.data = data;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllPayRollService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLog(logID, 1);
+            }
+            return value;
+        }
+
+
         #endregion
 
     }
