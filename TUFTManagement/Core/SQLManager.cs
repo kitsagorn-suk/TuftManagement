@@ -162,7 +162,7 @@ namespace TUFTManagement.Core
             List<NewMenuList> list = new List<NewMenuList>();
 
             DataTable table = new DataTable();
-            SQLCustomExecute sql = new SQLCustomExecute("exec get_menu_himself @pUserID, @pLang ");
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_menu_himself @pUserID, @pLang ,@pProjectName");
 
             SqlParameter paramUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
             paramUserID.Direction = ParameterDirection.Input;
@@ -6601,7 +6601,8 @@ namespace TUFTManagement.Core
                 "@pNameEN," +
                 "@pNameTH," +
                 "@pDeptID," +
-                "@pUserID ");
+                "@pUserID," +
+                "@pIsActive ");
 
             SqlParameter pTableName = new SqlParameter(@"pTableName", SqlDbType.VarChar);
             pTableName.Direction = ParameterDirection.Input;
@@ -6628,6 +6629,11 @@ namespace TUFTManagement.Core
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
 
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = masterDataDTO.isActive;
+            sql.Parameters.Add(pIsActive);
+
             table = sql.executeQueryWithReturnTable();
 
             _ReturnIdModel data = new _ReturnIdModel();
@@ -6652,7 +6658,8 @@ namespace TUFTManagement.Core
                 "@pNameEN," +
                 "@pNameTH," +
                 "@pDeptID," +
-                "@pUserID ");
+                "@pUserID," +
+                "@pIsActive ");
 
             SqlParameter pMasterID = new SqlParameter(@"pMasterID", SqlDbType.Int);
             pMasterID.Direction = ParameterDirection.Input;
@@ -6683,6 +6690,11 @@ namespace TUFTManagement.Core
             pUserID.Direction = ParameterDirection.Input;
             pUserID.Value = userID;
             sql.Parameters.Add(pUserID);
+
+            SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
+            pIsActive.Direction = ParameterDirection.Input;
+            pIsActive.Value = masterDataDTO.isActive;
+            sql.Parameters.Add(pIsActive);
 
             table = sql.executeQueryWithReturnTable();
 
@@ -6752,7 +6764,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
             pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = masterDataDTO.IsActive;
+            pIsActive.Value = masterDataDTO.isActive;
             sql.Parameters.Add(pIsActive);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
@@ -6790,7 +6802,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
             pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = masterDataDTO.IsActive;
+            pIsActive.Value = masterDataDTO.isActive;
             sql.Parameters.Add(pIsActive);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
@@ -8859,7 +8871,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.VarChar);
             pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = masterDataDTO.IsActive;
+            pIsActive.Value = masterDataDTO.isActive;
             sql.Parameters.Add(pIsActive);
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);

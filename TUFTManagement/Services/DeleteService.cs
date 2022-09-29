@@ -13,7 +13,7 @@ namespace TUFTManagement.Services
         private SQLManager _sql = SQLManager.Instance;
 
         public ReturnIdModel DeleteEmpProfileService(string authorization, string lang, string platform, int logID,
-            SaveEmpProfileDTO saveEmpProfileDTO, int userID)
+            SaveEmpProfileDTO saveEmpProfileDTO, int userID, string projectName, string shareCode)
         {
             if (_sql == null)
             {
@@ -25,14 +25,13 @@ namespace TUFTManagement.Services
             {
                 value.data = new _ReturnIdModel();
 
-                //ValidationModel validation = new ValidationModel();
-                //List<string> listobjectID = new List<string>();
-                //listobjectID.Add("100301004");
-                //validation = ValidationManager.CheckValidationUpdate(saveEmpProfileDTO.empProfileID, "emp_profile", userID, lang,
-                //    listobjectID, roleID);
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Add Employee > Delete Employee
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2041000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
                 
-
                 if (validation.Success == true)
                 {
                     value.data = _sql.DeleteEmpProfile(saveEmpProfileDTO, userID);

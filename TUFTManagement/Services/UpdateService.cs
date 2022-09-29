@@ -349,7 +349,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateEmpStatusService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpStatusDTO saveEmpStatusDTO, int userID)
+        public ReturnIdModel UpdateEmpStatusService(string shareCode, string authorization, string lang, string platform, int logID, SaveEmpStatusDTO saveEmpStatusDTO, int userID, string projectName)
         {
             if (_sql == null)
             {
@@ -360,7 +360,13 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Employee > Search > Edit EmpStatus
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2081100");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -393,7 +399,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateLeaveDetailService(string authorization, string lang, string platform, int logID, SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode)
+        public ReturnIdModel UpdateLeaveDetailService(string authorization, string lang, string platform, int logID, SaveLeaveDetailDTO saveLeaveDetailDTO, int userID,string shareCode, string projectName)
         {
             if (_sql == null)
             {
@@ -404,7 +410,13 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave > Edit
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2104000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -441,7 +453,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel CancelLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID,string shareCode)
+        public ReturnIdModel CancelLeaveFormService(string authorization, string lang, string platform, int logID, ActionLeaveFormDTO actionLeaveFormDTO, int userID,string shareCode, string projectName)
         {
             if (_sql == null)
             {
@@ -452,10 +464,15 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
-                //MailModel mail = new MailModel();
 
-               
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave > Cancel
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2102000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
+
+
                 if (validation.Success == true)
                 {
                     value.data = _sql.CancelLeaveForm(actionLeaveFormDTO.leaveID, userID, actionLeaveFormDTO.cancelReason, shareCode);
@@ -488,7 +505,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ApproveLeaveRequestDTO approveLeaveRequestDTO, int userID, string shareCode)
+        public ReturnIdModel RejectLeaveFormService(string authorization, string lang, string platform, int logID, ApproveLeaveRequestDTO approveLeaveRequestDTO, int userID, string shareCode, string projectName)
         {
             if (_sql == null)
             {
@@ -501,7 +518,13 @@ namespace TUFTManagement.Services
                 //MailModel mail = new MailModel();
                
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave > Approve&Reject
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2103000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -510,21 +533,6 @@ namespace TUFTManagement.Services
                         value.data = _sql.RejectLeaveForm(leaveID, userID, shareCode);
                     }
                     
-
-                    //MailService srv = new MailService();
-                    //if (_sql.CheckleaveIsEdit(value.data.id))
-                    //{
-                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 5);
-                    //}
-                    //else
-                    //{
-                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 2);
-                    //}
-                    //value.mail = mail;
-                //}
-                //else
-                //{
-                //    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
                 }
 
                 value.success = validation.Success;
@@ -546,7 +554,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel ApproveLeaveFormService(string authorization, string lang, string platform, int logID, ApproveLeaveRequestDTO approveLeaveRequestDTO, int userID,string shareCode)
+        public ReturnIdModel ApproveLeaveFormService(string authorization, string lang, string platform, int logID, ApproveLeaveRequestDTO approveLeaveRequestDTO, int userID,string shareCode, string projectName)
         {
             if (_sql == null)
             {
@@ -558,28 +566,20 @@ namespace TUFTManagement.Services
             try
             {
                 value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidation(1, lang, platform);
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Time Attendance > Approve&Reject
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2095000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
                     foreach (int leaveID in approveLeaveRequestDTO.approveListLeaveID)
                     {
                         value.data = _sql.ApproveLeaveForm(leaveID, userID, shareCode);
-
                     }
-
-
-
-                    //MailService srv = new MailService();
-                    //if (_sql.CheckleaveIsEdit(value.data.id))
-                    //{
-                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 5);
-                    //}
-                    //else
-                    //{
-                    //    mail = srv.SendMailLeave(lang, logID, value.data.id, 2);
-                    //}
-                    //value.mail = mail;
                 }
                 else
                 {

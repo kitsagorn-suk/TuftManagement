@@ -30,7 +30,7 @@ namespace TUFTManagement.Services
                 value.data = new InsertLogin();
 
                 //เช็คสิทธิในการเข้าใช้
-                //Employee > All Agent > View
+                //Employee > Add Employee
                 List<string> listobjectID = new List<string>();
                 listobjectID.Add("2040000");
                 string objectID = string.Join(",", listobjectID.ToArray());
@@ -152,7 +152,7 @@ namespace TUFTManagement.Services
         
 
         public ReturnIdModel InsertLeaveDetailService(string authorization, string lang, string platform, int logID,
-    SaveLeaveDetailDTO saveLeaveDetailDTO,int remainDay, int userID,string shareCode)
+    SaveLeaveDetailDTO saveLeaveDetailDTO,int remainDay, int userID,string shareCode, string projectName)
         {
             if (_sql == null)
             {
@@ -161,17 +161,31 @@ namespace TUFTManagement.Services
             ReturnIdModel value = new ReturnIdModel();
             try
             {
-                value.data = new _ReturnIdModel();
-                ValidationModel validation = ValidationManager.CheckValidationDupicateInsertLeaveDetail(lang, saveLeaveDetailDTO);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave > Add
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2101000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
+
                 if (validation.Success == true)
                 {
-                    value.data = _sql.InsertLeaveDetail(saveLeaveDetailDTO, remainDay, userID, shareCode);
+                    value.data = new _ReturnIdModel();
+                    validation = ValidationManager.CheckValidationDupicateInsertLeaveDetail(lang, saveLeaveDetailDTO);
+                    if (validation.Success == true)
+                    {
+                        value.data = _sql.InsertLeaveDetail(saveLeaveDetailDTO, remainDay, userID, shareCode);
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+                    }
                 }
                 else
                 {
                     _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
                 }
-
+                
                 value.success = validation.Success;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }

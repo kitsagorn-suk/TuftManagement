@@ -235,7 +235,7 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
-                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, TableName, "is_active", masterDataDTO.IsActive, userID);
+                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, TableName, "is_active", masterDataDTO.isActive, userID);
                        // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.UpdateActiveMaster(shareCode, masterDataDTO,TableName, userID); ;
                     }
@@ -290,7 +290,7 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
-                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_position", "is_active", masterDataDTO.IsActive, userID);
+                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_position", "is_active", masterDataDTO.isActive, userID);
                         // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.CancelSystemPosition(masterDataDTO, userID); ;
                     }
@@ -345,7 +345,7 @@ namespace TUFTManagement.Services
                     validation = ValidationManager.CheckValidation(1, lang, platform);
                     if (validation.Success == true)
                     {
-                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_departrment", "is_active", masterDataDTO.IsActive, userID);
+                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_departrment", "is_active", masterDataDTO.isActive, userID);
                         // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
                         value.data = _sql.CancelSystemDepartment(masterDataDTO, userID); ;
                     }
@@ -3015,50 +3015,8 @@ namespace TUFTManagement.Services
 
 
         #region searchService
-        public SearchAllEmployeeModel SearchAllEmployee(string authorization, string lang, string platform, int logID, PageRequestDTO pageRequestDTO, string shareCode)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
-
-            SearchAllEmployeeModel value = new SearchAllEmployeeModel();
-            try
-            {
-                Pagination<SearchAllEmployee> data = new Pagination<SearchAllEmployee>();
-
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
-
-                if (validation.Success == true)
-                {
-                    data = _sql.SearchAllEmployee(shareCode, pageRequestDTO);
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
-                }
-
-                value.success = validation.Success;
-                value.data = data;
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "SearchAllEmployee:");
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
-
-        public SearchAllLeaveModel SearchAllLeave(string authorization, string lang, string platform, int logID, SearchLeaveDTO searchLeavetDTO, string shareCode)
+        
+        public SearchAllLeaveModel SearchAllLeave(string authorization, string lang, string platform, int logID, SearchLeaveDTO searchLeavetDTO, string shareCode, string projectName, int userID)
         {
             if (_sql == null)
             {
@@ -3068,7 +3026,6 @@ namespace TUFTManagement.Services
             SearchAllLeaveModel value = new SearchAllLeaveModel();
             value.data = new SearchAllLeaveDetail();
             value.data.dataSearch = new Pagination<SearchAllLeave>();
-            //value.data.dataShift = new List<AllLeaveShift>();
             value.data.dataLeave = new List<AllLeave>();
             try
             {
@@ -3076,7 +3033,12 @@ namespace TUFTManagement.Services
                 List<AllLeaveShift> dataShift = new List<AllLeaveShift>();
                 List<AllLeave> dataLeave = new List<AllLeave>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2100000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
@@ -3089,20 +3051,6 @@ namespace TUFTManagement.Services
                     {
                         termsList.Add(item.empID);
                     }
-
-                    //int[] terms = termsList.ToArray();
-                    //string theString = string.Join(",", terms);
-
-                    //List<GetWorkShift> allWS = new List<GetWorkShift>();
-                    //allWS = _sql.GetAllWorkShiftList(shareCode);
-
-                    //foreach (GetWorkShift item in allWS)
-                    //{
-                    //    AllLeaveShift sss = new AllLeaveShift();
-                    //    sss = _sql.GetWorkShiftLeave(shareCode, theString, item.workShiftID, searchLeavetDTO.paramSearch);
-
-                    //    dataShift.Add(sss);
-                    //}
 
                     List<SearchAllLeave> totalLeave = dataSearch.data;
 
@@ -3154,7 +3102,7 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public SearchAllPendingLeaveModel SearchAllPendingLeave(string authorization, string lang, string platform, int logID, SearchPendingLeaveDTO searchPendingLeaveDTO, string shareCode)
+        public SearchAllPendingLeaveModel SearchAllPendingLeave(string authorization, string lang, string platform, int logID, SearchPendingLeaveDTO searchPendingLeaveDTO, string shareCode, string projectName, int userID)
         {
             if (_sql == null)
             {
@@ -3171,7 +3119,12 @@ namespace TUFTManagement.Services
                 List<AllLeaveShift> dataShift = new List<AllLeaveShift>();
                 List<AllLeave> dataLeave = new List<AllLeave>();
 
-                ValidationModel validation = ValidationManager.CheckValidationWithShareCode(shareCode, 1, lang, platform);
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > Leave > Search Pending
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2105000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
 
                 if (validation.Success == true)
                 {
