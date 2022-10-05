@@ -6692,7 +6692,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
             pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = masterDataDTO.isActive;
+            pIsActive.Value = int.Parse(masterDataDTO.isActive);
             sql.Parameters.Add(pIsActive);
 
             table = sql.executeQueryWithReturnTable();
@@ -7375,6 +7375,35 @@ namespace TUFTManagement.Core
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_image_gallary " +
+                "@pUserID"
+                );
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<EmployeeDetails.ImageGallery> listData = new List<EmployeeDetails.ImageGallery>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmployeeDetails.ImageGallery data = new EmployeeDetails.ImageGallery();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+        public List<EmployeeDetails.ImageGallery> GetImgIdentity(string shareCode, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_image_identity " +
                 "@pUserID"
                 );
 

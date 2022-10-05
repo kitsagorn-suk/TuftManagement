@@ -311,6 +311,7 @@ namespace TUFTManagement.Services
                 {
                     data = _sql.GetEmpProfile(shareCode, userID, lang, requestDTO);
                     data.emergencyContact = _sql.GetEmerContact(shareCode, requestDTO.userID);
+                    data.imageIdentity = _sql.GetImgIdentity(shareCode, requestDTO.userID);
                     data.imageGallery = _sql.GetImgGallary(shareCode, requestDTO.userID);
                     value.data = data;
                     value.data.menuList = menuList;
