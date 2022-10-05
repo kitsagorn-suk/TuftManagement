@@ -85,6 +85,8 @@ namespace TUFTManagement.Models
         public string imageProfileCode { set; get; } = "";
         public string imageGalleryCode { set; get; } = "";
         public string imageProfileUrl { set; get; } = "";
+        public string imageIdentityCode { set; get; } = "";
+        
         public string imageIdentityUrl { set; get; } = "";
         
 
@@ -188,6 +190,8 @@ namespace TUFTManagement.Models
             imageProfileCode = dr["image_profile_code"].ToString();
             imageGalleryCode = dr["image_gallery_code"].ToString();
             imageProfileUrl = dr["image_profile_url"].ToString();
+
+            imageIdentityCode = dr["image_iden_code"].ToString();
             imageIdentityUrl = dr["image_iden_url"].ToString();
 
         }

@@ -29,7 +29,7 @@ namespace TUFTManagement.Services
                 List<string> listobjectID = new List<string>();
                 listobjectID.Add("2082100");
                 string objectID = string.Join(",", listobjectID.ToArray());
-                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, saveEmpProfileDTO.userID, userID);
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
                 if (validation.Success == true)
                 {
                     validation = ValidationManager.CheckValidationDupicateInsertEmp(shareCode, lang, saveEmpProfileDTO);
