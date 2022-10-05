@@ -1311,7 +1311,10 @@ namespace TUFTManagement.Core
                 "@pImageProfileCode, " +
                 "@pImageGalleryCode, " +
                 "@pImageIdentityCode, " +
-                
+
+                "@pContactTypeID, " +
+                "@pContactExpiryDate, " +
+
                 "@pCreateBy ");
 
             SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
@@ -1473,7 +1476,17 @@ namespace TUFTManagement.Core
             pImageIdentityCode.Direction = ParameterDirection.Input;
             pImageIdentityCode.Value = saveEmpProfileDTO.imageIdentityCode;
             sql.Parameters.Add(pImageIdentityCode);
-            
+
+            SqlParameter pContactTypeID = new SqlParameter(@"pContactTypeID", SqlDbType.Int);
+            pContactTypeID.Direction = ParameterDirection.Input;
+            pContactTypeID.Value = saveEmpProfileDTO.contractTypeID;
+            sql.Parameters.Add(pContactTypeID);
+
+            SqlParameter pContactExpiryDate = new SqlParameter(@"pContactExpiryDate", SqlDbType.VarChar, 10);
+            pContactExpiryDate.Direction = ParameterDirection.Input;
+            pContactExpiryDate.Value = saveEmpProfileDTO.contractExpiryDate;
+            sql.Parameters.Add(pContactExpiryDate);
+
             SqlParameter pCreateBy = new SqlParameter(@"pCreateBy", SqlDbType.Int);
             pCreateBy.Direction = ParameterDirection.Input;
             pCreateBy.Value = userID;
@@ -3275,7 +3288,10 @@ namespace TUFTManagement.Core
                 "@pImageProfileCode, " +
                 "@pImageGalleryCode, " +
                 "@pImageIdentityCode, " +
-                
+
+                "@pContactTypeID, " +
+                "@pContactExpiryDate, " +
+
                 "@pUpdateBy");
 
             SqlParameter pEmpProfileID = new SqlParameter(@"pEmpProfileID", SqlDbType.Int);
@@ -3432,6 +3448,16 @@ namespace TUFTManagement.Core
             pImageIdentityCode.Direction = ParameterDirection.Input;
             pImageIdentityCode.Value = saveEmpProfileDTO.imageIdentityCode;
             sql.Parameters.Add(pImageIdentityCode);
+
+            SqlParameter pContactTypeID = new SqlParameter(@"pContactTypeID", SqlDbType.Int);
+            pContactTypeID.Direction = ParameterDirection.Input;
+            pContactTypeID.Value = saveEmpProfileDTO.contractTypeID;
+            sql.Parameters.Add(pContactTypeID);
+
+            SqlParameter pContactExpiryDate = new SqlParameter(@"pContactExpiryDate", SqlDbType.VarChar, 10);
+            pContactExpiryDate.Direction = ParameterDirection.Input;
+            pContactExpiryDate.Value = saveEmpProfileDTO.contractExpiryDate;
+            sql.Parameters.Add(pContactExpiryDate);
 
             SqlParameter pUpdateBy = new SqlParameter(@"pUpdateBy", SqlDbType.Int);
             pUpdateBy.Direction = ParameterDirection.Input;
@@ -10251,7 +10277,7 @@ namespace TUFTManagement.Core
 
             string connectionString = decode.Connection(shareCode);
 
-            connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
+            //connectionString = ConfigurationManager.AppSettings["connectionStringsLocal"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

@@ -26,6 +26,8 @@ namespace TUFTManagement.Models
         public int departmentID { set; get; } = 0;
         public int positionID { set; get; } = 0;
         public int employmentTypeID { set; get; } = 0;
+        public int contractTypeID { set; get; } = 0;
+        public string contractExpiryDate { set; get; } = "";
 
         public int titleID { set; get; } = 0;
         public string firstNameTH { set; get; } = "";
@@ -83,6 +85,8 @@ namespace TUFTManagement.Models
         public string imageProfileCode { set; get; } = "";
         public string imageGalleryCode { set; get; } = "";
         public string imageProfileUrl { set; get; } = "";
+        public string imageIdentityCode { set; get; } = "";
+        
         public string imageIdentityUrl { set; get; } = "";
         
 
@@ -129,6 +133,8 @@ namespace TUFTManagement.Models
             departmentID = int.Parse(dr["department_id"].ToString());
             positionID = Convert.ToInt32(dr["position_id"]);
             employmentTypeID = Convert.ToInt32(dr["employment_type_id"]);
+            contractTypeID = Convert.ToInt32(dr["contact_type_id"]);
+            contractExpiryDate = dr["contact_expiry_date"].ToString();
             titleID = Convert.ToInt32(dr["title_id"]);
             firstNameTH = dr["firstname_th"].ToString();
             lastNameTH = dr["lastname_th"].ToString();
@@ -184,6 +190,8 @@ namespace TUFTManagement.Models
             imageProfileCode = dr["image_profile_code"].ToString();
             imageGalleryCode = dr["image_gallery_code"].ToString();
             imageProfileUrl = dr["image_profile_url"].ToString();
+
+            imageIdentityCode = dr["image_iden_code"].ToString();
             imageIdentityUrl = dr["image_iden_url"].ToString();
 
         }

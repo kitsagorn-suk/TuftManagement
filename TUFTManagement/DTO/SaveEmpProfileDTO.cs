@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace TUFTManagement.DTO
 {
@@ -25,6 +22,8 @@ namespace TUFTManagement.DTO
         public int departmentID { set; get; } = 0;
         public int positionID { set; get; } = 0;
         public int employmentTypeID { set; get; } = 0;
+        public int contractTypeID { set; get; } = 0;
+        public string contractExpiryDate { set; get; } = "";
 
         public int titleID { set; get; } = 0;
         public string firstNameTH { set; get; } = "";

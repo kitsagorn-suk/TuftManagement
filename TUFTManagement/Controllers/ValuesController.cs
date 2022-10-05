@@ -2950,14 +2950,11 @@ namespace TUFTManagement.Controllers
                     //{
                     //    checkMissingOptional += "nameEN ";
                     //}
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                    if (masterDataDTO.deptID == 0)
-                    {
-                        checkMissingOptional += "deptID ";
-                    }
+
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameTH))
+                    //{
+                    //    checkMissingOptional += "nameTH ";
+                    //}
                 }
                 else if (masterDataDTO.mode.ToLower().Equals("update"))
                 {
@@ -2969,14 +2966,10 @@ namespace TUFTManagement.Controllers
                     //{
                     //    checkMissingOptional += "nameEN ";
                     //}
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
-                    if (masterDataDTO.deptID == 0)
-                    {
-                        checkMissingOptional += "deptID ";
-                    }
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameTH))
+                    //{
+                    //    checkMissingOptional += "nameTH ";
+                    //}
                 }
                 else if (masterDataDTO.mode.ToLower().Equals("delete"))
                 {
@@ -3308,14 +3301,14 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "masterID Must 0 ";
                     }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    //{
+                    //    checkMissingOptional += "nameEN ";
+                    //}
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameTH))
+                    //{
+                    //    checkMissingOptional += "nameTH ";
+                    //}
                 }
                 else if (masterDataDTO.mode.ToLower().Equals("update"))
                 {
@@ -3323,14 +3316,14 @@ namespace TUFTManagement.Controllers
                     {
                         checkMissingOptional += "masterID ";
                     }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameEN))
-                    {
-                        checkMissingOptional += "nameEN ";
-                    }
-                    if (string.IsNullOrEmpty(masterDataDTO.nameTH))
-                    {
-                        checkMissingOptional += "nameTH ";
-                    }
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameEN))
+                    //{
+                    //    checkMissingOptional += "nameEN ";
+                    //}
+                    //if (string.IsNullOrEmpty(masterDataDTO.nameTH))
+                    //{
+                    //    checkMissingOptional += "nameTH ";
+                    //}
                 }
                 else if (masterDataDTO.mode.ToLower().Equals("delete"))
                 {

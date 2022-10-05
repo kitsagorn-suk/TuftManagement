@@ -171,6 +171,19 @@ namespace TUFTManagement.Services
                     checkMissingOptional += "employmentTypeID ";
                 }
 
+                if (shareCode.ToLower().Equals("lls")) // ถ้าเป็น ลาลิสา
+                {
+                    // ถ้าเป็นพนักงานสัญญาจ้าง จะต้องกรอกประเภทสัญญา และ วันสิ้นสุดสัญญา
+                    if (saveEmpProfileDTO.employmentTypeID == 4 && saveEmpProfileDTO.contractTypeID.Equals(0)) 
+                    {
+                        checkMissingOptional += "contactTypeID ";
+                    }
+                    if (saveEmpProfileDTO.employmentTypeID == 4 && string.IsNullOrEmpty(saveEmpProfileDTO.contractExpiryDate))
+                    {
+                        checkMissingOptional += "contactExpireDate ";
+                    }
+                }
+
                 if (!shareCode.ToLower().Equals("lls")) // ถ้าไม่ใช่ ลาลิสา
                 {
                     if (saveEmpProfileDTO.monthlySalary.Equals(0) && saveEmpProfileDTO.employmentTypeID != 2) // ถ้าเป็นพริตตี้ รายวัน จะไม่เช็ค
@@ -182,6 +195,7 @@ namespace TUFTManagement.Services
                         checkMissingOptional += "dailySalary ";
                     }
                 }
+                
                 
                 if (saveEmpProfileDTO.departmentID.Equals(0))
                 {
@@ -368,13 +382,13 @@ namespace TUFTManagement.Services
                         {
                             foreach (SaveEmergencyContact item in saveEmpProfileDTO.emergencyContact)
                             {
-                                int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emerContactID);
-                                if (isDupName > 0)
-                                {
-                                    throw new Exception("emergency fullname : " + item.emerFullName + " is already");
-                                }
-                                else
-                                {
+                                //int isDupName = _sql.CheckDupEmergencyName(shareCode, item.emerFullName, item.emerContactID);
+                                //if (isDupName > 0)
+                                //{
+                                //    throw new Exception("emergency fullname : " + item.emerFullName + " is already");
+                                //}
+                                //else
+                                //{
                                     if (string.IsNullOrEmpty(item.emerFullName))
                                     {
                                         checkMissingOptional += "emerFullName ";
@@ -387,7 +401,7 @@ namespace TUFTManagement.Services
                                     {
                                         checkMissingOptional += "emerContact ";
                                     }
-                                }
+                                //}
                             }
                         }
                         else
