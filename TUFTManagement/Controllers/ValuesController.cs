@@ -2918,7 +2918,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/save/master/position")]
         [HttpPost]
-        public IHttpActionResult SaveMasterPosition(MasterDataDTO masterDataDTO)
+        public IHttpActionResult SaveMasterPosition(MasterDataPositionDTO masterDataPositionDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -2937,24 +2937,24 @@ namespace TUFTManagement.Controllers
 
             try
             {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
+                string json = JsonConvert.SerializeObject(masterDataPositionDTO);
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveMasterPosition", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
+                if (string.IsNullOrEmpty(masterDataPositionDTO.mode))
                 {
                     throw new Exception("Missing Parameter : mode ");
                 }
-                if (string.IsNullOrEmpty(masterDataDTO.isActive))
+                if (string.IsNullOrEmpty(masterDataPositionDTO.isActive))
                 {
                     throw new Exception("Missing Parameter : isActive ");
                 }
 
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
+                if (masterDataPositionDTO.mode.ToLower().Equals("insert"))
                 {
-                    if (masterDataDTO.masterID != 0)
+                    if (masterDataPositionDTO.masterID != 0)
                     {
                         checkMissingOptional += "masterID Must 0 ";
                     }
@@ -2968,9 +2968,9 @@ namespace TUFTManagement.Controllers
                     //    checkMissingOptional += "nameTH ";
                     //}
                 }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
+                else if (masterDataPositionDTO.mode.ToLower().Equals("update"))
                 {
-                    if (masterDataDTO.masterID == 0)
+                    if (masterDataPositionDTO.masterID == 0)
                     {
                         checkMissingOptional += "masterID ";
                     }
@@ -2983,9 +2983,9 @@ namespace TUFTManagement.Controllers
                     //    checkMissingOptional += "nameTH ";
                     //}
                 }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
+                else if (masterDataPositionDTO.mode.ToLower().Equals("delete"))
                 {
-                    if (masterDataDTO.masterID == 0)
+                    if (masterDataPositionDTO.masterID == 0)
                     {
                         checkMissingOptional += "masterID ";
                     }
@@ -3002,7 +3002,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_position", data.userID, shareCode, fromProject);
+                obj = srv.SaveMasterPositionService(authHeader, lang, fromProject.ToLower(), logID, masterDataPositionDTO, "system_position", data.userID, shareCode, fromProject);
 
                 return Ok(obj);
             }
@@ -3277,7 +3277,7 @@ namespace TUFTManagement.Controllers
 
         [Route("1.0/save/master/department")]
         [HttpPost]
-        public IHttpActionResult SaveMasterDepartment(MasterDataDTO masterDataDTO)
+        public IHttpActionResult SaveMasterDepartment(MasterDataDepartmentDTO masterDataDepartmentDTO)
         {
             var request = HttpContext.Current.Request;
             string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
@@ -3296,20 +3296,20 @@ namespace TUFTManagement.Controllers
 
             try
             {
-                string json = JsonConvert.SerializeObject(masterDataDTO);
+                string json = JsonConvert.SerializeObject(masterDataDepartmentDTO);
                 int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SaveMasterDepartment", json, timestampNow.ToString(), headersDTO,
                     data.userID, fromProject.ToLower());
 
                 string checkMissingOptional = "";
 
-                if (string.IsNullOrEmpty(masterDataDTO.mode))
+                if (string.IsNullOrEmpty(masterDataDepartmentDTO.mode))
                 {
                     throw new Exception("Missing Parameter : mode ");
                 }
 
-                if (masterDataDTO.mode.ToLower().Equals("insert"))
+                if (masterDataDepartmentDTO.mode.ToLower().Equals("insert"))
                 {
-                    if (masterDataDTO.masterID != 0)
+                    if (masterDataDepartmentDTO.masterID != 0)
                     {
                         checkMissingOptional += "masterID Must 0 ";
                     }
@@ -3322,9 +3322,9 @@ namespace TUFTManagement.Controllers
                     //    checkMissingOptional += "nameTH ";
                     //}
                 }
-                else if (masterDataDTO.mode.ToLower().Equals("update"))
+                else if (masterDataDepartmentDTO.mode.ToLower().Equals("update"))
                 {
-                    if (masterDataDTO.masterID == 0)
+                    if (masterDataDepartmentDTO.masterID == 0)
                     {
                         checkMissingOptional += "masterID ";
                     }
@@ -3337,9 +3337,9 @@ namespace TUFTManagement.Controllers
                     //    checkMissingOptional += "nameTH ";
                     //}
                 }
-                else if (masterDataDTO.mode.ToLower().Equals("delete"))
+                else if (masterDataDepartmentDTO.mode.ToLower().Equals("delete"))
                 {
-                    if (masterDataDTO.masterID == 0)
+                    if (masterDataDepartmentDTO.masterID == 0)
                     {
                         checkMissingOptional += "masterID ";
                     }
@@ -3356,7 +3356,7 @@ namespace TUFTManagement.Controllers
 
                 MasterDataService srv = new MasterDataService();
                 var obj = new object();
-                obj = srv.SaveMasterService(authHeader, lang, fromProject.ToLower(), logID, masterDataDTO, "system_department", data.userID, shareCode, fromProject);
+                obj = srv.SaveMasterDepartmentService(authHeader, lang, fromProject.ToLower(), logID, masterDataDepartmentDTO, "system_department", data.userID, shareCode, fromProject);
 
                 return Ok(obj);
             }
@@ -3365,6 +3365,8 @@ namespace TUFTManagement.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
             }
         }
+
+
 
         [Route("1.0/get/master/department")]
         [HttpPost]
@@ -4038,7 +4040,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchAllDepartmentPosition(authHeader, lang, fromProject.ToLower(), logID, searchMasterDepartmentPositionDTO);
+                obj = srv.SearchAllDepartmentPosition(authHeader, lang, fromProject.ToLower(), logID, searchMasterDepartmentPositionDTO, shareCode);
 
                 return Ok(obj);
             }

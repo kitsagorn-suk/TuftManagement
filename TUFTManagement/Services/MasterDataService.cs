@@ -13,7 +13,7 @@ namespace TUFTManagement.Services
     {
         private SQLManager _sql = SQLManager.Instance;
 
-        public ReturnIdModel SaveMasterService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, 
+        public ReturnIdModel SaveMasterPositionService(string authorization, string lang, string platform, int logID, MasterDataPositionDTO masterDataPositionDTO, 
             string TableName, int userID, string shareCode, string projectName)
         {
             if (_sql == null)
@@ -34,22 +34,22 @@ namespace TUFTManagement.Services
                 ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
                 if (validation.Success == true)
                 {
-                    validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, TableName, masterDataDTO);
+                    validation = ValidationManager.CheckValidationDupicateMasterPosition(shareCode, lang, masterDataPositionDTO);
                     if (validation.Success == true)
                     {
-                        if (masterDataDTO.mode.ToLower() == "insert")
+                        if (masterDataPositionDTO.mode.ToLower() == "insert")
                         {
-                            value.data = _sql.InsertMasterData(shareCode, masterDataDTO, TableName, userID);
+                            value.data = _sql.InsertMasterPosition(masterDataPositionDTO, userID, shareCode);
                         }
-                        else if (masterDataDTO.mode.ToLower() == "update")
+                        else if (masterDataPositionDTO.mode.ToLower() == "update")
                         {
                             //_sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
-                            _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
-                            value.data = _sql.UpdateMasterData(shareCode, masterDataDTO, TableName, userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataPositionDTO.masterID, TableName, "name_th", masterDataPositionDTO.nameTH, userID);
+                            value.data = _sql.UpdateMasterPosition(masterDataPositionDTO, userID, shareCode);
                         }
-                        else if (masterDataDTO.mode.ToLower() == "delete")
+                        else if (masterDataPositionDTO.mode.ToLower() == "delete")
                         {
-                            value.data = _sql.CancelSystemDepartment(masterDataDTO, userID);
+                            value.data = _sql.CancelSystemPosition(masterDataPositionDTO, userID);
                         }
                     }
                     else
@@ -62,6 +62,73 @@ namespace TUFTManagement.Services
                     _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
                 }
                 
+                value.success = validation.Success;
+                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+            }
+            catch (Exception ex)
+            {
+                LogManager.ServiceLog.WriteExceptionLog(ex, "SaveMasterPositionService:");
+                if (logID > 0)
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, ex.ToString());
+                }
+                throw ex;
+            }
+            finally
+            {
+                _sql.UpdateStatusLogWithShareCode(shareCode, logID, 1);
+            }
+            return value;
+        }
+        public ReturnIdModel SaveMasterDepartmentService(string authorization, string lang, string platform, int logID, MasterDataDepartmentDTO masterDataDepartmentDTO,
+            string TableName, int userID, string shareCode, string projectName)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+
+            ReturnIdModel value = new ReturnIdModel();
+            try
+            {
+                _ReturnIdModel data = new _ReturnIdModel();
+
+                //เช็คสิทธิในการเข้าใช้
+                //Employee > All Agent > View
+                List<string> listobjectID = new List<string>();
+                listobjectID.Add("2082000");
+                string objectID = string.Join(",", listobjectID.ToArray());
+                ValidationModel validation = ValidationManager.CheckValidationWithProjectName(shareCode, lang, objectID, projectName, userID);
+                if (validation.Success == true)
+                {
+                    validation = ValidationManager.CheckValidationDupicateMasterDepartment(shareCode, lang, masterDataDepartmentDTO);
+                    if (validation.Success == true)
+                    {
+                        if (masterDataDepartmentDTO.mode.ToLower() == "insert")
+                        {
+                            value.data = _sql.InsertMasterDepartment(masterDataDepartmentDTO, userID, shareCode);
+                        }
+                        else if (masterDataDepartmentDTO.mode.ToLower() == "update")
+                        {
+                            //_sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDTO.masterID, TableName, "name_en", masterDataDTO.nameEN, userID);
+                            _sql.InsertSystemLogChangeWithShareCode(shareCode, masterDataDepartmentDTO.masterID, TableName, "name_th", masterDataDepartmentDTO.nameTH, userID);
+                            value.data = _sql.UpdateMasterDepartment( masterDataDepartmentDTO, userID, shareCode);
+                        }
+                        else if (masterDataDepartmentDTO.mode.ToLower() == "delete")
+                        {
+                            value.data = _sql.CancelSystemDepartment(masterDataDepartmentDTO, userID);
+                        }
+                    }
+                    else
+                    {
+                        _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                    }
+                }
+                else
+                {
+                    _sql.UpdateLogReceiveDataErrorWithShareCode(shareCode, logID, validation.InvalidMessage);
+                }
+
                 value.success = validation.Success;
                 value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
             }
@@ -268,115 +335,115 @@ namespace TUFTManagement.Services
             return value;
         }
 
-        public ReturnIdModel UpdateActiveSystemPositionService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, int userID, string shareCode)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
+        //public ReturnIdModel UpdateActiveSystemPositionService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, int userID, string shareCode)
+        //{
+        //    if (_sql == null)
+        //    {
+        //        _sql = SQLManager.Instance;
+        //    }
 
-            ReturnIdModel value = new ReturnIdModel();
-            try
-            {
-                _ReturnIdModel data = new _ReturnIdModel();
+        //    ReturnIdModel value = new ReturnIdModel();
+        //    try
+        //    {
+        //        _ReturnIdModel data = new _ReturnIdModel();
 
-                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, "system_position", masterDataDTO);
-                if (validation.Success == true)
-                {
-                    //ValidationModel validation = new ValidationModel();
-                    //List<string> listobjectID = new List<string>();
-                    //listobjectID.Add("100401002");
-                    //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                    validation = ValidationManager.CheckValidation(1, lang, platform);
-                    if (validation.Success == true)
-                    {
-                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_position", "is_active", masterDataDTO.isActive, userID);
-                        // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
-                        value.data = _sql.CancelSystemPosition(masterDataDTO, userID); ;
-                    }
-                    else
-                    {
-                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                    }
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                }
+        //        ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, "system_position", masterDataDTO);
+        //        if (validation.Success == true)
+        //        {
+        //            //ValidationModel validation = new ValidationModel();
+        //            //List<string> listobjectID = new List<string>();
+        //            //listobjectID.Add("100401002");
+        //            //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+        //            validation = ValidationManager.CheckValidation(1, lang, platform);
+        //            if (validation.Success == true)
+        //            {
+        //                _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_position", "is_active", masterDataDTO.isActive, userID);
+        //                // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+        //                value.data = _sql.CancelSystemPosition(masterDataDTO, userID); ;
+        //            }
+        //            else
+        //            {
+        //                _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+        //        }
 
-                value.success = validation.Success;
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateActiveMasterService:");
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
+        //        value.success = validation.Success;
+        //        value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateActiveMasterService:");
+        //        if (logID > 0)
+        //        {
+        //            _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+        //        }
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        _sql.UpdateStatusLog(logID, 1);
+        //    }
+        //    return value;
+        //}
 
-        public ReturnIdModel UpdateActiveSystemDepartmentService(string authorization, string lang, string platform, int logID, MasterDataDTO masterDataDTO, int userID, string shareCode)
-        {
-            if (_sql == null)
-            {
-                _sql = SQLManager.Instance;
-            }
+        //public ReturnIdModel UpdateActiveSystemDepartmentService(string authorization, string lang, string platform, int logID, MasterDataDepartmentDTO masterDataDepartmentDTO, int userID, string shareCode)
+        //{
+        //    if (_sql == null)
+        //    {
+        //        _sql = SQLManager.Instance;
+        //    }
 
-            ReturnIdModel value = new ReturnIdModel();
-            try
-            {
-                _ReturnIdModel data = new _ReturnIdModel();
+        //    ReturnIdModel value = new ReturnIdModel();
+        //    try
+        //    {
+        //        _ReturnIdModel data = new _ReturnIdModel();
 
-                ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, "system_departrment", masterDataDTO);
-                if (validation.Success == true)
-                {
-                    //ValidationModel validation = new ValidationModel();
-                    //List<string> listobjectID = new List<string>();
-                    //listobjectID.Add("100401002");
-                    //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
-                    validation = ValidationManager.CheckValidation(1, lang, platform);
-                    if (validation.Success == true)
-                    {
-                        _sql.InsertSystemLogChange(shareCode, masterDataDTO.masterID, "system_departrment", "is_active", masterDataDTO.isActive, userID);
-                        // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
-                        value.data = _sql.CancelSystemDepartment(masterDataDTO, userID); ;
-                    }
-                    else
-                    {
-                        _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                    }
-                }
-                else
-                {
-                    _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
-                }
+        //        ValidationModel validation = ValidationManager.CheckValidationDupicateMasterData(shareCode, lang, "system_departrment", masterDataDepartmentDTO);
+        //        if (validation.Success == true)
+        //        {
+        //            //ValidationModel validation = new ValidationModel();
+        //            //List<string> listobjectID = new List<string>();
+        //            //listobjectID.Add("100401002");
+        //            //validation = ValidationManager.CheckValidationUpdate(masterCompanyDTO.companyID, "system_company", userID, lang, listobjectID, roleID);
+        //            validation = ValidationManager.CheckValidation(1, lang, platform);
+        //            if (validation.Success == true)
+        //            {
+        //                _sql.InsertSystemLogChange(shareCode, masterDataDepartmentDTO.masterID, "system_departrment", "is_active", masterDataDepartmentDTO.isActive, userID);
+        //                // _sql.InsertSystemLogChange(masterDataDTO.masterID, TableName, "name_th", masterDataDTO.nameTH, userID);
+        //                value.data = _sql.CancelSystemDepartment(masterDataDepartmentDTO, userID); ;
+        //            }
+        //            else
+        //            {
+        //                _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            _sql.UpdateLogReceiveDataError(logID, validation.InvalidMessage);
+        //        }
 
-                value.success = validation.Success;
-                value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
-            }
-            catch (Exception ex)
-            {
-                LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateActiveMasterService:");
-                if (logID > 0)
-                {
-                    _sql.UpdateLogReceiveDataError(logID, ex.ToString());
-                }
-                throw ex;
-            }
-            finally
-            {
-                _sql.UpdateStatusLog(logID, 1);
-            }
-            return value;
-        }
+        //        value.success = validation.Success;
+        //        value.msg = new MsgModel() { code = validation.InvalidCode, text = validation.InvalidMessage, topic = validation.InvalidText };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogManager.ServiceLog.WriteExceptionLog(ex, "UpdateActiveMasterService:");
+        //        if (logID > 0)
+        //        {
+        //            _sql.UpdateLogReceiveDataError(logID, ex.ToString());
+        //        }
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        _sql.UpdateStatusLog(logID, 1);
+        //    }
+        //    return value;
+        //}
 
 
         public SearchMasterDataDepartmentModel SearchMasterDepartmentService(string authorization, string lang, string platform, int logID, SearchMasterDataDTO searchMasterDataDTO, string TableName, string shareCode)
@@ -3204,7 +3271,7 @@ namespace TUFTManagement.Services
         }
 
 
-        public SearchAllMasterDepartmentPositionModel SearchAllDepartmentPosition(string authorization, string lang, string platform, int logID, SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        public SearchAllMasterDepartmentPositionModel SearchAllDepartmentPosition(string authorization, string lang, string platform, int logID, SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO, string shareCode)
         {
             if (_sql == null)
             {
@@ -3221,10 +3288,8 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    dataSearch = _sql.SearchAllDepartmentPosition(searchMasterDepartmentPositionDTO);
+                    dataSearch = _sql.SearchAllDepartmentPosition(searchMasterDepartmentPositionDTO, shareCode);
                     
-                    
-
                 }
                 else
                 {
