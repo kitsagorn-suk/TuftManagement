@@ -642,7 +642,90 @@ namespace TUFTManagement.Core
             }
             return value;
         }
+        public static ValidationModel CheckValidationDupicateMasterPosition(string shareCode, string lang, MasterDataPositionDTO masterDataPositionDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
 
+                DataTable dt = _sql.CheckDuplicateMasterPosition(shareCode, masterDataPositionDTO);
+
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0]["status_name_en"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301008;
+                        getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                    if (dt.Rows[0]["status_name_th"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301009;
+                        getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                }
+
+                getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(0);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
+        public static ValidationModel CheckValidationDupicateMasterDepartment(string shareCode, string lang, MasterDataDepartmentDTO masterDataDepartmentDTO)
+        {
+            if (_sql == null)
+            {
+                _sql = SQLManager.Instance;
+            }
+            ValidationModel value = new ValidationModel();
+            try
+            {
+                GetMessageTopicDTO getMessage = new GetMessageTopicDTO();
+                ValidationModel.InvalidState state = ValidationModel.InvalidState.S201001;
+
+                DataTable dt = _sql.CheckDuplicateMasterDepartment(shareCode, masterDataDepartmentDTO);
+
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0]["status_name_en"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301008;
+                        getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                    if (dt.Rows[0]["status_name_th"].ToString() != "0")
+                    {
+                        state = ValidationModel.InvalidState.E301009;
+                        getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
+                        return new ValidationModel { Success = false, InvalidCode = ValidationModel.GetInvalidCode(state), InvalidMessage = getMessage.message, InvalidText = getMessage.topic };
+                    }
+                }
+
+                getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
+                value.Success = true;
+                value.InvalidCode = ValidationModel.GetInvalidCode(0);
+                value.InvalidMessage = getMessage.message;
+                value.InvalidText = getMessage.topic;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return value;
+        }
         public static ValidationModel CheckValidationDupicateMasterKey(string shareCode, string lang, string TableName, MasterDataDTO masterDataDTO)
         {
             if (_sql == null)
