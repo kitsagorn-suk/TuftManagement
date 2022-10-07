@@ -395,7 +395,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    data = _sql.SearchMasterDepartment(searchMasterDataDTO);
+                    data = _sql.SearchMasterDepartment(searchMasterDataDTO, shareCode);
                 }
                 else
                 {
@@ -3000,7 +3000,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetDepartment(masterID);
+                    data = _sql.GetDepartment(masterID, shareCode);
                     value.data = data;
                     value.success = validation.Success;
                 }
@@ -3204,7 +3204,7 @@ namespace TUFTManagement.Services
         }
 
 
-        public SearchAllMasterDepartmentPositionModel SearchAllDepartmentPosition(string authorization, string lang, string platform, int logID, SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        public SearchAllMasterDepartmentPositionModel SearchAllDepartmentPosition(string authorization, string lang, string platform, int logID, SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO, string shareCode)
         {
             if (_sql == null)
             {
@@ -3221,7 +3221,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    dataSearch = _sql.SearchAllDepartmentPosition(searchMasterDepartmentPositionDTO);
+                    dataSearch = _sql.SearchAllDepartmentPosition(searchMasterDepartmentPositionDTO, shareCode);
                     
                     
 

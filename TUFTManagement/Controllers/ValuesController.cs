@@ -3059,61 +3059,61 @@ namespace TUFTManagement.Controllers
             }
         }
 
-        [Route("1.0/search/master/position")]
-        [HttpPost]
-        public IHttpActionResult SearchMasterDataPosition(SearchMasterDataDTO searchMasterDataDTO)
-        {
-            var request = HttpContext.Current.Request;
-            string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
-            string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
-            string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
-            string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
+        //[Route("1.0/search/master/position")]
+        //[HttpPost]
+        //public IHttpActionResult SearchMasterDataPosition(SearchMasterDataDTO searchMasterDataDTO)
+        //{
+        //    var request = HttpContext.Current.Request;
+        //    string authHeader = (request.Headers["Authorization"] == null ? "" : request.Headers["Authorization"]);
+        //    string lang = (request.Headers["lang"] == null ? WebConfigurationManager.AppSettings["default_language"] : request.Headers["lang"]);
+        //    string fromProject = (request.Headers["Fromproject"] == null ? "" : request.Headers["Fromproject"]);
+        //    string shareCode = (request.Headers["Sharecode"] == null ? "" : request.Headers["Sharecode"]);
 
-            HeadersDTO headersDTO = new HeadersDTO();
-            headersDTO.authHeader = authHeader;
-            headersDTO.lang = lang;
-            headersDTO.fromProject = fromProject;
-            headersDTO.shareCode = shareCode;
+        //    HeadersDTO headersDTO = new HeadersDTO();
+        //    headersDTO.authHeader = authHeader;
+        //    headersDTO.lang = lang;
+        //    headersDTO.fromProject = fromProject;
+        //    headersDTO.shareCode = shareCode;
 
-            AuthenticationController _auth = AuthenticationController.Instance;
-            AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
+        //    AuthenticationController _auth = AuthenticationController.Instance;
+        //    AuthorizationModel data = _auth.ValidateHeader(authHeader, lang, fromProject, shareCode);
 
-            try
-            {
-                string json = JsonConvert.SerializeObject(searchMasterDataDTO);
-                int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchMasterDataPosition", json, timestampNow.ToString(), headersDTO,
-                    data.userID, fromProject.ToLower());
+        //    try
+        //    {
+        //        string json = JsonConvert.SerializeObject(searchMasterDataDTO);
+        //        int logID = _sql.InsertLogReceiveDataWithShareCode(shareCode, "SearchMasterDataPosition", json, timestampNow.ToString(), headersDTO,
+        //            data.userID, fromProject.ToLower());
 
-                MasterDataService srv = new MasterDataService();
+        //        MasterDataService srv = new MasterDataService();
 
-                var obj = new object();
+        //        var obj = new object();
 
-                if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
-                {
-                    throw new Exception("invalid : pageInt ");
-                }
-                if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
-                {
-                    throw new Exception("invalid : perPage ");
-                }
-                if (searchMasterDataDTO.sortField > 4)
-                {
-                    throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
-                }
-                if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
-                {
-                    throw new Exception("invalid sortType");
-                }
+        //        if (searchMasterDataDTO.pageInt.Equals(null) || searchMasterDataDTO.pageInt.Equals(0))
+        //        {
+        //            throw new Exception("invalid : pageInt ");
+        //        }
+        //        if (searchMasterDataDTO.perPage.Equals(null) || searchMasterDataDTO.perPage.Equals(0))
+        //        {
+        //            throw new Exception("invalid : perPage ");
+        //        }
+        //        if (searchMasterDataDTO.sortField > 4)
+        //        {
+        //            throw new Exception("invalid : sortField " + searchMasterDataDTO.sortField);
+        //        }
+        //        if (!(searchMasterDataDTO.sortType == "a" || searchMasterDataDTO.sortType == "d" || searchMasterDataDTO.sortType == "A" || searchMasterDataDTO.sortType == "D" || searchMasterDataDTO.sortType == ""))
+        //        {
+        //            throw new Exception("invalid sortType");
+        //        }
 
-                obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_position",  shareCode);
+        //        obj = srv.SearchMasterService(authHeader, lang, fromProject.ToLower(), logID, searchMasterDataDTO, "system_position",  shareCode);
 
-                return Ok(obj);
-            }
-            catch (Exception ex)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
-            }
-        }
+        //        return Ok(obj);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, ex.Message));
+        //    }
+        //}
 
         [Route("1.0/search/master/bodySet")]
         [HttpPost]
@@ -4038,7 +4038,7 @@ namespace TUFTManagement.Controllers
                     throw new Exception("invalid sortType");
                 }
 
-                obj = srv.SearchAllDepartmentPosition(authHeader, lang, fromProject.ToLower(), logID, searchMasterDepartmentPositionDTO);
+                obj = srv.SearchAllDepartmentPosition(authHeader, lang, fromProject.ToLower(), logID, searchMasterDepartmentPositionDTO, shareCode);
 
                 return Ok(obj);
             }

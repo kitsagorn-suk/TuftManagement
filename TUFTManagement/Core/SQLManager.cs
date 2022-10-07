@@ -8119,7 +8119,7 @@ namespace TUFTManagement.Core
             return listData;
         }
 
-        public Department GetDepartment(int id)
+        public Department GetDepartment(int id, string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_department " +
@@ -8130,7 +8130,7 @@ namespace TUFTManagement.Core
             pId.Value = id;
             sql.Parameters.Add(pId);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             Department data = new Department();
 
@@ -8145,7 +8145,7 @@ namespace TUFTManagement.Core
             return data;
         }
 
-        public Pagination<SearchMasterDataDepartment> SearchMasterDepartment(SearchMasterDataDTO searchMasterDataDTO)
+        public Pagination<SearchMasterDataDepartment> SearchMasterDepartment(SearchMasterDataDTO searchMasterDataDTO, string shareCode)
         {
             DataTable table = new DataTable();
 
@@ -8187,7 +8187,7 @@ namespace TUFTManagement.Core
             pSortType.Value = searchMasterDataDTO.sortType;
             sql.Parameters.Add(pSortType);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             Pagination<SearchMasterDataDepartment> pagination = new Pagination<SearchMasterDataDepartment>();
 
@@ -8202,14 +8202,14 @@ namespace TUFTManagement.Core
                 }
             }
 
-            int total = GetTotalSearchMasterDepartment(searchMasterDataDTO);
+            int total = GetTotalSearchMasterDepartment(searchMasterDataDTO, shareCode);
 
             pagination.SetPagination(total, searchMasterDataDTO.perPage, searchMasterDataDTO.pageInt);
 
             return pagination;
         }
 
-        public int GetTotalSearchMasterDepartment(SearchMasterDataDTO searchMasterDataDTO)
+        public int GetTotalSearchMasterDepartment(SearchMasterDataDTO searchMasterDataDTO, string shareCode)
         {
             int total = 0;
 
@@ -8228,7 +8228,7 @@ namespace TUFTManagement.Core
             pNameTH.Value = searchMasterDataDTO.nameTH;
             sql.Parameters.Add(pNameTH);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
