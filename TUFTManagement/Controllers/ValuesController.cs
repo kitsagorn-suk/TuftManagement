@@ -349,7 +349,7 @@ namespace TUFTManagement.Controllers
                     }
                 }
             }
-
+            
             foreach (MultipartFileData fileData in streamProvider.FileData)
             {
                 fileSize = new FileInfo(fileData.LocalFileName).Length;
@@ -437,7 +437,7 @@ namespace TUFTManagement.Controllers
                         if (validation.Success == true)
                         {
 
-                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, fileSize.ToString(), fileName + fileInfo.Extension, fileURL, userID);
                             value.success = validation.Success;
 
                             _fileDetails file = new _fileDetails();
@@ -466,7 +466,7 @@ namespace TUFTManagement.Controllers
                         if (validation.Success == true)
                         {
 
-                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, fileSize.ToString(), fileName + fileInfo.Extension, fileURL, userID);
                             value.success = validation.Success;
 
                             _fileDetails file = new _fileDetails();
@@ -495,7 +495,7 @@ namespace TUFTManagement.Controllers
                         if (validation.Success == true)
                         {
 
-                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, fileSize.ToString(), fileName + fileInfo.Extension, fileURL, userID);
                             value.success = validation.Success;
 
                             _fileDetails file = new _fileDetails();
@@ -524,7 +524,7 @@ namespace TUFTManagement.Controllers
                         if (validation.Success == true)
                         {
 
-                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, "", fileName, fileURL, userID);
+                            _ReturnIdModel result = _sql.InsertUploadFileDetails(shareCode, keyName, fileCode, fileSize.ToString(), fileName + fileInfo.Extension, fileURL, userID);
                             value.success = validation.Success;
 
                             _fileDetails file = new _fileDetails();

@@ -2796,7 +2796,7 @@ namespace TUFTManagement.Core
             return pagination;
         }
 
-        public Pagination<SearchAllMasterDepartmentPosition> SearchAllDepartmentPosition (SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        public Pagination<SearchAllMasterDepartmentPosition> SearchAllDepartmentPosition (SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO, string shareCode)
         {
             DataTable table = new DataTable();
 
@@ -2856,7 +2856,7 @@ namespace TUFTManagement.Core
             pSortType.Value = searchMasterDepartmentPositionDTO.sortType;
             sql.Parameters.Add(pSortType);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             Pagination<SearchAllMasterDepartmentPosition> pagination = new Pagination<SearchAllMasterDepartmentPosition>();
 
@@ -2871,7 +2871,7 @@ namespace TUFTManagement.Core
                 }
             }
 
-            int total = GetTotalSearchAllDepartmentPosition(searchMasterDepartmentPositionDTO);
+            int total = GetTotalSearchAllDepartmentPosition(searchMasterDepartmentPositionDTO, shareCode);
 
             pagination.SetPagination(total, searchMasterDepartmentPositionDTO.perPage, searchMasterDepartmentPositionDTO.pageInt);
 
@@ -2879,7 +2879,7 @@ namespace TUFTManagement.Core
         }
 
 
-        public int GetTotalSearchAllDepartmentPosition(SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO)
+        public int GetTotalSearchAllDepartmentPosition(SearchMasterDepartmentPositionDTO searchMasterDepartmentPositionDTO, string shareCode)
         {
             int total = 0;
 
@@ -2910,7 +2910,7 @@ namespace TUFTManagement.Core
             pEmpStatusList.Value = searchMasterDepartmentPositionDTO.prepairIsActiveSearch;
             sql.Parameters.Add(pEmpStatusList);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -4420,7 +4420,7 @@ namespace TUFTManagement.Core
         }
 
 
-        public Pagination<SearchMasterData> SearchMasterDataPosition(string paramSearch, int perPage, int pageInt, int sortField, string sortType)
+        public Pagination<SearchMasterData> SearchMasterDataPosition(string paramSearch, int perPage, int pageInt, int sortField, string sortType, string shareCode)
         {
             DataTable table = new DataTable();
 
@@ -4456,7 +4456,7 @@ namespace TUFTManagement.Core
             pSortType.Value = sortType;
             sql.Parameters.Add(pSortType);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             Pagination<SearchMasterData> pagination = new Pagination<SearchMasterData>();
 
@@ -4471,14 +4471,14 @@ namespace TUFTManagement.Core
                 }
             }
 
-            int total = GetTotalSearchMasterPosition(paramSearch);
+            int total = GetTotalSearchMasterPosition(paramSearch, shareCode);
 
             pagination.SetPagination(total, perPage, pageInt);
 
             return pagination;
         }
 
-        public int GetTotalSearchMasterPosition(string paramSearch)
+        public int GetTotalSearchMasterPosition(string paramSearch, string shareCode)
         {
             int total = 0;
 
@@ -4491,7 +4491,7 @@ namespace TUFTManagement.Core
             pParamSearch.Value = paramSearch;
             sql.Parameters.Add(pParamSearch);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             if (table != null && table.Rows.Count > 0)
             {
@@ -4505,7 +4505,7 @@ namespace TUFTManagement.Core
             return total;
         }
 
-        public MasterPosition GetMasterPosition(int id)
+        public MasterPosition GetMasterPosition(int id, string shareCode)
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_master_position " +
@@ -4516,7 +4516,7 @@ namespace TUFTManagement.Core
             pPositionID.Value = id;
             sql.Parameters.Add(pPositionID);
 
-            table = sql.executeQueryWithReturnTable();
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
 
             MasterPosition data = new MasterPosition();
 
@@ -6692,7 +6692,7 @@ namespace TUFTManagement.Core
 
             SqlParameter pIsActive = new SqlParameter(@"pIsActive", SqlDbType.Int);
             pIsActive.Direction = ParameterDirection.Input;
-            pIsActive.Value = masterDataDTO.isActive;
+            pIsActive.Value = int.Parse(masterDataDTO.isActive);
             sql.Parameters.Add(pIsActive);
 
             table = sql.executeQueryWithReturnTable();
@@ -7375,6 +7375,35 @@ namespace TUFTManagement.Core
         {
             DataTable table = new DataTable();
             SQLCustomExecute sql = new SQLCustomExecute("exec get_image_gallary " +
+                "@pUserID"
+                );
+
+            SqlParameter pUserID = new SqlParameter(@"pUserID", SqlDbType.Int);
+            pUserID.Direction = ParameterDirection.Input;
+            pUserID.Value = userID;
+            sql.Parameters.Add(pUserID);
+
+            table = sql.executeQueryWithReturnTableOther(getConnectionEncoded(shareCode));
+
+            List<EmployeeDetails.ImageGallery> listData = new List<EmployeeDetails.ImageGallery>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    EmployeeDetails.ImageGallery data = new EmployeeDetails.ImageGallery();
+                    data.loadData(row);
+                    listData.Add(data);
+                }
+            }
+
+            return listData;
+        }
+
+        public List<EmployeeDetails.ImageGallery> GetImgIdentity(string shareCode, int userID)
+        {
+            DataTable table = new DataTable();
+            SQLCustomExecute sql = new SQLCustomExecute("exec get_image_identity " +
                 "@pUserID"
                 );
 

@@ -85,10 +85,10 @@ namespace TUFTManagement.Models
         public string imageProfileCode { set; get; } = "";
         public string imageGalleryCode { set; get; } = "";
         public string imageProfileUrl { set; get; } = "";
+
         public string imageIdentityCode { set; get; } = "";
-        
-        public string imageIdentityUrl { set; get; } = "";
-        
+
+        public List<ImageGallery> imageIdentity { set; get; }
 
         public List<ImageGallery> imageGallery { set; get; }
 
@@ -114,10 +114,14 @@ namespace TUFTManagement.Models
         {
             public int id { set; get; } = 0;
             public string imgUrl { set; get; } = "";
+            public string imgName { set; get; } = "";
+            public string imgFileSize { set; get; } = "";
             public void loadData(DataRow dr)
             {
                 id =  int.Parse(dr["id"].ToString());
                 imgUrl = dr["url"].ToString();
+                imgName = dr["name"].ToString();
+                imgFileSize = dr["file_extension"].ToString();
             }
         }
 
@@ -192,7 +196,6 @@ namespace TUFTManagement.Models
             imageProfileUrl = dr["image_profile_url"].ToString();
 
             imageIdentityCode = dr["image_iden_code"].ToString();
-            imageIdentityUrl = dr["image_iden_url"].ToString();
 
         }
 

@@ -630,7 +630,7 @@ namespace TUFTManagement.Core
                     }
                 }
 
-                getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, 0, lang);
+                getMessage = ValidationModel.GetInvalidMessageWithShareCode(shareCode, state, lang);
                 value.Success = true;
                 value.InvalidCode = ValidationModel.GetInvalidCode(0);
                 value.InvalidMessage = getMessage.message;

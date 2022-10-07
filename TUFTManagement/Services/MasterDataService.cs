@@ -438,7 +438,7 @@ namespace TUFTManagement.Services
 
                 if (validation.Success == true)
                 {
-                    data = _sql.GetMasterPosition(masterID);
+                    data = _sql.GetMasterPosition(masterID, shareCode);
                     value.data = data;
                     value.success = validation.Success;
                 }
