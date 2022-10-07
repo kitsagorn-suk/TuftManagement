@@ -7613,6 +7613,7 @@ namespace TUFTManagement.Core
                 "@pDepartmentIDList, " +
                 "@pPositionIDList, " +
                 "@pDateSearch, " +
+                "@pWorkShiftSearch, " +
                 "@pLang, " +
                 "@pPage, " +
                 "@pPerPage, " +
@@ -7638,6 +7639,11 @@ namespace TUFTManagement.Core
             pDateSearch.Direction = ParameterDirection.Input;
             pDateSearch.Value = searchWorkTimeDTO.dateSearch;
             sql.Parameters.Add(pDateSearch);
+
+            SqlParameter pWorkShiftSearch = new SqlParameter(@"pWorkShiftSearch", SqlDbType.VarChar, 100);
+            pWorkShiftSearch.Direction = ParameterDirection.Input;
+            pWorkShiftSearch.Value = searchWorkTimeDTO.prepairWorkShiftSearch;
+            sql.Parameters.Add(pWorkShiftSearch);
 
             SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
             pLang.Direction = ParameterDirection.Input;
@@ -7692,6 +7698,10 @@ namespace TUFTManagement.Core
 
             SQLCustomExecute sql = new SQLCustomExecute("exec get_search_all_work_time_pending_page " +
                 "@pTextSearch, " +
+                "@pDepartmentIDList, " +
+                "@pPositionIDList, " +
+                "@pDateSearch, " +
+                "@pWorkShiftSearch, " +
                 "@pLang, " +
                 "@pPage, " +
                 "@pPerPage, " +
@@ -7702,7 +7712,27 @@ namespace TUFTManagement.Core
             pTextSearch.Direction = ParameterDirection.Input;
             pTextSearch.Value = searchWorkTimePendingDTO.paramSearch;
             sql.Parameters.Add(pTextSearch);
-            
+
+            SqlParameter pDepartmentIDList = new SqlParameter(@"pDepartmentIDList", SqlDbType.VarChar, 255);
+            pDepartmentIDList.Direction = ParameterDirection.Input;
+            pDepartmentIDList.Value = searchWorkTimePendingDTO.prepairDepartmentList;
+            sql.Parameters.Add(pDepartmentIDList);
+
+            SqlParameter pPositionIDList = new SqlParameter(@"pPositionIDList", SqlDbType.VarChar, 255);
+            pPositionIDList.Direction = ParameterDirection.Input;
+            pPositionIDList.Value = searchWorkTimePendingDTO.prepairDepartmentList;
+            sql.Parameters.Add(pPositionIDList);
+
+            SqlParameter pDateSearch = new SqlParameter(@"pDateSearch", SqlDbType.VarChar, 255);
+            pDateSearch.Direction = ParameterDirection.Input;
+            pDateSearch.Value = searchWorkTimePendingDTO.dateSearch;
+            sql.Parameters.Add(pDateSearch);
+
+            SqlParameter pWorkShiftSearch = new SqlParameter(@"pWorkShiftSearch", SqlDbType.VarChar, 255);
+            pWorkShiftSearch.Direction = ParameterDirection.Input;
+            pWorkShiftSearch.Value = searchWorkTimePendingDTO.prepairWorkShiftIDList;
+            sql.Parameters.Add(pWorkShiftSearch);
+
             SqlParameter pLang = new SqlParameter(@"pLang", SqlDbType.VarChar, 255);
             pLang.Direction = ParameterDirection.Input;
             pLang.Value = searchWorkTimePendingDTO.lang;

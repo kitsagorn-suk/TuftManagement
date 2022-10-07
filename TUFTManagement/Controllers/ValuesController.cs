@@ -2238,7 +2238,19 @@ namespace TUFTManagement.Controllers
                 GetService srv = new GetService();
                 var obj = new object();
 
-                
+                string strDepartmentList = JsonConvert.SerializeObject(searchWorkTimePendingDTO.departmentList);
+                strDepartmentList = string.Join(",", searchWorkTimePendingDTO.departmentList);
+                searchWorkTimePendingDTO.prepairDepartmentList = strDepartmentList;
+
+                string strPositionList = JsonConvert.SerializeObject(searchWorkTimePendingDTO.positionList);
+                strPositionList = string.Join(",", searchWorkTimePendingDTO.positionList);
+                searchWorkTimePendingDTO.prepairPositionList = strPositionList;
+
+                string strWorkShiftIDList = JsonConvert.SerializeObject(searchWorkTimePendingDTO.positionList);
+                strWorkShiftIDList = string.Join(",", searchWorkTimePendingDTO.workShiftIDList);
+                searchWorkTimePendingDTO.prepairWorkShiftIDList = strWorkShiftIDList;
+
+
                 if (searchWorkTimePendingDTO.pageInt.Equals(null) || searchWorkTimePendingDTO.pageInt.Equals(0))
                 {
                     throw new Exception("invalid : pageInt ");
@@ -4633,6 +4645,10 @@ namespace TUFTManagement.Controllers
                 string strPositionSearch = JsonConvert.SerializeObject(searchWorkTimeDTO.positionSearch);
                 strPositionSearch = string.Join(",", searchWorkTimeDTO.positionSearch);
                 searchWorkTimeDTO.prepairPositionSearch = strPositionSearch;
+
+                string strWorkShiftSearch = JsonConvert.SerializeObject(searchWorkTimeDTO.workShiftSearch);
+                strWorkShiftSearch = string.Join(",", searchWorkTimeDTO.workShiftSearch);
+                searchWorkTimeDTO.prepairWorkShiftSearch = strWorkShiftSearch;
 
                 if (searchWorkTimeDTO.pageInt.Equals(null) || searchWorkTimeDTO.pageInt.Equals(0))
                 {
