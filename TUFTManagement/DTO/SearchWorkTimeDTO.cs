@@ -12,6 +12,8 @@ namespace TUFTManagement.DTO
         public string prepairDepartmentSearch { set; get; } = "";
         public string[] positionSearch { set; get; } = { "" };
         public string prepairPositionSearch { set; get; } = "";
+        public string[] workShiftSearch { set; get; } = { "" };
+        public string prepairWorkShiftSearch { set; get; } = "";
         public int shiftSearch { set; get; } = 0;
         public string lang { set; get; } = "";
         public string paramSearch { set; get; } = "";
